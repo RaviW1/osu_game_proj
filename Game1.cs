@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+
+//Main class game1.cs
 namespace osu_game_proj
 {
     public class Game1 : Game
