@@ -1,0 +1,4 @@
+interface IController
+{
+    void Update();
+}
