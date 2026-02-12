@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.Collections.Generic;
 
 //Main class game1.cs
 namespace osu_game_proj
@@ -10,6 +10,7 @@ namespace osu_game_proj
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        private Player player;
 
         public Game1()
         {
@@ -83,7 +84,15 @@ namespace osu_game_proj
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+
+
             // TODO: use this.Content to load your game content here
+
+            var playerTextures = new Dictionary<string, Texture2D>();
+            playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
+
+            player = new Player(playerTextures);
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -102,7 +111,11 @@ namespace osu_game_proj
 
             // TODO: Add your drawing code here
 
+            _spriteBatch.Begin();
+            player.Draw(_spriteBatch, new Vector2(350, 200));
+
             base.Draw(gameTime);
+            _spriteBatch.End();
         }
     }
 }
