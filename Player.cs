@@ -14,9 +14,10 @@ public class Player
 
     private IPlayerState currentState;
 
-    public Player(Dictionary<string, Texture2D> textures)
+    public Player(Dictionary<string, Texture2D> textures, Vector2 startCoords)
     {
         Textures = textures;
+        Position = startCoords;
         currentState = new IdleState();
         currentState.Draw(this);
     }
@@ -25,11 +26,11 @@ public class Player
     {
 
     }
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch)
     {
         if (CurrentTexture != null)
         {
-            spriteBatch.Draw(CurrentTexture, startCoords, sourceRectangle, Color.White);
+            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, Color.White);
         }
 
     }

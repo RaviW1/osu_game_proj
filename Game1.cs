@@ -91,7 +91,7 @@ namespace osu_game_proj
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
 
-            player = new Player(playerTextures);
+            player = new Player(playerTextures, new Vector2(350, 200));
 
         }
 
@@ -112,7 +112,7 @@ namespace osu_game_proj
             // TODO: Add your drawing code here
 
             _spriteBatch.Begin();
-            player.Draw(_spriteBatch, new Vector2(350, 200));
+            player.Draw(_spriteBatch);
 
             base.Draw(gameTime);
             _spriteBatch.End();

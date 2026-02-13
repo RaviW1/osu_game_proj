@@ -19,6 +19,7 @@ public class IdleState : IPlayerState
     {
         player.CurrentTexture = player.Textures["Walking"];
 
+        // grab idle sprite from walking animation
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
 
     }
@@ -28,3 +29,24 @@ public class IdleState : IPlayerState
     }
 }
 
+public class WalkingState : IPlayerState
+{
+    private float offsetX = 0f;
+    private int direction = 1;
+
+    public void Update(Player player, GameTime gameTime)
+    {
+    }
+    public void Draw(Player player)
+    {
+        player.CurrentTexture = player.Textures["Walking"];
+
+        // grab idle sprite from walking animation
+        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
+
+    }
+    public void HandleInput(Player player, KeyboardController keyboardController)
+    {
+
+    }
+}
