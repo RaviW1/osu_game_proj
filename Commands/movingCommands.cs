@@ -12,3 +12,10 @@ public class WalkCommand : ICommand
         player.Walk(direction);
     }
 }
+public class JumpCommand : ICommand
+{
+    public void Execute(Player player)
+    {
+        player.Jump();
+    }
+}
