@@ -11,6 +11,7 @@ namespace osu_game_proj
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player player;
+        private KeyboardController keyboard;
 
         public Game1()
         {
@@ -30,7 +31,7 @@ namespace osu_game_proj
             //   MovementAxisCommand, VerticalAxisCommand, JumpPressedCommand, JumpReleasedCommand
             // ------------------------------
 
-            KeyboardController keyboard = new KeyboardController();
+            keyboard = new KeyboardController();
 
 
             var moveAxisCmd = new MovementAxisCommand(
@@ -77,6 +78,12 @@ namespace osu_game_proj
             keyboard.BindRelease(Keys.Space, jumpReleasedCmd);
 
 
+            //           keyboardController = new KeyboardController();
+
+            //j           keyboardController.RegisterCommand(Keys.Right, new WalkCommand(1));
+            //         keyboardController.RegisterCommand(Keys.Left, new WalkCommand(-1));
+
+
             base.Initialize();
         }
 
@@ -101,6 +108,15 @@ namespace osu_game_proj
                 Exit();
 
             // TODO: Add your update logic here
+
+            List<ICommand> currentCommands = keyboard.GetCommands();
+
+            foreach (ICommand command in currentCommands)
+            {
+                command.Execute(player);
+            }
+
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }

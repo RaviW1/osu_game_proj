@@ -14,7 +14,7 @@ public sealed class MovementAxisCommand : ICommand
         _rightKeys = rightKeys ?? Array.Empty<Keys>();
     }
 
-    public void Execute()
+    public void Execute(Player player)
     {
         var s = Keyboard.GetState();
         bool left = AnyDown(s, _leftKeys);
@@ -23,7 +23,7 @@ public sealed class MovementAxisCommand : ICommand
         AxisX = (left == right) ? 0 : (left ? -1 : 1);
 
         // Later:
-        // player.SetMoveAxis(AxisX);
+        player.Walk(AxisX);
     }
 
     private static bool AnyDown(KeyboardState s, Keys[] keys)

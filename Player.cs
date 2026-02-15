@@ -11,6 +11,7 @@ public class Player
     public Dictionary<string, Texture2D> Textures;
     public Texture2D CurrentTexture;
     public Rectangle sourceRectangle;
+    public SpriteEffects facing = SpriteEffects.None;
 
     private IPlayerState currentState;
 
@@ -22,16 +23,30 @@ public class Player
         currentState.Draw(this);
     }
 
-    public void Update()
+    public void Update(GameTime gameTime)
     {
+        currentState.Update(this, gameTime);
 
+    }
+    public void ChangeState(IPlayerState newState)
+    {
+        currentState = newState;
+        newState.Draw(this);
     }
     public void Draw(SpriteBatch spriteBatch)
     {
         if (CurrentTexture != null)
         {
-            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, Color.White);
+            Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
+            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, Color.White, 0f, origin, 1f, facing, 0f);
         }
-
+    }
+    public void Walk(int direction)
+    {
+        currentState.Walk(this, direction);
+    }
+    public void Jump()
+    {
+        currentState.Jump(this);
     }
 }

@@ -9,7 +9,7 @@ public class QuitCommand : ICommand
         this.game = game;
     }
 
-    public void Execute()
+    public void Execute(Player player)
     {
         game.Exit();
     }
