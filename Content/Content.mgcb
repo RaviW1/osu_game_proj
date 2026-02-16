@@ -25,3 +25,32 @@
 /processorParam:TextureFormat=Color
 /build:hollow_knight_walking.png
 
+#begin Dashmaster_0011_charm_generic_03.png
+#begin boofly.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Dashmaster_0011_charm_generic_03.png
+
+#begin Dreamshield_charm_grimm_markoth_shield.png
+/build:boofly.png
+
+#begin hollow_knight_attack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Dreamshield_charm_grimm_markoth_shield.png
+
+/build:hollow_knight_attack.png

@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+
 
 //Main class game1.cs
 namespace osu_game_proj
@@ -12,12 +13,17 @@ namespace osu_game_proj
         private SpriteBatch _spriteBatch;
         private Player player;
         private KeyboardController keyboard;
+        private ItemManager itemManager;
+        private List<ISprite> enemies;
+        private int currentEnemyIndex = 0;
+        private static Game1 instance;
 
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            instance = this;
         }
 
         protected override void Initialize()
@@ -32,6 +38,11 @@ namespace osu_game_proj
             // ------------------------------
 
             keyboard = new KeyboardController();
+
+
+            keyboard = new KeyboardController();
+            keyboard.BindPress(Keys.O, new CycleEnemyCommand(-1));
+            keyboard.BindPress(Keys.P, new CycleEnemyCommand(1));
 
 
             var moveAxisCmd = new MovementAxisCommand(
@@ -77,6 +88,21 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.Space, jumpPressedCmd);
             keyboard.BindRelease(Keys.Space, jumpReleasedCmd);
 
+            // ---- Item cycling (u = previous, i = next) ----
+            itemManager = new ItemManager();
+            var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir));
+            var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir));
+            keyboard.BindPress(Keys.U, cyclePrevItemCmd);
+            keyboard.BindPress(Keys.I, cycleNextItemCmd);
+            keyboard.BindPress(Keys.Q, new QuitCommand(this));
+            keyboard.BindPress(Keys.R, new ResetCommand(this));
+            // Attack
+            keyboard.BindPress(Keys.Z, new AttackCommand());
+            keyboard.BindPress(Keys.N, new AttackCommand());
+
+            // Damage
+            keyboard.BindPress(Keys.E, new DamageCommand());
+
 
             //           keyboardController = new KeyboardController();
 
@@ -90,6 +116,9 @@ namespace osu_game_proj
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            enemies = new List<ISprite>();
+            Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
+            enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 200)));
 
 
 
@@ -97,6 +126,16 @@ namespace osu_game_proj
 
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
+
+            player = new Player(playerTextures, new Vector2(350, 200));
+
+            // Load item textures and add to item manager
+            Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
+            Texture2D dreamshield = Content.Load<Texture2D>("Dreamshield_charm_grimm_markoth_shield");
+            itemManager.AddItem(new TextureItem(dashmaster));
+            itemManager.AddItem(new TextureItem(dreamshield));
+
+            playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
 
             player = new Player(playerTextures, new Vector2(350, 200));
 
@@ -108,7 +147,10 @@ namespace osu_game_proj
                 Exit();
 
             // TODO: Add your update logic here
-
+            if (enemies.Count > 0)
+            {
+                enemies[currentEnemyIndex].Update();
+            }
             List<ICommand> currentCommands = keyboard.GetCommands();
 
             foreach (ICommand command in currentCommands)
@@ -117,6 +159,7 @@ namespace osu_game_proj
             }
 
             player.Update(gameTime);
+            itemManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -129,9 +172,44 @@ namespace osu_game_proj
 
             _spriteBatch.Begin();
             player.Draw(_spriteBatch);
+            itemManager.Draw(_spriteBatch, new Vector2(600, 300));
 
             base.Draw(gameTime);
+
+
+            // TODO: Add your drawing code here
+            if (enemies.Count > 0)
+            {
+                enemies[currentEnemyIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
+            }
+
+            player.Draw(_spriteBatch);
             _spriteBatch.End();
+
+
+            base.Draw(gameTime);
+        }
+        public static void CycleEnemy(int direction)
+        {
+            if (instance.enemies.Count == 0) return;
+
+            instance.currentEnemyIndex += direction;
+
+            if (instance.currentEnemyIndex < 0)
+                instance.currentEnemyIndex = instance.enemies.Count - 1;
+            else if (instance.currentEnemyIndex >= instance.enemies.Count)
+                instance.currentEnemyIndex = 0;
+        }
+        public void Reset()
+        {
+            // Reset player position
+            var playerTextures = new System.Collections.Generic.Dictionary<string, Texture2D>();
+            playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
+
+            player = new Player(playerTextures, new Vector2(350, 200));
+
+            // Reset enemy index
+            currentEnemyIndex = 0;
         }
     }
 }
