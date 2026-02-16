@@ -15,6 +15,8 @@ public class Player
 
     private IPlayerState currentState;
 
+    public Color DrawColor = Color.White;
+
     public Player(Dictionary<string, Texture2D> textures, Vector2 startCoords)
     {
         Textures = textures;
@@ -38,7 +40,7 @@ public class Player
         if (CurrentTexture != null)
         {
             Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
-            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, Color.White, 0f, origin, 1f, facing, 0f);
+            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 1f, facing, 0f); // Use DrawColor instead of Color.White
         }
     }
     public void Walk(int direction)
@@ -48,5 +50,14 @@ public class Player
     public void Jump()
     {
         currentState.Jump(this);
+    }
+    public void Attack()
+    {
+        currentState.Attack(this);
+    }
+
+    public void TakeDamage()
+    {
+        currentState.TakeDamage(this);
     }
 }
