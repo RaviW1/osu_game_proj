@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace osu_game_proj
         private SpriteBatch _spriteBatch;
         private Player player;
         private KeyboardController keyboard;
+        private ItemManager itemManager;
 
         public Game1()
         {
@@ -77,6 +78,12 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.Space, jumpPressedCmd);
             keyboard.BindRelease(Keys.Space, jumpReleasedCmd);
 
+            // ---- Item cycling (u = previous, i = next) ----
+            itemManager = new ItemManager();
+            var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir));
+            var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir));
+            keyboard.BindPress(Keys.U, cyclePrevItemCmd);
+            keyboard.BindPress(Keys.I, cycleNextItemCmd);
 
             //           keyboardController = new KeyboardController();
 
@@ -100,6 +107,12 @@ namespace osu_game_proj
 
             player = new Player(playerTextures, new Vector2(350, 200));
 
+            // Load item textures and add to item manager
+            Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
+            Texture2D dreamshield = Content.Load<Texture2D>("Dreamshield_charm_grimm_markoth_shield");
+            itemManager.AddItem(new TextureItem(dashmaster));
+            itemManager.AddItem(new TextureItem(dreamshield));
+
         }
 
         protected override void Update(GameTime gameTime)
@@ -117,6 +130,7 @@ namespace osu_game_proj
             }
 
             player.Update(gameTime);
+            itemManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -129,6 +143,7 @@ namespace osu_game_proj
 
             _spriteBatch.Begin();
             player.Draw(_spriteBatch);
+            itemManager.Draw(_spriteBatch, new Vector2(600, 300));
 
             base.Draw(gameTime);
             _spriteBatch.End();
