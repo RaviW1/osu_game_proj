@@ -1,31 +1,35 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Windows.Input;
 
 public class KeyboardController : IController
 {
-    private readonly Dictionary<Keys, ICommand> mappings = new();
+    private readonly Dictionary<Keys, ICommand> onPress = new();
+    private readonly Dictionary<Keys, ICommand> whileHeld = new();
+    private readonly Dictionary<Keys, ICommand> onRelease = new();
+
     private KeyboardState previousState;
 
-    public void RegisterCommand(Keys key, ICommand command)
-    {
-        mappings[key] = command;
-    }
+    public void BindPress(Keys key, ICommand cmd) => onPress[key] = cmd;
+    public void BindHeld(Keys key, ICommand cmd) => whileHeld[key] = cmd;
+    public void BindRelease(Keys key, ICommand cmd) => onRelease[key] = cmd;
 
     public void Update()
     {
-        KeyboardState current = Keyboard.GetState();
+        var current = Keyboard.GetState();
 
-        foreach (var pair in mappings)
-        {
-            Keys key = pair.Key;
-
+        foreach (var (key, cmd) in onPress)
             if (current.IsKeyDown(key) && previousState.IsKeyUp(key))
-            {
-                pair.Value.Execute();
-            }
-        }
+                cmd.Execute();
+
+        foreach (var (key, cmd) in whileHeld)
+            if (current.IsKeyDown(key))
+                cmd.Execute();
+
+        foreach (var (key, cmd) in onRelease)
+            if (current.IsKeyUp(key) && previousState.IsKeyDown(key))
+                cmd.Execute();
 
         previousState = current;
     }
 }
+
