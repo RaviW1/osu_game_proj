@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using osu_game_proj;
-using System.Windows.Input;
 
 public class MouseController : IController
 {
