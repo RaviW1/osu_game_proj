@@ -118,7 +118,7 @@ namespace osu_game_proj
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             enemies = new List<ISprite>();
             Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
-            enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 200)));
+            enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
 
 
 
