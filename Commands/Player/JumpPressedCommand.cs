@@ -9,10 +9,9 @@
         // public JumpPressedCommand(Player player) => _player = player;
     }
 
-    public void Execute()
+    public void Execute(Player player)
     {
-        // Later:
-        // _player.JumpPressed();
+        player.Jump();
 
 
     }

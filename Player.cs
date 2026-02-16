@@ -1,19 +1,52 @@
 using System.Numerics;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Microsoft.Xna.Framework;
 
-public interface IPlayer
-{   
-   void Update();
-   void Draw(SpriteBatch spriteBatch, Vector2 startCoords);
-}
-public class Player  : IPlayer
+public class Player
 {
-    public void Update()
+    public Vector2 Position;
+    public Vector2 Velocity;
+    public Dictionary<string, Texture2D> Textures;
+    public Texture2D CurrentTexture;
+    public Rectangle sourceRectangle;
+    public SpriteEffects facing = SpriteEffects.None;
+
+    private IPlayerState currentState;
+
+    public Player(Dictionary<string, Texture2D> textures, Vector2 startCoords)
     {
+        Textures = textures;
+        Position = startCoords;
+        currentState = new IdleState();
+        currentState.Draw(this);
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        currentState.Update(this, gameTime);
 
     }
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void ChangeState(IPlayerState newState)
     {
-
+        currentState = newState;
+        newState.Draw(this);
+    }
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        if (CurrentTexture != null)
+        {
+            Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
+            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, Color.White, 0f, origin, 1f, facing, 0f);
+        }
+    }
+    public void Walk(int direction)
+    {
+        currentState.Walk(this, direction);
+    }
+    public void Jump()
+    {
+        currentState.Jump(this);
     }
 }

@@ -14,7 +14,7 @@ public sealed class VerticalAxisCommand : ICommand
         _downKeys = downKeys ?? Array.Empty<Keys>();
     }
 
-    public void Execute()
+    public void Execute(Player player)
     {
         var s = Keyboard.GetState();
         bool up = AnyDown(s, _upKeys);
