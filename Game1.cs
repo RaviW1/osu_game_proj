@@ -129,7 +129,9 @@ namespace osu_game_proj
             Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
-            enemies.Add(new Aspid(aspidTexture, new System.Numerics.Vector2(500, 50)));
+            Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
+            enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
+            
 
             // Load block textures
             blocks = new List<ISprite>();

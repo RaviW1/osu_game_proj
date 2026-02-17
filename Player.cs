@@ -40,7 +40,7 @@ public class Player
         if (CurrentTexture != null)
         {
             Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
-            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 1f, facing, 0f); // Use DrawColor instead of Color.White
+            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
         }
     }
     public void Walk(int direction)
