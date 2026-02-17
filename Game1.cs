@@ -15,7 +15,9 @@ namespace osu_game_proj
         private KeyboardController keyboard;
         private ItemManager itemManager;
         private List<ISprite> enemies;
+        private List<ISprite> blocks;
         private int currentEnemyIndex = 0;
+        private int currentBlockIndex = 0;
         private static Game1 instance;
 
         public Game1()
@@ -96,6 +98,11 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.I, cycleNextItemCmd);
             keyboard.BindPress(Keys.Q, new QuitCommand(this));
             keyboard.BindPress(Keys.R, new ResetCommand(this));
+
+            // Block cycling (t = previous, y = next)
+            keyboard.BindPress(Keys.T, new CycleBlockCommand(-1));
+            keyboard.BindPress(Keys.Y, new CycleBlockCommand(1));
+
             // Attack
             keyboard.BindPress(Keys.Z, new AttackCommand());
             keyboard.BindPress(Keys.N, new AttackCommand());
@@ -116,15 +123,20 @@ namespace osu_game_proj
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // Load enemy textures
             enemies = new List<ISprite>();
             Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             enemies.Add(new Aspid(aspidTexture, new System.Numerics.Vector2(500, 50)));
 
-
-
-
+            // Load block textures
+            blocks = new List<ISprite>();
+            Texture2D spikeTexture = Content.Load<Texture2D>("spike_back");
+            blocks.Add(new MapBlock(spikeTexture, new System.Numerics.Vector2(50, 50)));
+            Texture2D fungalSpikeTexture = Content.Load<Texture2D>("fungd_spikes_01");
+            blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
             // TODO: use this.Content to load your game content here
 
@@ -155,6 +167,12 @@ namespace osu_game_proj
             {
                 enemies[currentEnemyIndex].Update();
             }
+
+            if (blocks.Count > 0)
+            {
+                blocks[currentBlockIndex].Update();
+            }
+
             List<ICommand> currentCommands = keyboard.GetCommands();
 
             foreach (ICommand command in currentCommands)
@@ -187,6 +205,11 @@ namespace osu_game_proj
                 enemies[currentEnemyIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
             }
 
+            if (blocks.Count > 0)
+            {
+                blocks[currentBlockIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
+            }
+
             player.Draw(_spriteBatch);
             _spriteBatch.End();
 
@@ -204,6 +227,26 @@ namespace osu_game_proj
             else if (instance.currentEnemyIndex >= instance.enemies.Count)
                 instance.currentEnemyIndex = 0;
         }
+
+        public static void CycleBlock(int direction)
+        {
+            if (instance.blocks.Count == 0)
+            {
+                return;
+            }
+
+            instance.currentBlockIndex += direction;
+
+            if (instance.currentBlockIndex < 0)
+            {
+                instance.currentBlockIndex = instance.blocks.Count - 1;
+            }
+            else if (instance.currentBlockIndex >= instance.blocks.Count)
+            {
+                instance.currentBlockIndex = 0;
+            }
+        }
+
         public void Reset()
         {
             // Reset player position
@@ -214,6 +257,9 @@ namespace osu_game_proj
 
             // Reset enemy index
             currentEnemyIndex = 0;
+
+            // Reset block index
+            currentBlockIndex = 0;
         }
     }
 }
