@@ -209,9 +209,9 @@ namespace osu_game_proj
                 command.Execute(player);
             }
 
-            player.Update(gameTime);
             itemManager.Update(gameTime);
 
+            player.Update(gameTime);
             base.Update(gameTime);
         }
 
