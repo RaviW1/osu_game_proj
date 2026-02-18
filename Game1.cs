@@ -52,6 +52,7 @@ namespace osu_game_proj
                 rightKeys: new[] { Keys.D, Keys.Right }
             );
 
+
             var vertAxisCmd = new VerticalAxisCommand(
                 upKeys: new[] { Keys.W, Keys.Up },
                 downKeys: new[] { Keys.S, Keys.Down }
@@ -131,7 +132,7 @@ namespace osu_game_proj
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
-            
+
 
             // Load block textures
             blocks = new List<ISprite>();
@@ -195,11 +196,9 @@ namespace osu_game_proj
             // TODO: Add your drawing code here
 
             _spriteBatch.Begin();
-            player.Draw(_spriteBatch);
             itemManager.Draw(_spriteBatch, new Vector2(600, 300));
 
             base.Draw(gameTime);
-
 
             // TODO: Add your drawing code here
             if (enemies.Count > 0)
@@ -212,9 +211,8 @@ namespace osu_game_proj
                 blocks[currentBlockIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
             }
 
-            player.Draw(_spriteBatch);
+            player.Draw(_spriteBatch, gameTime);
             _spriteBatch.End();
-
 
             base.Draw(gameTime);
         }

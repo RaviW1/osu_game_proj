@@ -7,6 +7,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 public interface IPlayerState
 {
     void Update(Player player, GameTime gameTime);
+    void Reset(Player player);
     void Draw(Player player);
     void Walk(Player player, int direction);
     void Jump(Player player);
@@ -20,13 +21,13 @@ public class IdleState : IPlayerState
     {
     }
 
-    public void Draw(Player player)
+    public void Reset(Player player)
     {
+
         player.CurrentTexture = player.Textures["Walking"];
 
         // grab idle sprite from walking animation
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
-
     }
     public void Walk(Player player, int direction)
     {
@@ -44,31 +45,69 @@ public class IdleState : IPlayerState
     {
         player.ChangeState(new DamagedState());
     }
+    public void Draw(Player player) { }
 }
 
 public class WalkingState : IPlayerState
 {
     private float offsetX = 0f;
     private int direction = 1;
+    private int currentFrame = 0;
+    private int totalFrames = 8;
+    private float timeSinceLastFrame = 0f;
+    private bool commandReceivedThisFrame = true;
+    private float secondsPerFrame = .1f;
 
     public WalkingState(int direction)
     {
         this.direction = direction;
+        this.currentFrame = 0;
     }
 
     public void Update(Player player, GameTime gameTime)
     {
+        if (!commandReceivedThisFrame)
+        {
+            player.ChangeState(new IdleState());
+            return;
+        }
+
+        commandReceivedThisFrame = false;
+
+        timeSinceLastFrame += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+        if (timeSinceLastFrame > secondsPerFrame)
+        {
+            timeSinceLastFrame = 0f;
+            currentFrame++;
+            if (currentFrame >= totalFrames)
+            {
+                currentFrame = 0;
+            }
+        }
+    }
+    public void Reset(Player player)
+    {
+        player.CurrentTexture = player.Textures["Walking"];
+        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }
     public void Draw(Player player)
     {
         player.CurrentTexture = player.Textures["Walking"];
 
-        // grab idle sprite from walking animation
-        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
+        int frameIndex = currentFrame % 9;
+        int frameWidth = player.CurrentTexture.Width / 9;
+        int frameHeight = player.CurrentTexture.Height;
 
+
+        int xPosition = frameIndex * frameWidth;
+
+        player.sourceRectangle = new Rectangle(xPosition, 0, frameWidth, frameHeight);
     }
     public void Walk(Player player, int direction)
     {
+        commandReceivedThisFrame = true;
         if (direction > 0)
         {
             player.facing = SpriteEffects.None;
@@ -87,7 +126,6 @@ public class WalkingState : IPlayerState
     {
         player.ChangeState(new AttackState());
     }
-
     public void TakeDamage(Player player)
     {
         player.ChangeState(new DamagedState());
@@ -96,7 +134,7 @@ public class WalkingState : IPlayerState
 
 public class JumpState : IPlayerState
 {
-    public void Draw(Player player)
+    public void Reset(Player player)
     {
         player.CurrentTexture = player.Textures["Walking"];
 
@@ -144,6 +182,7 @@ public class JumpState : IPlayerState
     {
         player.ChangeState(new DamagedState());
     }
+    public void Draw(Player player) { }
 }
 
 public class AttackState : IPlayerState
@@ -185,7 +224,7 @@ public class AttackState : IPlayerState
         }
     }
 
-    public void Draw(Player player)
+    public void Reset(Player player)
     {
         player.CurrentTexture = player.Textures["Attack"];
         int frameWidth = 128;
@@ -208,6 +247,7 @@ public class AttackState : IPlayerState
     }
     public void Jump(Player player) { }
     public void Attack(Player player) { }
+    public void Draw(Player player) { }
     public void TakeDamage(Player player)
     {
         player.ChangeState(new DamagedState());
@@ -239,14 +279,18 @@ public class DamagedState : IPlayerState
         }
     }
 
-    public void Draw(Player player)
+    public void Reset(Player player)
     {
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }
-
+    public void ReturnToIdle(Player player)
+    {
+        player.ChangeState(new IdleState());
+    }
     public void Walk(Player player, int direction) { }
     public void Jump(Player player) { }
     public void Attack(Player player) { }
     public void TakeDamage(Player player) { }
+    public void Draw(Player player) { }
 }

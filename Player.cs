@@ -22,7 +22,7 @@ public class Player
         Textures = textures;
         Position = startCoords;
         currentState = new IdleState();
-        currentState.Draw(this);
+        currentState.Reset(this);
     }
 
     public void Update(GameTime gameTime)
@@ -33,15 +33,13 @@ public class Player
     public void ChangeState(IPlayerState newState)
     {
         currentState = newState;
-        newState.Draw(this);
+        newState.Reset(this);
     }
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (CurrentTexture != null)
-        {
-            Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
-            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
-        }
+        currentState.Draw(this);
+        Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
+        spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
     }
     public void Walk(int direction)
     {
