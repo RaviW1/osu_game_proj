@@ -111,13 +111,6 @@ namespace osu_game_proj
             // Damage
             keyboard.BindPress(Keys.E, new DamageCommand());
 
-
-            //           keyboardController = new KeyboardController();
-
-            //j           keyboardController.RegisterCommand(Keys.Right, new WalkCommand(1));
-            //         keyboardController.RegisterCommand(Keys.Left, new WalkCommand(-1));
-
-
             base.Initialize();
         }
 
@@ -143,9 +136,12 @@ namespace osu_game_proj
 
             // TODO: use this.Content to load your game content here
 
+            // Load Player Textures
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
+            playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
 
+            // create new player object
             player = new Player(playerTextures, new Vector2(350, 200));
 
             // Load item textures and add to item manager
