@@ -146,10 +146,10 @@ public class JumpState : IPlayerState
 {
     public void Reset(Player player)
     {
-        player.CurrentTexture = player.Textures["Walking"];
+        player.CurrentTexture = player.Textures["Jumping"];
 
         // grab idle sprite from walking animation
-        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
+        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 11 - 30, player.CurrentTexture.Height);
         player.Velocity.Y = -500f;
     }
     public void Update(Player player, GameTime gameTime)
@@ -232,7 +232,18 @@ public class AttackState : IPlayerState
         if (attackTimer >= attackDuration)
         {
             if (wasJumping)
-                player.ChangeState(new JumpState());
+            {
+                // this line is causing a double jump
+                // TODO: fix double jump
+                //player.ChangeState(new JumpState());
+
+                // this will change later when we implement collision detection etc
+                if (player.Position.Y >= 200)
+                {
+                    player.Position.Y = 200;
+                    player.ChangeState(new IdleState());
+                }
+            }
             else
                 player.ChangeState(new IdleState());
         }
