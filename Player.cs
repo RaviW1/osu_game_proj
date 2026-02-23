@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Microsoft.Xna.Framework;
 
+
 public class Player
 {
     public Vector2 Position;
@@ -16,10 +17,15 @@ public class Player
     private IPlayerState currentState;
 
     public Color DrawColor = Color.White;
+    public List<Projectile> Projectiles { get; private set; }
+    private Texture2D fireballTexture;
 
-    public Player(Dictionary<string, Texture2D> textures, Vector2 startCoords)
+    
+    public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
         Textures = textures;
+        this.fireballTexture = fireballTexture;
+        this.Projectiles = new List<Projectile>();
         Position = startCoords;
         currentState = new IdleState();
         currentState.Draw(this);
@@ -28,12 +34,37 @@ public class Player
     public void Update(GameTime gameTime)
     {
         currentState.Update(this, gameTime);
-
+    
+        // Update projectiles
+        for (int i = Projectiles.Count - 1; i >= 0; i--)
+        {
+            Projectiles[i].Update();
+        
+            // Remove off-screen projectiles
+            var projPos = Projectiles[i].GetPosition();
+            if (projPos.X < -50 || projPos.X > 850)
+            {
+                Projectiles.RemoveAt(i);
+            }
+        }
     }
     public void ChangeState(IPlayerState newState)
     {
         currentState = newState;
         newState.Draw(this);
+    }
+    public void ShootFireball()
+    {
+        // Shoot in the direction player is facing
+        float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
+        System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
+
+        float bodyOffsetY = -sourceRectangle.Height / 4f;
+        System.Numerics.Vector2 startPos = new System.Numerics.Vector2(Position.X, Position.Y + bodyOffsetY);
+    
+        Projectile fireball = new Projectile(fireballTexture, startPos, fireballVelocity);
+    
+        Projectiles.Add(fireball);
     }
     public void Draw(SpriteBatch spriteBatch)
     {
@@ -41,6 +72,10 @@ public class Player
         {
             Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
             spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
+        }
+        foreach (var projectile in Projectiles)
+        {
+            projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
         }
     }
     public void Walk(int direction)

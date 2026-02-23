@@ -19,6 +19,8 @@ namespace osu_game_proj
         private int currentEnemyIndex = 0;
         private int currentBlockIndex = 0;
         private static Game1 instance;
+        private AbilityBar abilityBar;
+        private Texture2D pixelTexture;
 
         public Game1()
         {
@@ -109,6 +111,8 @@ namespace osu_game_proj
 
             // Damage
             keyboard.BindPress(Keys.E, new DamageCommand());
+            keyboard.BindPress(Keys.D1, new AttackCommand());
+            keyboard.BindPress(Keys.D2, new ShootFireballCommand());
 
 
             //           keyboardController = new KeyboardController();
@@ -131,7 +135,25 @@ namespace osu_game_proj
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
-            
+            // Create pixel texture for UI
+            pixelTexture = CreatePixelTexture();
+
+            // Create ability icons dictionary
+            var abilityIcons = new Dictionary<string, Texture2D>();
+            abilityIcons.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
+            abilityIcons.Add("Fireball", Content.Load<Texture2D>("fireball"));
+
+            // Define source rectangles for each icon 
+            var iconSourceRects = new Dictionary<string, Rectangle?>();
+
+            // Attack sprite 
+            iconSourceRects.Add("Attack", new Rectangle(896, 0, 128, 128)); 
+
+            // Fireball sprite 
+            iconSourceRects.Add("Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2)); 
+
+            // Create ability bar
+            abilityBar = new AbilityBar(pixelTexture, abilityIcons, iconSourceRects, Vector2.Zero);
 
             // Load block textures
             blocks = new List<ISprite>();
@@ -145,7 +167,8 @@ namespace osu_game_proj
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
 
-            player = new Player(playerTextures, new Vector2(350, 200));
+            player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
+
 
             // Load item textures and add to item manager
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
@@ -155,7 +178,6 @@ namespace osu_game_proj
 
             playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
 
-            player = new Player(playerTextures, new Vector2(350, 200));
 
         }
 
@@ -211,6 +233,8 @@ namespace osu_game_proj
             {
                 blocks[currentBlockIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
             }
+            abilityBar.Draw(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
 
             player.Draw(_spriteBatch);
             _spriteBatch.End();
@@ -255,7 +279,10 @@ namespace osu_game_proj
             var playerTextures = new System.Collections.Generic.Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
 
-            player = new Player(playerTextures, new Vector2(350, 200));
+            Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
+    
+            player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
+    
 
             // Reset enemy index
             currentEnemyIndex = 0;
@@ -263,5 +290,11 @@ namespace osu_game_proj
             // Reset block index
             currentBlockIndex = 0;
         }
+        private Texture2D CreatePixelTexture()
+        {
+            Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
+            texture.SetData(new[] { Color.White });
+            return texture;
+        }   
     }
 }
