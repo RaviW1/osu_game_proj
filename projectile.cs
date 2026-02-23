@@ -6,8 +6,13 @@ public class Projectile : ISprite
     private Vector2 position;
     private Vector2 velocity;
     private Texture2D texture;
-
     private bool movingRight;
+    
+    // Animation fields
+    private int currentFrame = 0;
+    private int totalFrames = 4;
+    private float animationTimer = 0f;
+    private float frameTime = 0.1f; // 0.1 seconds per frame
     
     public Projectile(Texture2D texture, Vector2 startPos, Vector2 velocity)
     {
@@ -20,6 +25,14 @@ public class Projectile : ISprite
     public void Update()
     {
         position += velocity * 0.016f;
+        
+        // Update animation
+        animationTimer += 0.016f;
+        if (animationTimer >= frameTime)
+        {
+            currentFrame = (currentFrame + 1) % totalFrames; // Cycle 0->1->2->3->0
+            animationTimer = 0f;
+        }
     }
     
     public Vector2 GetPosition()
@@ -32,16 +45,16 @@ public class Projectile : ISprite
         var xnaPos = new Microsoft.Xna.Framework.Vector2(position.X, position.Y);
         if (texture != null)
         {
-            // Draw just one frame from the sprite sheet
-            
             int frameWidth = texture.Width / 2;
             int frameHeight = texture.Height / 2;
-            int frameX = 0;  
-            int frameY = 0;  
-        
-            var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
-        
             
+            // Calculate frame position (2x2 grid)
+            int frameX = (currentFrame % 2) * frameWidth;
+            int frameY = (currentFrame / 2) * frameHeight;
+            
+            var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
+            
+            // Flip sprite if moving right
             var spriteEffect = movingRight ? 
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : 
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None;
