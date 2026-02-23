@@ -20,3 +20,6 @@ o or p to cycle currently shown enemy
 There is a problem with the knight moving extra fast when using both left/right and the arrow keys  
 Additionally, many of the current sprites are placeholders and will hopefully be replaced in the future
 
+## Documention
+Code Reviews and sprint reflection are in the documentation folder
+
