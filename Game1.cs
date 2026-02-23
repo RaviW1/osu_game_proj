@@ -54,6 +54,7 @@ namespace osu_game_proj
                 rightKeys: new[] { Keys.D, Keys.Right }
             );
 
+
             var vertAxisCmd = new VerticalAxisCommand(
                 upKeys: new[] { Keys.W, Keys.Up },
                 downKeys: new[] { Keys.S, Keys.Down }
@@ -115,10 +116,6 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
             keyboard.BindHeld(Keys.D3, new HealCommand());
 
-            //           keyboardController = new KeyboardController();
-
-            //j           keyboardController.RegisterCommand(Keys.Right, new WalkCommand(1));
-            //         keyboardController.RegisterCommand(Keys.Left, new WalkCommand(-1));
 
 
             base.Initialize();
@@ -148,15 +145,16 @@ namespace osu_game_proj
             var iconSourceRects = new Dictionary<string, Rectangle?>();
 
             // Attack sprite 
-            iconSourceRects.Add("Attack", new Rectangle(896, 0, 128, 128)); 
+            iconSourceRects.Add("Attack", new Rectangle(896, 0, 128, 128));
 
             // Fireball sprite 
-            iconSourceRects.Add("Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2)); 
+            iconSourceRects.Add("Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2));
             Texture2D playerTexture = Content.Load<Texture2D>("hollow_knight_walking");
             iconSourceRects.Add("Heal", new Rectangle(0, 0, playerTexture.Width / 8, playerTexture.Height));
 
             // Create ability bar
             abilityBar = new AbilityBar(pixelTexture, abilityIcons, iconSourceRects, Vector2.Zero);
+
 
             // Load block textures
             blocks = new List<ISprite>();
@@ -167,11 +165,13 @@ namespace osu_game_proj
 
             // TODO: use this.Content to load your game content here
 
+            // Load Player Textures
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
+            playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
 
+            // create new player object
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
-
 
             // Load item textures and add to item manager
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
@@ -207,9 +207,9 @@ namespace osu_game_proj
                 command.Execute(player);
             }
 
-            player.Update(gameTime);
             itemManager.Update(gameTime);
 
+            player.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -220,11 +220,9 @@ namespace osu_game_proj
             // TODO: Add your drawing code here
 
             _spriteBatch.Begin();
-            player.Draw(_spriteBatch);
             itemManager.Draw(_spriteBatch, new Vector2(600, 300));
 
             base.Draw(gameTime);
-
 
             // TODO: Add your drawing code here
             if (enemies.Count > 0)
@@ -239,9 +237,8 @@ namespace osu_game_proj
             abilityBar.Draw(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
 
-            player.Draw(_spriteBatch);
+            player.Draw(_spriteBatch, gameTime);
             _spriteBatch.End();
-
 
             base.Draw(gameTime);
         }
@@ -283,9 +280,9 @@ namespace osu_game_proj
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
 
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
-    
+
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
-    
+
 
             // Reset enemy index
             currentEnemyIndex = 0;
@@ -298,6 +295,6 @@ namespace osu_game_proj
             Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] { Color.White });
             return texture;
-        }   
+        }
     }
 }

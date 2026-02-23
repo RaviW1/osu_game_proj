@@ -20,7 +20,7 @@ public class Player
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
 
-    
+
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
         Textures = textures;
@@ -28,18 +28,18 @@ public class Player
         this.Projectiles = new List<Projectile>();
         Position = startCoords;
         currentState = new IdleState();
-        currentState.Draw(this);
+        currentState.Reset(this);
     }
 
     public void Update(GameTime gameTime)
     {
         currentState.Update(this, gameTime);
-    
+
         // Update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
             Projectiles[i].Update();
-        
+
             // Remove off-screen projectiles
             var projPos = Projectiles[i].GetPosition();
             if (projPos.X < -50 || projPos.X > 850)
@@ -51,7 +51,7 @@ public class Player
     public void ChangeState(IPlayerState newState)
     {
         currentState = newState;
-        newState.Draw(this);
+        newState.Reset(this);
     }
     public void ShootFireball()
     {
@@ -61,18 +61,17 @@ public class Player
 
         float bodyOffsetY = -sourceRectangle.Height / 4f;
         System.Numerics.Vector2 startPos = new System.Numerics.Vector2(Position.X, Position.Y + bodyOffsetY);
-    
+
         Projectile fireball = new Projectile(fireballTexture, startPos, fireballVelocity);
-    
+
         Projectiles.Add(fireball);
     }
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (CurrentTexture != null)
-        {
-            Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
-            spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
-        }
+        currentState.Draw(this);
+        Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
+        spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f); // Use DrawColor instead of Color.White
+
         foreach (var projectile in Projectiles)
         {
             projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
