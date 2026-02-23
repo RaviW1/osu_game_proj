@@ -12,6 +12,8 @@ public interface IPlayerState
     void Jump(Player player);
     void Attack(Player player);
     void TakeDamage(Player player);
+
+    void Heal(Player player);
 }
 
 public class IdleState : IPlayerState
@@ -35,6 +37,10 @@ public class IdleState : IPlayerState
     public void Jump(Player player)
     {
         player.ChangeState(new JumpState());
+    }
+    public void Heal(Player player)
+    {
+        player.ChangeState(new HealingState());
     }
     public void Attack(Player player)
     {
@@ -92,6 +98,10 @@ public class WalkingState : IPlayerState
     {
         player.ChangeState(new DamagedState());
     }
+    public void Heal(Player player)  
+    { 
+        // Can't heal while walking - do nothing
+    }
 }
 
 public class JumpState : IPlayerState
@@ -130,6 +140,10 @@ public class JumpState : IPlayerState
             player.facing = SpriteEffects.FlipHorizontally;
         }
         player.Position.X += direction * 3f;
+    }
+    public void Heal(Player player) 
+    { 
+        // Can't heal while moving/jumping/attacking/damaged - do nothing
     }
     public void Jump(Player player)
     {
@@ -206,6 +220,10 @@ public class AttackState : IPlayerState
             player.Position.X += direction * 3f;
         }
     }
+    public void Heal(Player player) 
+    { 
+        // Can't heal while moving/jumping/attacking/damaged - do nothing
+    }
     public void Jump(Player player) { }
     public void Attack(Player player) { }
     public void TakeDamage(Player player)
@@ -244,9 +262,52 @@ public class DamagedState : IPlayerState
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }
+    public void Heal(Player player) 
+    { 
+        // Can't heal while moving/jumping/attacking/damaged - do nothing
+    }
+
 
     public void Walk(Player player, int direction) { }
     public void Jump(Player player) { }
     public void Attack(Player player) { }
     public void TakeDamage(Player player) { }
+}
+
+public class HealingState : IPlayerState
+{
+    private float healTimer = 0f;
+    private const float healDuration = 0.5f;
+    private float blinkTimer = 0f;
+
+    public void Update(Player player, GameTime gameTime)
+    {
+        healTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        blinkTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        // Toggle between yellow and white for flashing
+        if (blinkTimer >= 0.1f)
+        {
+            player.DrawColor = (player.DrawColor == Color.Yellow) ? Color.White : Color.Yellow;
+            blinkTimer = 0f;
+        }
+
+        if (healTimer >= healDuration)
+        {
+            player.DrawColor = Color.White; // Reset color
+            player.ChangeState(new IdleState());
+        }
+    }
+
+    public void Draw(Player player)
+    {
+        player.CurrentTexture = player.Textures["Walking"];
+        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
+    }
+
+    public void Walk(Player player, int direction) { }
+    public void Jump(Player player) { }
+    public void Attack(Player player) { }
+    public void TakeDamage(Player player) { }
+    public void Heal(Player player) { }
 }

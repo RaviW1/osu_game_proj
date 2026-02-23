@@ -95,4 +95,8 @@ public class Player
     {
         currentState.TakeDamage(this);
     }
+    public void Heal()
+    {
+        currentState.Heal(this);
+    }
 }

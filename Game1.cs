@@ -113,7 +113,7 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.E, new DamageCommand());
             keyboard.BindPress(Keys.D1, new AttackCommand());
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
-
+            keyboard.BindHeld(Keys.D3, new HealCommand());
 
             //           keyboardController = new KeyboardController();
 
@@ -142,6 +142,7 @@ namespace osu_game_proj
             var abilityIcons = new Dictionary<string, Texture2D>();
             abilityIcons.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
             abilityIcons.Add("Fireball", Content.Load<Texture2D>("fireball"));
+            abilityIcons.Add("Heal", Content.Load<Texture2D>("hollow_knight_walking"));
 
             // Define source rectangles for each icon 
             var iconSourceRects = new Dictionary<string, Rectangle?>();
@@ -151,6 +152,8 @@ namespace osu_game_proj
 
             // Fireball sprite 
             iconSourceRects.Add("Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2)); 
+            Texture2D playerTexture = Content.Load<Texture2D>("hollow_knight_walking");
+            iconSourceRects.Add("Heal", new Rectangle(0, 0, playerTexture.Width / 8, playerTexture.Height));
 
             // Create ability bar
             abilityBar = new AbilityBar(pixelTexture, abilityIcons, iconSourceRects, Vector2.Zero);
