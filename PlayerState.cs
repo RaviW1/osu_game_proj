@@ -56,7 +56,6 @@ public class IdleState : IPlayerState
 
 public class WalkingState : IPlayerState
 {
-    private float offsetX = 0f;
     private int direction = 1;
     private int currentFrame = 0;
     private int totalFrames = 8;
@@ -144,12 +143,11 @@ public class WalkingState : IPlayerState
 
 public class JumpState : IPlayerState
 {
-    private int direction = 1;
     private int currentFrame = 0;
     private int totalFrames = 12;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = true;
     private float secondsPerFrame = .1f;
+
     public void Reset(Player player)
     {
         player.CurrentTexture = player.Textures["Jumping"];
@@ -171,7 +169,7 @@ public class JumpState : IPlayerState
         {
             timeSinceLastFrame = 0f;
             currentFrame++;
-            if (currentFrame >= totalFrames)
+            if (currentFrame > totalFrames)
             {
                 currentFrame = 0;
             }
