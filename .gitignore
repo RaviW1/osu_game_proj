@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 .DS_Store
 .config/
+.cursor/
+.vscode/
+sprint2.html
