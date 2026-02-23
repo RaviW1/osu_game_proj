@@ -4,12 +4,11 @@ Sprint Number: 2
 Files Reviewed: Aspid.cs, Boofly.cs
 Author of code review: Akari Wu
 Author of File: Owen Wang
+Time to take: 15 minutes
 
 Readability:
 
 1. The Boofly.cs class works well. It is brief and useful. The Aspid class has complicated moving calculation so it is understandable.
-
-2. Aspid.cs has too many 0.16f in the update method. They can be put into a constant if they have the same meaning.
 
 3. In both boofly and Aspid class, the draw method used very long names for the constant, this can be declared easier in code to make it look better.
 
@@ -19,8 +18,11 @@ Maintainability:
 
 1. Both class used Vector2 objects but used the wrong one. It should be from Microsoft.Xna.Framework instead of System.Numerics
 
-2. Too many numbers used directly,or "Magic Numbers", in classes. May cause bug if anything changes.
+2. Too many numbers used directly,or "Magic Numbers", in class Aspid.cs. May causes bugs if anything changes.
 
 3. All the naming are easy to understand so it is easy to utilize and make changes.
 
 4. The cycle enemies method in game1 is pretty useful and was reused by another team member.
+
+Possible changes:
+Change the Vector2 usage. Add constants for magic numbers.
