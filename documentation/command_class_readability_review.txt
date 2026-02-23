@@ -1,1 +1,15 @@
+Author of code review: Ravi Wijeratne
+Date of Code review: 2/23/2026
+Sprint Number: 2
+Name of File Reviewed: MovementAxisCommand.cs
+Author of File: Lohith Katari 
+Number of Minutes taken for code review: 15 minutes
 
+Overall the code is compact and very succinct. None of the methods are longer than 5
+and the overall implementation is very strong.
+One issue I find for readability is the use of some more obscure C# syntax.
+Specifically,  the use of "?" on assigning left/right keys and assigning AxisX. I'm not sure if 
+this is a result of my lack of C# knowledge, but, while being succinct, I found those 
+lines difficult to immediately understand, especially considering the lack of surrounding context.
+Additionally, the use of -1, 0, 1 for axis, while easily inferred, could use some 
+better documentation to alleviate any potential confusion

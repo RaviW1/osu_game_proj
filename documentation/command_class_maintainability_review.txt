@@ -1,0 +1,20 @@
+Author of code review: Ravi Wijeratne
+Date of the Code Review: 2/23/2026
+Sprint number: 2
+Name of file: MovementAxisCommand.cs
+Author of file: Lohith Katari
+
+The class is fairly succinct and that allows it to maintained easily. I had to 
+make some adjustments, and it was very easy for me to insert my own code.
+Generally, the deesign of the command structure makes it very easy to differentiate
+different types of keystrokes and that made implementing movement when held down vs
+pressed alot simpler. One problem I have seen, however, is how this class is called.
+All the Commands, this class included, are linked with the keyboard and created in 
+the Game class load content method. This results in a very messy, difficult to maintain Game class, which I would prefer to contain as
+little functional code as possible.
+Overall the design of this class and the ICommand interface that you designed, allows
+very easy implementation of new functionality. For example, implementing the character 
+sprite flipping base on direction is much easier because this command directly 
+passes the direction information to the player class.
+Additionally, remapping, horizontal movement requires a two line change, and so does 
+adding additional movement key options.
