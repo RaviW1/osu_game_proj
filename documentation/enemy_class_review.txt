@@ -1,4 +1,4 @@
-Code Review: Enemy Classes (Enemy.cs, Aspid.cs, Boofly.cs)
+Code Review: Enemy Classes (Aspid.cs, Boofly.cs)
 Date of Code Review: 2/23/2026
 Sprint Number: 2
 Files Reviewed: Aspid.cs, Boofly.cs
