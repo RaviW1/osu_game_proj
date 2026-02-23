@@ -5,43 +5,47 @@ using Microsoft.Xna.Framework.Graphics;
 public class ItemManager
 {
     private readonly List<IItem> items;
+    private readonly List<Vector2> positions;
     private int currentIndex;
+    private readonly float scale;
 
-    public ItemManager()
+    public ItemManager(float scale = 0.4f)
     {
         items = new List<IItem>();
+        positions = new List<Vector2>();
         currentIndex = 0;
+        this.scale = scale;
     }
 
-    public void AddItem(IItem item)
+    public void AddItem(IItem item, Vector2 position)
     {
         items.Add(item);
+        positions.Add(position);
     }
 
-    /// <summary>
-    /// Cycle to the next or previous item in the list.
-    /// </summary>
     /// <param name="direction">+1 for next item, -1 for previous item</param>
-    public void CycleItem(int direction)
+    public void CycleItem(int direction, Player player)
     {
         if (items.Count == 0) return;
+        items[currentIndex].OnDeselect(player);
         currentIndex = (currentIndex + direction + items.Count) % items.Count;
         items[currentIndex].Reset();
+        items[currentIndex].OnSelect(player);
     }
 
     public void Update(GameTime gameTime)
     {
-        if (items.Count > 0)
+        foreach (var item in items)
         {
-            items[currentIndex].Update(gameTime);
+            item.Update(gameTime);
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, Vector2 position)
+    public void Draw(SpriteBatch spriteBatch)
     {
-        if (items.Count > 0)
+        for (int i = 0; i < items.Count; i++)
         {
-            items[currentIndex].Draw(spriteBatch, position);
+            items[i].Draw(spriteBatch, positions[i], scale, i == currentIndex);
         }
     }
 }
