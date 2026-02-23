@@ -112,18 +112,11 @@ namespace osu_game_proj
 
             // Damage
             keyboard.BindPress(Keys.E, new DamageCommand());
-<<<<<<< HEAD
             keyboard.BindPress(Keys.D1, new AttackCommand());
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
             keyboard.BindHeld(Keys.D3, new HealCommand());
 
-            //           keyboardController = new KeyboardController();
 
-            //j           keyboardController.RegisterCommand(Keys.Right, new WalkCommand(1));
-            //         keyboardController.RegisterCommand(Keys.Left, new WalkCommand(-1));
-
-=======
->>>>>>> 0f2344f (fixed bug in attacking while jumping)
 
             base.Initialize();
         }
@@ -177,8 +170,8 @@ namespace osu_game_proj
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
             playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
 
+            // create new player object
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
-
 
             // Load item textures and add to item manager
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");

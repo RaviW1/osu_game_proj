@@ -144,6 +144,12 @@ public class WalkingState : IPlayerState
 
 public class JumpState : IPlayerState
 {
+    private int direction = 1;
+    private int currentFrame = 0;
+    private int totalFrames = 12;
+    private float timeSinceLastFrame = 0f;
+    private bool commandReceivedThisFrame = true;
+    private float secondsPerFrame = .1f;
     public void Reset(Player player)
     {
         player.CurrentTexture = player.Textures["Jumping"];
@@ -158,6 +164,19 @@ public class JumpState : IPlayerState
         player.Velocity.Y += 20f;
         player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+        timeSinceLastFrame += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+        if (timeSinceLastFrame > secondsPerFrame)
+        {
+            timeSinceLastFrame = 0f;
+            currentFrame++;
+            if (currentFrame >= totalFrames)
+            {
+                currentFrame = 0;
+            }
+        }
+
         // we decide 200 is the "floor"
         // this will change later when we implement collision detection etc
         if (player.Position.Y >= 200)
@@ -165,6 +184,7 @@ public class JumpState : IPlayerState
             player.Position.Y = 200;
             player.ChangeState(new IdleState());
         }
+
     }
     public void Walk(Player player, int direction)
     {
@@ -196,7 +216,16 @@ public class JumpState : IPlayerState
     {
         player.ChangeState(new DamagedState());
     }
-    public void Draw(Player player) { }
+    public void Draw(Player player)
+    {
+        player.CurrentTexture = player.Textures["Jumping"];
+        int frameIndex = currentFrame % 12;
+        int frameWidth = player.CurrentTexture.Width / 12;
+        int frameHeight = player.CurrentTexture.Height;
+
+        int xPosition = frameIndex * frameWidth;
+        player.sourceRectangle = new Rectangle(xPosition, 0, frameWidth, frameHeight);
+    }
 }
 
 public class AttackState : IPlayerState
