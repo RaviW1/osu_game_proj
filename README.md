@@ -9,8 +9,9 @@ e to activate a damage state
 q to quit  
 r to reset  
 z or n to attack  
-1 to shoot a projectile
-2 to heal  
+1 to attack
+2 to shoot a projectile
+3 to heal  
 t or y to cycle between displayed blocks  
 u or i to cycle displayed charm  
 o or p to cycle currently shown enemy  
