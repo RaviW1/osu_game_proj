@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Microsoft.Xna.Framework;
+using System;
 
 
 public class Player
@@ -20,7 +21,10 @@ public class Player
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
 
-
+    private int playerHealth = 7;
+    public int PlayerHealth { get { return playerHealth; } set { playerHealth = value; } }
+    private Boolean canDash = false;
+    public Boolean CanDash { get { return canDash; } set { canDash = value; } }
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
         Textures = textures;

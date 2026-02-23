@@ -21,6 +21,7 @@ namespace osu_game_proj
         private static Game1 instance;
         private AbilityBar abilityBar;
         private Texture2D pixelTexture;
+        private SpriteFont font;
 
         public Game1()
         {
@@ -94,9 +95,9 @@ namespace osu_game_proj
             keyboard.BindRelease(Keys.Space, jumpReleasedCmd);
 
             // ---- Item cycling (u = previous, i = next) ----
-            itemManager = new ItemManager();
-            var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir));
-            var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir));
+            itemManager = new ItemManager(0.4f);
+            var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir, player));
+            var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir, player));
             keyboard.BindPress(Keys.U, cyclePrevItemCmd);
             keyboard.BindPress(Keys.I, cycleNextItemCmd);
             keyboard.BindPress(Keys.Q, new QuitCommand(this));
@@ -174,14 +175,15 @@ namespace osu_game_proj
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
 
             // Load item textures and add to item manager
+            // ID 0: Unbreakable Heart (+2 HP on select), ID 1: Dashmaster (canDash on select)
+            Texture2D unbreakableHeart = Content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
-            Texture2D dreamshield = Content.Load<Texture2D>("Dreamshield_charm_grimm_markoth_shield");
-            itemManager.AddItem(new TextureItem(dashmaster));
-            itemManager.AddItem(new TextureItem(dreamshield));
+            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
+            itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
             playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
 
-
+            font = Content.Load<SpriteFont>("DefaultFont");
         }
 
         protected override void Update(GameTime gameTime)
@@ -220,7 +222,6 @@ namespace osu_game_proj
             // TODO: Add your drawing code here
 
             _spriteBatch.Begin();
-            itemManager.Draw(_spriteBatch, new Vector2(600, 300));
 
             base.Draw(gameTime);
 
@@ -238,6 +239,17 @@ namespace osu_game_proj
 
 
             player.Draw(_spriteBatch, gameTime);
+            itemManager.Draw(_spriteBatch);
+
+            int viewWidth = GraphicsDevice.Viewport.Width;
+            string hpText = "HP " + player.PlayerHealth;
+            string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
+            Vector2 hpSize = font.MeasureString(hpText);
+            Vector2 dashSize = font.MeasureString(dashText);
+            float margin = 10f;
+            _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, margin), Color.White);
+            _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, margin + hpSize.Y + 4), Color.White);
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
