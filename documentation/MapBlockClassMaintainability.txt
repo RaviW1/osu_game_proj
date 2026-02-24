@@ -1,0 +1,13 @@
+Author: Lohith Katari
+Date: 2/23/2026
+Sprint 2
+File: MapBlock.cs
+File Author: Brooklyn Kongdech
+Time Taken: 10 minutes
+
+The MapBloack class is very simple and maintainable. 
+Currently it is not fully implemented however the implementation is straightforward and easy to understand. 
+The class is well organized and easy to read. 
+The properties are clearly defined and the methods are straightforward.
+Going forward it is easy to implement Update() if nessesary and for a static background class it is functional and maintainable as is.
+Going forward this class may have collision implemented to it however doing so may require some refactoring. 
