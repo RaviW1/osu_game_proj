@@ -1,0 +1,23 @@
+Maintainability Code Review: Item Classes
+
+Author: Brooklynn Kongdech
+Date: 2/23/26
+Sprint #2
+
+Files reviewed: IItem.cs, TextureItem.cs, ItemManager.cs
+Author of file being reviewed: Akari Wu
+Minutes to complete review: 15 min
+
+
+
+Specific comments on code quality:
+
+- As noted in the readability review for these files, the shortness of the code and the methods makes things easy to understand at a glance, which also makes making changes easier
+
+- I thought it was a little strange that the item positions are stored in the item manager rather than as a member of each item individually; this causes the items to rely on the position information from the item manager for Draw()
+
+
+
+A hypothetical change to make to the game related to file being reviewed and how the current implementation could or could not easily support that change
+
+Since Hollow Knight doesn't use the same inventory system as Zelda, the one we have here (with the bar and the cycling) is temporary; because of this I think that the position data for each item should be changed so that it is stored in the individual items and doesn't rely on an item manager existing and giving that data to each item. This way items can exist independently of each other.
