@@ -170,6 +170,7 @@ namespace osu_game_proj
             var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
             playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
+            playerTextures.Add("Attacking", Content.Load<Texture2D>("knight_attack"));
 
             // create new player object
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));

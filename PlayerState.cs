@@ -231,6 +231,10 @@ public class AttackState : IPlayerState
     private float attackTimer = 0f;
     private const float attackDuration = 0.3f;
     private bool wasJumping = false;
+    private int currentFrame = 0;
+    private int totalFrames = 6;
+    private float timeSinceLastFrame = 0f;
+    private float secondsPerFrame = .1f;
 
     public AttackState(bool wasJumping = false)
     {
@@ -240,6 +244,19 @@ public class AttackState : IPlayerState
     public void Update(Player player, GameTime gameTime)
     {
         attackTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        timeSinceLastFrame += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+
+        if (timeSinceLastFrame > secondsPerFrame)
+        {
+            timeSinceLastFrame = 0f;
+            currentFrame++;
+            if (currentFrame > totalFrames)
+            {
+                currentFrame = 0;
+            }
+        }
 
         // Apply gravity if we were jumping
         if (wasJumping)
@@ -303,7 +320,16 @@ public class AttackState : IPlayerState
     }
     public void Jump(Player player) { }
     public void Attack(Player player) { }
-    public void Draw(Player player) { }
+    public void Draw(Player player)
+    {
+        player.CurrentTexture = player.Textures["Attacking"];
+        int frameIndex = currentFrame % totalFrames;
+        int frameWidth = player.CurrentTexture.Width / totalFrames;
+        int frameHeight = player.CurrentTexture.Height;
+
+        int xPosition = frameIndex * frameWidth;
+        player.sourceRectangle = new Rectangle(xPosition, 0, frameWidth, frameHeight);
+    }
     public void TakeDamage(Player player)
     {
         player.ChangeState(new DamagedState());
