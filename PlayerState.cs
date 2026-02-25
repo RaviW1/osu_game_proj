@@ -169,10 +169,11 @@ public class JumpState : IPlayerState
         {
             timeSinceLastFrame = 0f;
             currentFrame++;
-            if (currentFrame > totalFrames)
-            {
-                currentFrame = 0;
-            }
+            //TODO: experiment with not looping at all
+            //            if (currentFrame > totalFrames)
+            //           {
+            //             currentFrame = 10;
+            //          }
         }
 
         // we decide 200 is the "floor"
