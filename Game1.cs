@@ -22,6 +22,8 @@ namespace osu_game_proj
         private AbilityBar abilityBar;
         private Texture2D pixelTexture;
         private SpriteFont font;
+        private LoadLevelFile levelFileLoader;
+        private TileGenerator tileGenObj;
 
         public Game1()
         {
@@ -45,7 +47,6 @@ namespace osu_game_proj
             keyboard = new KeyboardController();
 
 
-            keyboard = new KeyboardController();
             keyboard.BindPress(Keys.O, new CycleEnemyCommand(-1));
             keyboard.BindPress(Keys.P, new CycleEnemyCommand(1));
 
@@ -164,6 +165,8 @@ namespace osu_game_proj
             Texture2D fungalSpikeTexture = Content.Load<Texture2D>("fungd_spikes_01");
             blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
+            // TODO: Load tile textures
+
             // TODO: use this.Content to load your game content here
 
             // Load Player Textures
@@ -253,7 +256,8 @@ namespace osu_game_proj
 
             base.Draw(gameTime);
 
-            // TODO: Add your drawing code here
+
+            // TODO: break this out into a seperate class
             if (enemies.Count > 0)
             {
                 enemies[currentEnemyIndex].Draw(_spriteBatch, System.Numerics.Vector2.Zero);
@@ -269,6 +273,7 @@ namespace osu_game_proj
             player.Draw(_spriteBatch, gameTime);
             itemManager.Draw(_spriteBatch);
 
+            // TODO: Break HUD drawing into seperate class
             int viewWidth = GraphicsDevice.Viewport.Width;
             string hpText = "HP " + player.PlayerHealth;
             string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
@@ -282,6 +287,7 @@ namespace osu_game_proj
 
             base.Draw(gameTime);
         }
+        // TODO: move next two methods out of Game1
         public static void CycleEnemy(int direction)
         {
             if (instance.enemies.Count == 0) return;
