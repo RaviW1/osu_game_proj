@@ -167,6 +167,14 @@ namespace osu_game_proj
 
             // TODO: Load tile textures
 
+
+            List<TileInformation> generateTileInfo = new List<TileInformation>();
+            levelFileLoader = new LoadLevelFile();
+            levelFileLoader.LoadFile("test_level.xml", generateTileInfo);
+
+            tileGenObj = new TileGenerator(generateTileInfo);
+            tileGenObj.LoadTileTextures(Content);
+
             // TODO: use this.Content to load your game content here
 
             // Load Player Textures
@@ -203,9 +211,12 @@ namespace osu_game_proj
             var handler = new ProjectilePlayerCollisionHandler();
             Rectangle playerBounds = player.GetBounds();
 
-            if (enemies[currentEnemyIndex] is Aspid aspid){
-                for (int i = aspid.Projectiles.Count - 1; i >= 0; i--){
-                    if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds)){
+            if (enemies[currentEnemyIndex] is Aspid aspid)
+            {
+                for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
+                {
+                    if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
+                    {
                         handler.HandleCollision(player, aspid.Projectiles[i]);
                         aspid.Projectiles.RemoveAt(i);
                     }
@@ -214,20 +225,26 @@ namespace osu_game_proj
             var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
             ISprite currentEnemy = enemies[currentEnemyIndex];
 
-            for (int i = player.Projectiles.Count - 1; i >= 0; i--){
-                if (currentEnemy is Aspid aspid2 && !aspid2.IsDead){
-                    if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds())){
+            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (currentEnemy is Aspid aspid2 && !aspid2.IsDead)
+                {
+                    if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds()))
+                    {
                         enemyHandler.HandleCollision(aspid2);
                         player.Projectiles.RemoveAt(i);
                     }
-                }else if (currentEnemy is Boofly boofly && !boofly.IsDead){
-                    if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds())){
+                }
+                else if (currentEnemy is Boofly boofly && !boofly.IsDead)
+                {
+                    if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds()))
+                    {
                         enemyHandler.HandleCollision(boofly);
                         player.Projectiles.RemoveAt(i);
                     }
                 }
             }
-    
+
 
             if (blocks.Count > 0)
             {
@@ -256,6 +273,7 @@ namespace osu_game_proj
 
             base.Draw(gameTime);
 
+            tileGenObj.Draw(_spriteBatch);
 
             // TODO: break this out into a seperate class
             if (enemies.Count > 0)
@@ -287,7 +305,7 @@ namespace osu_game_proj
 
             base.Draw(gameTime);
         }
-        // TODO: move next two methods out of Game1
+        // FOR TESTING
         public static void CycleEnemy(int direction)
         {
             if (instance.enemies.Count == 0) return;
@@ -327,6 +345,7 @@ namespace osu_game_proj
             playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
             playerTextures.Add("Attacking", Content.Load<Texture2D>("knight_attack"));
             playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
+
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
 
