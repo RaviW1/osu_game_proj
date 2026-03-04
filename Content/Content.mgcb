@@ -92,6 +92,18 @@
 /processorParam:TextureFormat=Color
 /build:fireball2.png
 
+#begin floating_platform1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:floating_platform1.png
+
 #begin fungd_spikes_01.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -128,6 +140,18 @@
 /processorParam:TextureFormat=Color
 /build:hollow_knight_walking.png
 
+#begin HUD_main.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HUD_main.png
+
 #begin knight_attack.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -152,7 +176,7 @@
 /processorParam:TextureFormat=Color
 /build:knight_jumping.png
 
-#begin masks(hp bar).png
+#begin Soul_orb_fills.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -162,9 +186,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:masks(hp bar).png
+/build:Soul_orb_fills.png
 
-#begin soul_meter.png
+#begin soul_orb_full.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -174,7 +198,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:soul_meter.png
+/build:soul_orb_full.png
 
 #begin spike_back.png
 /importer:TextureImporter
@@ -199,40 +223,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Unbreakable Heart - _0002_charm_glass_heal_full.png
-
-#begin HUD_main.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:HUD_main.png
-
-#begin Soul_orb_fills.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Soul_orb_fills.png
-
-#begin soul_orb_full.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:soul_orb_full.png
 

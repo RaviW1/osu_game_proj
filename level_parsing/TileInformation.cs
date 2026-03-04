@@ -5,13 +5,13 @@ using System;
 // also processes information about each tile
 public class TileInformation
 {
-    private Vector2 position;
-    private int tileType;
-    public TileInformation(string ID, string x, string y)
+    public Vector2 position;
+    public int tileType;
+    public TileInformation(int ID, int x, int y)
     {
-        int x_int = Int32.Parse(x);
-        int y_int = Int32.Parse(y);
+        int x_int = x;
+        int y_int = y;
         position = new Vector2(x_int, y_int);
-        tileType = Int32.Parse(ID);
+        tileType = ID;
     }
 }

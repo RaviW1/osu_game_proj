@@ -10,7 +10,7 @@ namespace osu_game_proj
 {
     public class LoadLevelFile
     {
-        public void LoadFile(string filepath, TileGenerator tileGenObj)
+        public void LoadFile(string filepath, List<TileInformation> generateTileInfo)
         {
             XDocument doc = XDocument.Load(filepath);
 
@@ -20,17 +20,19 @@ namespace osu_game_proj
             {
                 // TODO: Create new tile object for each tile in XML File
                 //  for each tile object we add to a list then pass that list to tileGenerator
-
-
+                TileInformation tileInfo = new TileInformation((int)t.Attribute("id"), (int)t.Attribute("x"), (int)t.Attribute("y"));
+                generateTileInfo.Add(tileInfo);
             }
         }
     }
 
-    // TODO: break this out into its own file
+    //  TODO: break this out into its own file
     public class TileGenerator
     {
+        // TODO: might need to add order to drawing - think about later
         private Dictionary<int, Texture2D> tileTextures;
         private List<TileInformation> generateTileInfo;
+        private List<MapBlock> tileList;
         public TileGenerator(List<TileInformation> generateTileInfo)
         {
             this.generateTileInfo = generateTileInfo;
@@ -41,17 +43,29 @@ namespace osu_game_proj
         {
             // Load all tile textures here
             // we assign an arbitrary integer value to each tile
+            tileTextures = new Dictionary<int, Texture2D>();
             tileTextures.Add(1, Content.Load<Texture2D>("floating_platform1"));
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
         {
+            // foreach iterates from list[0] to list [n] in order
+            tileList = new List<MapBlock>();
+            foreach (TileInformation tile in generateTileInfo)
+            {
+                MapBlock mapblock = new MapBlock(tileTextures[tile.tileType], tile.position);
+                tileList.Add(mapblock);
+            }
 
         }
-
         // TODO: Write class that iterates through list of mapBlock objects
         // TODO: and draws them to creen
         public void Draw(SpriteBatch spriteBatch)
         {
+            this.createMapBlocks(this.generateTileInfo);
+            foreach (MapBlock block in this.tileList)
+            {
+                block.Draw(spriteBatch, block.position);
+            }
         }
     }
 }

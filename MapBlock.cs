@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 public class MapBlock : ISprite
 {
     private Texture2D texture;
-    private Vector2 position;
+    public Vector2 position;
 
     public MapBlock(Texture2D texture, Vector2 startPosition)
     {
