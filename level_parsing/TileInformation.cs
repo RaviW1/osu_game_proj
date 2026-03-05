@@ -1,17 +1,14 @@
-
-using System.Numerics;
+using Microsoft.Xna.Framework;
 using System;
 // class of objects to hold basic information for each tile
 // also processes information about each tile
 public class TileInformation
 {
-    public Vector2 position;
     public int tileType;
-    public TileInformation(int ID, int x, int y)
+    public Rectangle destRectangle;
+    public TileInformation(int ID, int x_pos, int y_pos, int x_size, int y_size)
     {
-        int x_int = x;
-        int y_int = y;
-        position = new Vector2(x_int, y_int);
         tileType = ID;
+        destRectangle = new Rectangle(x_pos, y_pos, x_size, y_size);
     }
 }
