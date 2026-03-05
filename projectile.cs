@@ -63,5 +63,9 @@ public class Projectile : ISprite
                            0f, Microsoft.Xna.Framework.Vector2.Zero, 0.5f,
                            spriteEffect, 0f);
         }
+
+    }
+    public Microsoft.Xna.Framework.Rectangle GetBounds(){
+        return new Microsoft.Xna.Framework.Rectangle((int)position.X, (int)position.Y, 20, 20);
     }
 }

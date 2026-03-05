@@ -13,6 +13,12 @@ public class Aspid : ISprite
     private float shootTimer = 0f;
     private float shootInterval = 2f; // Shoot every 2 seconds
     private bool facingLeft = true;
+    private bool isDead = false;
+    private float deathVelocityY = 0f;
+    private const float floorY = 400f;
+
+    public bool IsDead => isDead;
+
     
     public List<Projectile> Projectiles { get; private set; }
     
@@ -24,9 +30,25 @@ public class Aspid : ISprite
         this.velocity = new Vector2(-30, 30); 
         this.Projectiles = new List<Projectile>();
     }
+    public Microsoft.Xna.Framework.Rectangle GetBounds(){
+        return new Microsoft.Xna.Framework.Rectangle(
+        (int)position.X, (int)position.Y, 45, 60); 
+    }
+    public void TakeDamage(){
+        isDead = true;
+        velocity = Vector2.Zero;
+        Projectiles.Clear();
+    }
     
     public void Update()
     {
+        if (isDead){
+            deathVelocityY += 20f;
+            position.Y += deathVelocityY * 0.016f;
+            if (position.Y >= floorY)
+                position.Y = floorY;
+            return;
+        }
         
         position.X += velocity.X * 0.016f;
         position.Y += velocity.Y * 0.016f;
