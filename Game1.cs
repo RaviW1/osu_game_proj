@@ -62,7 +62,7 @@ namespace osu_game_proj
             );
 
             var jumpPressedCmd = new JumpPressedCommand();
-            var jumpReleasedCmd = new JumpReleasedCommand();
+            var jumpHeldCmd = new JumpHeldCommand();
 
             // ---- Horizontal movement axis (X) ----
             // Update while held
@@ -92,7 +92,7 @@ namespace osu_game_proj
 
             // ---- Jump (press + release) ----
             keyboard.BindPress(Keys.Space, jumpPressedCmd);
-            keyboard.BindRelease(Keys.Space, jumpReleasedCmd);
+            keyboard.BindHeld(Keys.Space, jumpHeldCmd);
 
             // ---- Item cycling (u = previous, i = next) ----
             itemManager = new ItemManager(0.4f);
@@ -231,11 +231,10 @@ namespace osu_game_proj
                 blocks[currentBlockIndex].Update();
             }
 
-            List<ICommand> currentCommands = keyboard.GetCommands();
-
+            List<ICommand> currentCommands = keyboard.GetCommands(gameTime);
             foreach (ICommand command in currentCommands)
             {
-                command.Execute(player);
+                command.Execute(player, gameTime);
             }
 
             itemManager.Update(gameTime);

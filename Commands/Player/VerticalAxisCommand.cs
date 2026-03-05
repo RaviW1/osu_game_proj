@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 
 public sealed class VerticalAxisCommand : ICommand
@@ -14,7 +15,7 @@ public sealed class VerticalAxisCommand : ICommand
         _downKeys = downKeys ?? Array.Empty<Keys>();
     }
 
-    public void Execute(Player player)
+    public void Execute(Player player, GameTime gameTime)
     {
         var s = Keyboard.GetState();
         bool up = AnyDown(s, _upKeys);

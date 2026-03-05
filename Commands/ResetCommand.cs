@@ -10,7 +10,7 @@ public class ResetCommand : ICommand
         this.game = game;
     }
 
-    public void Execute(Player player)
+    public void Execute(Player player, GameTime gameTime)
     {
         game.Reset();
     }

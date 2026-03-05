@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
+using Microsoft.Xna.Framework;
+
 public interface IPlayerState
 {
     void Update(Player player, GameTime gameTime);
@@ -13,8 +15,10 @@ public interface IPlayerState
     void Jump(Player player);
     void Attack(Player player);
     void TakeDamage(Player player);
-
     void Heal(Player player);
+
+
+    void JumpHeld(Player player, float deltaTime) { }
 }
 
 //public class IdleState : IPlayerState

@@ -10,6 +10,8 @@ public class AttackState : IPlayerState
     private float timeSinceLastFrame = 0f;
     private float secondsPerFrame = .1f;
 
+    private const float Gravity = 1200f;
+
     public AttackState(bool wasJumping = false)
     {
         this.wasJumping = wasJumping;
@@ -32,19 +34,25 @@ public class AttackState : IPlayerState
             }
         }
 
-        // Apply gravity if we were jumping
+        // Replace the wasJumping block in Update with this:
         if (wasJumping)
         {
-            player.Velocity.Y += 20f;
+            player.Velocity.Y += Gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // Check if landed
-            if (player.Position.Y >= 200)
+            if (player.Position.Y >= 200f)
             {
-                player.Position.Y = 200;
+                player.Position.Y = 200f;
+                player.Velocity.Y = 0f;
+                player.IsAirborne = false;
                 player.ChangeState(new IdleState());
                 return;
             }
+        }
+
+        if (attackTimer >= attackDuration)
+        {
+            player.ChangeState(wasJumping ? (IPlayerState)new FallingState() : new IdleState());
         }
 
         if (attackTimer >= attackDuration)
