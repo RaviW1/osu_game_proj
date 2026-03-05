@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 public class KeyboardController : IController
@@ -35,11 +36,10 @@ public class KeyboardController : IController
     //    previousState = current;
     //}
 
-    public List<ICommand> GetCommands()
+    public List<ICommand> GetCommands(GameTime gameTime)
     {
         var activeCommands = new List<ICommand>();
         KeyboardState current = Keyboard.GetState();
-
         foreach (var pair in onPress)
         {
             Keys key = pair.Key;
@@ -49,12 +49,20 @@ public class KeyboardController : IController
             }
         }
         foreach (var (key, cmd) in whileHeld)
+        {
             if (current.IsKeyDown(key))
+            {
                 activeCommands.Add(cmd);
-        foreach (var (key, cmd) in onRelease)
-            if (current.IsKeyUp(key) && previousState.IsKeyDown(key))
-                activeCommands.Add(cmd);
+            }
+        }
 
+        foreach (var (key, cmd) in onRelease)
+        {
+            if (current.IsKeyUp(key) && previousState.IsKeyDown(key))
+            {
+                activeCommands.Add(cmd);
+            }
+        }
         previousState = current;
         return activeCommands;
     }

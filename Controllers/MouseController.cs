@@ -2,6 +2,7 @@
 using osu_game_proj;
 using System.Windows.Input;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 
 public class MouseController : IController
@@ -33,7 +34,7 @@ public class MouseController : IController
         previousState = Mouse.GetState();
     }
 
-    public List<ICommand> GetCommands()
+    public List<ICommand> GetCommands(GameTime gameTime)
     {
         var activeCommands = new List<ICommand>();
         return activeCommands;

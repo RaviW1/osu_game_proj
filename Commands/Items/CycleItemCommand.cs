@@ -1,5 +1,5 @@
 using System;
-
+using Microsoft.Xna.Framework;
 public class CycleItemCommand : ICommand
 {
     private readonly int direction;
@@ -13,7 +13,7 @@ public class CycleItemCommand : ICommand
         this.cycleAction = cycleAction;
     }
 
-    public void Execute(Player player)
+    public void Execute(Player player, GameTime gametime)
     {
         cycleAction?.Invoke(direction);
     }

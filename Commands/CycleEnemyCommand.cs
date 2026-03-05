@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using osu_game_proj; // ADD THIS LINE
 
 public class CycleEnemyCommand : ICommand
@@ -9,7 +10,7 @@ public class CycleEnemyCommand : ICommand
         this.direction = direction;
     }
     
-    public void Execute(Player player)
+    public void Execute(Player player, GameTime gameTime)
     {
         Game1.CycleEnemy(direction);
     }

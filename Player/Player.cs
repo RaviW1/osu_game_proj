@@ -25,6 +25,8 @@ public class Player
     public int PlayerHealth { get { return playerHealth; } set { playerHealth = value; } }
     private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
+
+    public bool IsAirborne { get; set; } = false;
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
         Textures = textures;
@@ -88,6 +90,12 @@ public class Player
             (int)(Position.Y - 20),
             30, 40);
     }
+
+    public void JumpHeld(float deltaTime)
+    {
+        currentState.JumpHeld(this, deltaTime);
+    }
+
     public void Walk(int direction)
     {
         currentState.Walk(this, direction);
