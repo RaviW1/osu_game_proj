@@ -4,7 +4,7 @@
 We have implemented our version of the game Hollow Knight  
 The control scheme is:  
 A/D or left/right arrow keys to move the knight left and right, respectively  
-Space to jump  
+Space to jump (tap for a small hop, hold for a higher jump)  
 e to activate a damage state  
 q to quit  
 r to reset  
@@ -17,9 +17,7 @@ u or i to cycle displayed charm
 o or p to cycle currently shown enemy  
 
 ## Known bugs 
-There is a problem with the knight moving extra fast when using both left/right and the arrow keys  
-Additionally, many of the current sprites are placeholders and will hopefully be replaced in the future
+none
 
 ## Documention
 Code Reviews and sprint reflection are in the documentation folder
-
