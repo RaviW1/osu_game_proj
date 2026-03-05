@@ -197,6 +197,34 @@ namespace osu_game_proj
             {
                 enemies[currentEnemyIndex].Update();
             }
+            var handler = new ProjectilePlayerCollisionHandler();
+            Rectangle playerBounds = player.GetBounds();
+
+            if (enemies[currentEnemyIndex] is Aspid aspid){
+                for (int i = aspid.Projectiles.Count - 1; i >= 0; i--){
+                    if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds)){
+                        handler.HandleCollision(player, aspid.Projectiles[i]);
+                        aspid.Projectiles.RemoveAt(i);
+                    }
+                }
+            }
+            var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
+            ISprite currentEnemy = enemies[currentEnemyIndex];
+
+            for (int i = player.Projectiles.Count - 1; i >= 0; i--){
+                if (currentEnemy is Aspid aspid2 && !aspid2.IsDead){
+                    if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds())){
+                        enemyHandler.HandleCollision(aspid2);
+                        player.Projectiles.RemoveAt(i);
+                    }
+                }else if (currentEnemy is Boofly boofly && !boofly.IsDead){
+                    if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds())){
+                        enemyHandler.HandleCollision(boofly);
+                        player.Projectiles.RemoveAt(i);
+                    }
+                }
+            }
+    
 
             if (blocks.Count > 0)
             {
@@ -288,19 +316,32 @@ namespace osu_game_proj
 
         public void Reset()
         {
-            // Reset player position
-            var playerTextures = new System.Collections.Generic.Dictionary<string, Texture2D>();
+            // Reset player with all textures
+            var playerTextures = new Dictionary<string, Texture2D>();
             playerTextures.Add("Walking", Content.Load<Texture2D>("hollow_knight_walking"));
-
+            playerTextures.Add("Jumping", Content.Load<Texture2D>("knight_jumping"));
+            playerTextures.Add("Attacking", Content.Load<Texture2D>("knight_attack"));
+            playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
-
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
 
 
-            // Reset enemy index
-            currentEnemyIndex = 0;
+            // Reset enemies
+            enemies.Clear();
+            Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
+            enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
+            Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
+            enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
 
-            // Reset block index
+            // Reset item manager
+            itemManager = new ItemManager(0.4f);
+            Texture2D unbreakableHeart = Content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
+            Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
+            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
+            itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
+
+            // Reset indices
+            currentEnemyIndex = 0;
             currentBlockIndex = 0;
         }
         private Texture2D CreatePixelTexture()

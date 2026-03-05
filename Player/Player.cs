@@ -81,6 +81,13 @@ public class Player
             projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
         }
     }
+    public Rectangle GetBounds()
+    {
+        return new Rectangle(
+            (int)(Position.X - 15),
+            (int)(Position.Y - 20),
+            30, 40);
+    }
     public void Walk(int direction)
     {
         currentState.Walk(this, direction);

@@ -7,10 +7,20 @@ public class DamagedState : IPlayerState
     private const float damageDuration = 0.5f;
     private float blinkTimer = 0f;
 
-    public void Update(Player player, GameTime gameTime)
-    {
+    public void Update(Player player, GameTime gameTime){
         damageTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         blinkTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        // Apply gravity
+        player.Velocity.Y += 20f;
+        player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        // Check floor
+        if (player.Position.Y >= 200)
+        {
+            player.Position.Y = 200;
+            player.Velocity.Y = 0f;
+        }
 
         // Toggle between red and transparent for flashing
         if (blinkTimer >= 0.1f)
@@ -21,13 +31,14 @@ public class DamagedState : IPlayerState
 
         if (damageTimer >= damageDuration)
         {
-            player.DrawColor = Color.White; // Reset color
+            player.DrawColor = Color.White;
             player.ChangeState(new IdleState());
         }
     }
 
     public void Reset(Player player)
     {
+        player.Velocity.Y = 0f;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }
