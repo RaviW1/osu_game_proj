@@ -1,0 +1,15 @@
+Author: Lohith Katari
+Date: 2/23/2026
+Sprint 2
+File: MapBlock.cs
+File Author: Brooklyn Kongdech
+Time Taken: 10 minutes
+
+The MapBlock class is a simple class that represents a block on the map. 
+It has a few properties that are used to determine how the block should be rendered.
+The class is well organized and easy to read. The properties are clearly defined and the methods are straightforward. 
+The class is implemented overtop of the Sprite class, which allows it to easily be compared to other sprite classes.
+It is very easy understand the the function of the class is clear. 
+The class also is properly commented which not only lets expansion of functionality be simple but also makes it easy to understand the current functionality.
+
+

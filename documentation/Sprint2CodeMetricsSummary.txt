@@ -1,0 +1,9 @@
+Code Metrics analysis:
+
+Overall our code metrics are strong. We are in a good spot to add more functionality without creating spagetti code.
+We have an average maintability score of 87.82.
+We have an average cyclomatic complixity of 2.6
+Some outliers in our code metrics were the Player class and Game1 class.
+Both of these classes have a lot of functionality and are doing a lot of work, which is reflected in their higher cyclomatic complexity and lines of code. 
+However, this is somewhat expected given the nature of these classes as they are central to the game logic and player functionality.
+We may look to refactor and simplify these classes in the future.
