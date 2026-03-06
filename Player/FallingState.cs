@@ -54,7 +54,7 @@ public class FallingState : IPlayerState
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
         // Play frames in reverse to visually distinguish falling from rising
         int fallingFrame = (TotalFrames - 1) - (currentFrame % TotalFrames);
-        player.sourceRectangle = new Rectangle(fallingFrame * frameWidth, 0, frameWidth, player.CurrentTexture.Height);
+        player.sourceRectangle = new Rectangle(fallingFrame * frameWidth, 0, frameWidth + 32, player.CurrentTexture.Height);
     }
 
     private void AdvanceFrame(float dt)
