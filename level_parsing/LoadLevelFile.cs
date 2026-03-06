@@ -20,7 +20,7 @@ namespace osu_game_proj
             {
                 // TODO: Create new tile object for each tile in XML File
                 //  for each tile object we add to a list then pass that list to tileGenerator
-                TileInformation tileInfo = new TileInformation((int)t.Attribute("id"), (int)t.Attribute("x_pos"), (int)t.Attribute("y_pos"), (int)t.Attribute("x_size"), (int)t.Attribute("y_size"));
+                TileInformation tileInfo = new TileInformation((string)t.Attribute("id"), (int)t.Attribute("x_pos"), (int)t.Attribute("y_pos"), (int)t.Attribute("x_size"), (int)t.Attribute("y_size"));
                 generateTileInfo.Add(tileInfo);
             }
         }
