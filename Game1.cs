@@ -24,6 +24,9 @@ namespace osu_game_proj
         private SpriteFont font;
         private LoadLevelFile levelFileLoader;
         private TileGenerator tileGenObj;
+        private List<Geo> geos;
+        private Texture2D geoTexture;
+        private List<TileInformation> generateTileInfo;
 
         public Game1()
         {
@@ -168,12 +171,16 @@ namespace osu_game_proj
             // TODO: Load tile textures
 
 
-            List<TileInformation> generateTileInfo = new List<TileInformation>();
+            generateTileInfo = new List<TileInformation>();
             levelFileLoader = new LoadLevelFile();
             levelFileLoader.LoadFile("test_level.xml", generateTileInfo);
 
             tileGenObj = new TileGenerator(generateTileInfo);
             tileGenObj.LoadTileTextures(Content);
+
+            geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
+            geos = new List<Geo>();
+            PlaceGeosOnPlatforms();
 
             // TODO: use this.Content to load your game content here
 
@@ -246,6 +253,16 @@ namespace osu_game_proj
             }
 
 
+            for (int i = geos.Count - 1; i >= 0; i--)
+            {
+                if (!geos[i].IsCollected && geos[i].GetBounds().Intersects(playerBounds))
+                {
+                    geos[i].Collect();
+                    player.GeoCount++;
+                }
+                geos[i].Update(gameTime);
+            }
+
             if (blocks.Count > 0)
             {
                 blocks[currentBlockIndex].Update();
@@ -288,6 +305,11 @@ namespace osu_game_proj
             abilityBar.Draw(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
 
+            foreach (var geo in geos)
+            {
+                geo.Draw(_spriteBatch);
+            }
+
             player.Draw(_spriteBatch, gameTime);
             itemManager.Draw(_spriteBatch);
 
@@ -300,6 +322,10 @@ namespace osu_game_proj
             float margin = 10f;
             _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, margin), Color.White);
             _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, margin + hpSize.Y + 4), Color.White);
+
+            string geoText = "Geo: " + player.GeoCount;
+            Vector2 geoSize = font.MeasureString(geoText);
+            _spriteBatch.DrawString(font, geoText, new Vector2(viewWidth - geoSize.X - margin, margin + hpSize.Y + 4 + dashSize.Y + 4), Color.Gold);
 
             _spriteBatch.End();
 
@@ -364,10 +390,33 @@ namespace osu_game_proj
             itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
             itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
+            // Reset geos
+            geos.Clear();
+            PlaceGeosOnPlatforms();
+
             // Reset indices
             currentEnemyIndex = 0;
             currentBlockIndex = 0;
         }
+        private void PlaceGeosOnPlatforms()
+        {
+            foreach (var tileInfo in generateTileInfo)
+            {
+                if (tileInfo.tileType == "floating_platform")
+                {
+                    Rectangle platform = tileInfo.destRectangle;
+                    int count = 3;
+                    float spacing = platform.Width / (float)(count + 1);
+                    for (int i = 1; i <= count; i++)
+                    {
+                        float geoX = platform.X + spacing * i - 5;
+                        float geoY = platform.Y - 18;
+                        geos.Add(new Geo(geoTexture, new Vector2(geoX, geoY)));
+                    }
+                }
+            }
+        }
+
         private Texture2D CreatePixelTexture()
         {
             Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
