@@ -23,6 +23,7 @@ namespace osu_game_proj
         // we assign an arbitrary integer value to each tile
         public void LoadTileTextures(ContentManager Content)
         {
+            // TODO: Change integers indexes to texture names 
             tileTextures = new Dictionary<int, Texture2D>();
             tileTextures.Add(1, Content.Load<Texture2D>("floating_platform1"));
             tileTextures.Add(2, Content.Load<Texture2D>("level1_background"));
