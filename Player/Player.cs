@@ -21,8 +21,10 @@ public class Player
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
 
+    private int maxPlayerHealth = 7;
     private int playerHealth = 7;
     public int PlayerHealth { get { return playerHealth; } set { playerHealth = value; } }
+    public int MaxPlayerHealth { get { return maxPlayerHealth; } set { maxPlayerHealth = value; } }
     private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
 
