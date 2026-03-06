@@ -32,7 +32,9 @@ public class Player
     public int Soul { get { return soul; } set { soul = value; } }
     private int soulLimit = 100;
     public int SoulLimit { get { return soulLimit; } set { soulLimit = value; } }
-    
+    public int geoCount=0;
+    public int GeoCount { get { return geoCount; } set { geoCount = value; } }
+
     // Player movement variables
     public bool IsAirborne { get; set; } = false;
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
