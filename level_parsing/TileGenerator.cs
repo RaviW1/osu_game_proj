@@ -20,12 +20,18 @@ namespace osu_game_proj
         }
         // Load necessary tile textures into scope
         // Really just a helper function to declutter load_content in the Game1 class
+        // we assign an arbitrary integer value to each tile
         public void LoadTileTextures(ContentManager Content)
         {
-            // Load all tile textures here
-            // we assign an arbitrary integer value to each tile
             tileTextures = new Dictionary<int, Texture2D>();
             tileTextures.Add(1, Content.Load<Texture2D>("floating_platform1"));
+            tileTextures.Add(2, Content.Load<Texture2D>("level1_background"));
+            tileTextures.Add(3, Content.Load<Texture2D>("level_tile"));
+            tileTextures.Add(4, Content.Load<Texture2D>("Level1_background_right"));
+            tileTextures.Add(5, Content.Load<Texture2D>("Level1BG_Top"));
+            tileTextures.Add(6, Content.Load<Texture2D>("Level1Ground"));
+            tileTextures.Add(7, Content.Load<Texture2D>("background_left_layer1"));
+
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
         {
@@ -38,8 +44,6 @@ namespace osu_game_proj
             }
 
         }
-        // TODO: Write class that iterates through list of mapBlock objects
-        // TODO: and draws them to creen
         public void Draw(SpriteBatch spriteBatch)
         {
             this.createMapBlocks(this.generateTileInfo);
