@@ -21,13 +21,19 @@ public class Player
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
 
+    // Player status variables
     private int maxPlayerHealth = 7;
     private int playerHealth = 7;
     public int PlayerHealth { get { return playerHealth; } set { playerHealth = value; } }
     public int MaxPlayerHealth { get { return maxPlayerHealth; } set { maxPlayerHealth = value; } }
     private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
-
+    private int soul=0;
+    public int Soul { get { return soul; } set { soul = value; } }
+    private int soulLimit = 100;
+    public int SoulLimit { get { return soulLimit; } set { soulLimit = value; } }
+    
+    // Player movement variables
     public bool IsAirborne { get; set; } = false;
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
