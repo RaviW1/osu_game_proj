@@ -1,16 +1,15 @@
-using System.Numerics;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
-
-public class MapBlock : ISprite
+public class TileBlock
 {
     private Texture2D texture;
-    public Vector2 position;
+    private Rectangle destRect;
 
-    public MapBlock(Texture2D texture, Vector2 startPosition)
+    public TileBlock(Texture2D texture, Rectangle destRectangle)
     {
         this.texture = texture;
-        this.position = startPosition;
+        this.destRect = destRectangle;
     }
 
     public void Update()
@@ -18,16 +17,15 @@ public class MapBlock : ISprite
         // Question: Do we need this for blocks? - Brooklynn
     }
 
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(
             this.texture,                           // texture
-            this.position,                          // position
+            this.destRect,                          // position
             null,                                   // sourceRectangle
             Microsoft.Xna.Framework.Color.White,    // color
             0.0f,                                   // rotation
             new Vector2(0, 0),                      // origin
-            1.0f,                                   // scale
             SpriteEffects.None,                     // effects
             0.0f                                    // layerDepth
             );
