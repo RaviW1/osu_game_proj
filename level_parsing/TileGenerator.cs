@@ -11,7 +11,7 @@ namespace osu_game_proj
     public class TileGenerator
     {
         // TODO: might need to add order to drawing - think about later
-        private Dictionary<int, Texture2D> tileTextures;
+        private Dictionary<string, Texture2D> tileTextures;
         private List<TileInformation> generateTileInfo;
         private List<TileBlock> tileList;
         public TileGenerator(List<TileInformation> generateTileInfo)
@@ -24,14 +24,14 @@ namespace osu_game_proj
         public void LoadTileTextures(ContentManager Content)
         {
             // TODO: Change integers indexes to texture names 
-            tileTextures = new Dictionary<int, Texture2D>();
-            tileTextures.Add(1, Content.Load<Texture2D>("floating_platform1"));
-            tileTextures.Add(2, Content.Load<Texture2D>("level1_background"));
-            tileTextures.Add(3, Content.Load<Texture2D>("level_tile"));
-            tileTextures.Add(4, Content.Load<Texture2D>("Level1_background_right"));
-            tileTextures.Add(5, Content.Load<Texture2D>("Level1BG_Top"));
-            tileTextures.Add(6, Content.Load<Texture2D>("Level1Ground"));
-            tileTextures.Add(7, Content.Load<Texture2D>("background_left_layer1"));
+            tileTextures = new Dictionary<string, Texture2D>();
+            tileTextures.Add("floating_platform", Content.Load<Texture2D>("floating_platform1"));
+            tileTextures.Add("level1_background", Content.Load<Texture2D>("level1_background"));
+            tileTextures.Add("level_tile", Content.Load<Texture2D>("level_tile"));
+            tileTextures.Add("right_cave_wall", Content.Load<Texture2D>("Level1_background_right"));
+            tileTextures.Add("top_cave_wall", Content.Load<Texture2D>("Level1BG_Top"));
+            tileTextures.Add("ground_platform", Content.Load<Texture2D>("Level1Ground"));
+            tileTextures.Add("left_rocks_wall", Content.Load<Texture2D>("background_left_layer1"));
 
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
