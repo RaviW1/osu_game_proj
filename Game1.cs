@@ -212,7 +212,7 @@ namespace osu_game_proj
             playerTextures.Add("Attacking", Content.Load<Texture2D>("knight_attack"));
 
             // create new player object
-            player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
+            player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
 
             // Load item textures and add to item manager
             // ID 0: Unbreakable Heart (+2 HP on select), ID 1: Dashmaster (canDash on select)
@@ -273,14 +273,20 @@ namespace osu_game_proj
                 }
             }
             // Melee hitbox vs enemies
-            if (player.IsAttacking){
+            if (player.IsAttacking)
+            {
                 Rectangle meleeHitbox = player.GetMeleeHitbox();
-                if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead){
-                    if (meleeHitbox.Intersects(aspidMelee.GetBounds())){
+                if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead)
+                {
+                    if (meleeHitbox.Intersects(aspidMelee.GetBounds()))
+                    {
                         aspidMelee.TakeDamage();
                     }
-                }else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead){
-                    if (meleeHitbox.Intersects(booflyMelee.GetBounds())){
+                }
+                else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead)
+                {
+                    if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
+                    {
                         booflyMelee.TakeDamage();
                     }
                 }
@@ -425,7 +431,7 @@ namespace osu_game_proj
             playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
 
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
-            player = new Player(playerTextures, fireballTexture, new Vector2(350, 200));
+            player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
 
 
             // Reset enemies

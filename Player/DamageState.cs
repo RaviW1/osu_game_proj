@@ -7,7 +7,8 @@ public class DamagedState : IPlayerState
     private const float damageDuration = 0.5f;
     private float blinkTimer = 0f;
 
-    public void Update(Player player, GameTime gameTime){
+    public void Update(Player player, GameTime gameTime)
+    {
         damageTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
         blinkTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -16,9 +17,9 @@ public class DamagedState : IPlayerState
         player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         // Check floor
-        if (player.Position.Y >= 200)
+        if (player.Position.Y >= 370)
         {
-            player.Position.Y = 200;
+            player.Position.Y = 370;
             player.Velocity.Y = 0f;
         }
 

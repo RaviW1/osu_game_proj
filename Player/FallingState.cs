@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 public class FallingState : IPlayerState
 {
     private const float Gravity = 1200f;
-    private const float GroundY = 200f;   // replace with collision later
+    private const float GroundY = 370f;   // replace with collision later
     private const float WalkSpeed = 3f;
 
     private int currentFrame = 0;
