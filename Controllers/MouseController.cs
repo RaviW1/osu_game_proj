@@ -1,9 +1,8 @@
-﻿using Microsoft.Xna.Framework.Input;
-using osu_game_proj;
-using System.Windows.Input;
-using System.Collections.Generic;
+﻿using osu_game_proj;
 using Microsoft.Xna.Framework;
-
+using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
 
 public class MouseController : IController
 {
@@ -37,34 +36,37 @@ public class MouseController : IController
     public List<ICommand> GetCommands(GameTime gameTime)
     {
         var activeCommands = new List<ICommand>();
+        MouseState current = Mouse.GetState();
+
+        // Detect Left Click
+        if (current.LeftButton == ButtonState.Pressed && previousState.LeftButton == ButtonState.Released)
+        {
+            int w = game.GraphicsDevice.Viewport.Width;
+            int h = game.GraphicsDevice.Viewport.Height;
+
+            bool isLeftHalf = current.X < w / 2;
+            bool isTopHalf = current.Y < h / 2;
+
+
+            if (isLeftHalf && isTopHalf)
+            {
+                if (topLeft != null) activeCommands.Add(topLeft);
+            }
+            else if (!isLeftHalf && isTopHalf)
+            {
+                if (topRight != null) activeCommands.Add(topRight);
+            }
+            // Add similar logic for bottom quadrants if needed
+        }
+
+        // Detect Right Click (Quit)
+        if (current.RightButton == ButtonState.Pressed && previousState.RightButton == ButtonState.Released)
+        {
+            if (quit != null) activeCommands.Add(quit);
+        }
+
+        previousState = current;
         return activeCommands;
     }
-
-    //   public void Update()
-    //   {
-    //       MouseState current = Mouse.GetState();
-
-    //       if (current.RightButton == ButtonState.Pressed &&
-    //           previousState.RightButton == ButtonState.Released)
-    //       {
-    //           quit.Execute();
-    //       }
-
-    //       if (current.LeftButton == ButtonState.Pressed &&
-    //           previousState.LeftButton == ButtonState.Released)
-    //       {
-    //           int w = game.GraphicsDevice.Viewport.Width;
-    //           int h = game.GraphicsDevice.Viewport.Height;
-
-    //           bool left = current.X < w / 2;
-    //           bool top = current.Y < h / 2;
-
-    //           if (left && top) topLeft.Execute();
-    //           else if (!left && top) topRight.Execute();
-    //           else if (left && !top) bottomLeft.Execute();
-    //           else bottomRight.Execute();
-    //       }
-
-    //       previousState = current;
-    //   }
 }
+
