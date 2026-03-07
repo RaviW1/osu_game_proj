@@ -495,5 +495,24 @@ namespace osu_game_proj
             texture.SetData(new[] { Color.White });
             return texture;
         }
+
+        public static List<Rectangle> GetCurrentLevelColliders()
+        {
+            var rects = new List<Rectangle>();
+
+            foreach (var tile in instance.drawTilesGen.generateTileInfo)
+            {
+                // Skip decorative background tiles
+                if (tile.tileType == "level1_background" ||
+                    tile.tileType == "left_rocks_wall" ||
+                    tile.tileType == "right_cave_wall" ||
+                    tile.tileType == "top_cave_wall")
+                    continue;
+
+                rects.Add(tile.destRectangle);
+            }
+
+            return rects;
+        }
     }
 }
