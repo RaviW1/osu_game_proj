@@ -5,7 +5,7 @@ using System;
 public class JumpState : IPlayerState
 {
     // Physics constants
-    private const float InitialVelocity = -400f;
+    private const float InitialVelocity = -500f;
     private const float Gravity = 1200f;
 
     // Variable jump height — extra upward force applied while jump is held

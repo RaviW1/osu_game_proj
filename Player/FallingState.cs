@@ -1,16 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using osu_game_proj;
 
 public class FallingState : IPlayerState
 {
+    // Physics constants
     private const float Gravity = 1200f;
-    private const float GroundY = 370f;   // replace with collision later
     private const float WalkSpeed = 3f;
 
-    private int currentFrame = 0;
-    private float timeSinceLastFrame = 0f;
+    // Animation constants
     private const float SecondsPerFrame = 0.1f;
     private const int TotalFrames = 12;
+
+    // Runtime state
+    private int currentFrame = 0;
+    private float timeSinceLastFrame = 0f;
+
+    // -------------------------------------------------------------------------
+    // IPlayerState implementation
+    // -------------------------------------------------------------------------
 
     public void Reset(Player player)
     {
@@ -27,12 +35,14 @@ public class FallingState : IPlayerState
 
         AdvanceFrame(dt);
 
-        if (player.Position.Y >= GroundY)
+        foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
         {
-            player.Position.Y = GroundY;
-            player.Velocity.Y = 0f;
-            player.IsAirborne = false;
-            player.ChangeState(new IdleState());
+            if (player.GetBounds().Intersects(tile) && PhysicsHelper.IsLandingOnTile(player, tile))
+            {
+                PhysicsHelper.LandOnTile(player, tile);
+                player.ChangeState(new IdleState());
+                return;
+            }
         }
     }
 
@@ -43,19 +53,28 @@ public class FallingState : IPlayerState
         player.Position.X += direction * WalkSpeed;
     }
 
-    public void Attack(Player player) => player.ChangeState(new AttackState(wasJumping: true));
-    public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
-    public void Jump(Player player) { } // no double jump
-    public void Heal(Player player) { }
-
     public void Draw(Player player)
     {
         player.CurrentTexture = player.Textures["Jumping"];
+
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
-        // Play frames in reverse to visually distinguish falling from rising
         int fallingFrame = (TotalFrames - 1) - (currentFrame % TotalFrames);
-        player.sourceRectangle = new Rectangle(fallingFrame * frameWidth, 0, frameWidth + 32, player.CurrentTexture.Height);
+        player.sourceRectangle = new Rectangle(
+            fallingFrame * frameWidth, 0,
+            frameWidth, player.CurrentTexture.Height);
     }
+
+    // Transitions
+    public void Attack(Player player) => player.ChangeState(new AttackState(wasJumping: true));
+    public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
+
+    // No-ops
+    public void Jump(Player player) { }
+    public void Heal(Player player) { }
+
+    // -------------------------------------------------------------------------
+    // Private helpers
+    // -------------------------------------------------------------------------
 
     private void AdvanceFrame(float dt)
     {
