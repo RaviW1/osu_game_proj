@@ -24,8 +24,21 @@ public class Player
     // Player status variables
     private int maxPlayerHealth = 7;
     private int playerHealth = 7;
-    public int PlayerHealth { get { return playerHealth; } set { playerHealth = value; } }
-    public int MaxPlayerHealth { get { return maxPlayerHealth; } set { maxPlayerHealth = value; } }
+    public int PlayerHealth
+    {
+        get { return playerHealth; }
+        set { playerHealth = Math.Min(value, maxPlayerHealth); }
+    }
+    public int MaxPlayerHealth
+    {
+        get { return maxPlayerHealth; }
+        set
+        {
+            maxPlayerHealth = value;
+            if (playerHealth > maxPlayerHealth)
+                playerHealth = maxPlayerHealth;
+        }
+    }
     private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
     private int soul = 0;

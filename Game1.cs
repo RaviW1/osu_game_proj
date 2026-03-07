@@ -218,7 +218,7 @@ namespace osu_game_proj
             // ID 0: Unbreakable Heart (+2 HP on select), ID 1: Dashmaster (canDash on select)
             Texture2D unbreakableHeart = Content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
-            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
+            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.MaxPlayerHealth += 2, p => p.MaxPlayerHealth -= 2), new Vector2(10, 10));
             itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
             playerTextures.Add("Attack", Content.Load<Texture2D>("hollow_knight_attack"));
@@ -360,17 +360,28 @@ namespace osu_game_proj
 
             // TODO: Break HUD drawing into seperate class
             int viewWidth = GraphicsDevice.Viewport.Width;
-            string hpText = "HP " + player.PlayerHealth;
-            string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
-            Vector2 hpSize = font.MeasureString(hpText);
-            Vector2 dashSize = font.MeasureString(dashText);
             float margin = 10f;
-            _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, margin), Color.White);
-            _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, margin + hpSize.Y + 4), Color.White);
+            float lineSpacing = 4f;
+            float yOffset = margin;
+
+            string maxHpText = "Max HP " + player.MaxPlayerHealth;
+            Vector2 maxHpSize = font.MeasureString(maxHpText);
+            _spriteBatch.DrawString(font, maxHpText, new Vector2(viewWidth - maxHpSize.X - margin, yOffset), Color.White);
+            yOffset += maxHpSize.Y + lineSpacing;
+
+            string hpText = "HP " + player.PlayerHealth;
+            Vector2 hpSize = font.MeasureString(hpText);
+            _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, yOffset), Color.White);
+            yOffset += hpSize.Y + lineSpacing;
+
+            string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
+            Vector2 dashSize = font.MeasureString(dashText);
+            _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, yOffset), Color.White);
+            yOffset += dashSize.Y + lineSpacing;
 
             string geoText = "Geo: " + player.GeoCount;
             Vector2 geoSize = font.MeasureString(geoText);
-            _spriteBatch.DrawString(font, geoText, new Vector2(viewWidth - geoSize.X - margin, margin + hpSize.Y + 4 + dashSize.Y + 4), Color.Gold);
+            _spriteBatch.DrawString(font, geoText, new Vector2(viewWidth - geoSize.X - margin, yOffset), Color.Gold);
 
             _spriteBatch.End();
 
@@ -445,7 +456,7 @@ namespace osu_game_proj
             itemManager = new ItemManager(0.4f);
             Texture2D unbreakableHeart = Content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
             Texture2D dashmaster = Content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
-            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
+            itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.MaxPlayerHealth += 2, p => p.MaxPlayerHealth -= 2), new Vector2(10, 10));
             itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
             // Reset geos for both levels
