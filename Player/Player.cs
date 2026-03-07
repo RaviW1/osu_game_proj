@@ -28,11 +28,11 @@ public class Player
     public int MaxPlayerHealth { get { return maxPlayerHealth; } set { maxPlayerHealth = value; } }
     private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
-    private int soul=0;
+    private int soul = 0;
     public int Soul { get { return soul; } set { soul = value; } }
     private int soulLimit = 100;
     public int SoulLimit { get { return soulLimit; } set { soulLimit = value; } }
-    public int geoCount=0;
+    public int geoCount = 0;
     public int GeoCount { get { return geoCount; } set { geoCount = value; } }
 
     public bool IsAttacking { get; set; } = false;

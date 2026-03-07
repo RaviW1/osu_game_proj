@@ -40,9 +40,9 @@ public class AttackState : IPlayerState
             player.Velocity.Y += Gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (player.Position.Y >= 200f)
+            if (player.Position.Y >= 370f)
             {
-                player.Position.Y = 200f;
+                player.Position.Y = 370f;
                 player.Velocity.Y = 0f;
                 player.IsAirborne = false;
                 player.ChangeState(new IdleState());
@@ -65,9 +65,9 @@ public class AttackState : IPlayerState
                 //player.ChangeState(new JumpState());
 
                 // this will change later when we implement collision detection etc
-                if (player.Position.Y >= 200)
+                if (player.Position.Y >= 370)
                 {
-                    player.Position.Y = 200;
+                    player.Position.Y = 370;
                     player.IsAttacking = false;
                     player.ChangeState(new IdleState());
                 }
