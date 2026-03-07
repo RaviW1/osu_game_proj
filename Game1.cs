@@ -24,6 +24,8 @@ namespace osu_game_proj
         private Texture2D pixelTexture;
         private SpriteFont font;
         private List<Geo> geos;
+        private List<Geo> geosLevel1;
+        private List<Geo> geosLevel2;
         private Texture2D geoTexture;
         private List<TileInformation> generateTileInfo;
         private LoadLevelFile level1FileLoader;
@@ -179,8 +181,6 @@ namespace osu_game_proj
             List<TileInformation> generateTileInfo = new List<TileInformation>();
             level1FileLoader = new LoadLevelFile();
             level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
-            // Load Level 1
-            level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
 
             tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj1.LoadTileTextures(Content);
@@ -197,8 +197,11 @@ namespace osu_game_proj
             drawTilesGen = tileGenObj1;
 
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
-            geos = new List<Geo>();
-            PlaceGeosOnPlatforms();
+            geosLevel1 = new List<Geo>();
+            geosLevel2 = new List<Geo>();
+            PlaceGeosOnPlatforms(tileGenObj1, geosLevel1);
+            PlaceGeosOnPlatforms(tileGenObj2, geosLevel2);
+            geos = geosLevel1;
 
             // TODO: use this.Content to load your game content here
 
@@ -386,16 +389,16 @@ namespace osu_game_proj
             }
         }
         public static void CycleStage(int direction)
-
         {
-
             if (direction == -1)
             {
                 instance.drawTilesGen = instance.tileGenObj1;
+                instance.geos = instance.geosLevel1;
             }
             else if (direction == 1)
             {
                 instance.drawTilesGen = instance.tileGenObj2;
+                instance.geos = instance.geosLevel2;
             }
         }
 
@@ -426,17 +429,20 @@ namespace osu_game_proj
             itemManager.AddItem(new TextureItem(0, unbreakableHeart, p => p.PlayerHealth += 2, p => p.PlayerHealth -= 2), new Vector2(10, 10));
             itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
-            // Reset geos
-            geos.Clear();
-            PlaceGeosOnPlatforms();
+            // Reset geos for both levels
+            geosLevel1.Clear();
+            geosLevel2.Clear();
+            PlaceGeosOnPlatforms(tileGenObj1, geosLevel1);
+            PlaceGeosOnPlatforms(tileGenObj2, geosLevel2);
+            geos = (drawTilesGen == tileGenObj1) ? geosLevel1 : geosLevel2;
 
             // Reset indices
             currentEnemyIndex = 0;
             currentBlockIndex = 0;
         }
-        private void PlaceGeosOnPlatforms()
+        private void PlaceGeosOnPlatforms(TileGenerator tileGen, List<Geo> targetGeos)
         {
-            foreach (var tileInfo in instance.drawTilesGen.generateTileInfo)
+            foreach (var tileInfo in tileGen.generateTileInfo)
             {
                 if (tileInfo.tileType == "floating_platform")
                 {
@@ -447,7 +453,7 @@ namespace osu_game_proj
                     {
                         float geoX = platform.X + spacing * i - 5;
                         float geoY = platform.Y - 18;
-                        geos.Add(new Geo(geoTexture, new Vector2(geoX, geoY)));
+                        targetGeos.Add(new Geo(geoTexture, new Vector2(geoX, geoY)));
                     }
                 }
             }
