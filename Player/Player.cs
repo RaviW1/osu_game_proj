@@ -35,6 +35,8 @@ public class Player
     public int geoCount=0;
     public int GeoCount { get { return geoCount; } set { geoCount = value; } }
 
+    public bool IsAttacking { get; set; } = false;
+
     // Player movement variables
     public bool IsAirborne { get; set; } = false;
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
@@ -99,6 +101,17 @@ public class Player
             (int)(Position.X - 15),
             (int)(Position.Y - 20),
             30, 40);
+    }
+
+    public Rectangle GetMeleeHitbox()
+    {
+        int hitboxWidth = 40;
+        int hitboxHeight = 30;
+        int offsetX = (facing == SpriteEffects.FlipHorizontally) ? -hitboxWidth - 15 : 15;
+        return new Rectangle((int)(Position.X + offsetX),
+            (int)(Position.Y - 20),
+            hitboxWidth,
+            hitboxHeight);
     }
 
     public void JumpHeld(float deltaTime)

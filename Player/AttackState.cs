@@ -52,6 +52,7 @@ public class AttackState : IPlayerState
 
         if (attackTimer >= attackDuration)
         {
+            player.IsAttacking = false;
             player.ChangeState(wasJumping ? (IPlayerState)new FallingState() : new IdleState());
         }
 
@@ -67,6 +68,7 @@ public class AttackState : IPlayerState
                 if (player.Position.Y >= 200)
                 {
                     player.Position.Y = 200;
+                    player.IsAttacking = false;
                     player.ChangeState(new IdleState());
                 }
             }
@@ -83,6 +85,7 @@ public class AttackState : IPlayerState
         int frameX = 896;
         int frameY = 0;
         player.sourceRectangle = new Rectangle(frameX, frameY, frameWidth, frameHeight);
+        player.IsAttacking = true;
     }
 
     public void Walk(Player player, int direction)
@@ -114,6 +117,7 @@ public class AttackState : IPlayerState
     }
     public void TakeDamage(Player player)
     {
+        player.IsAttacking = false;
         player.ChangeState(new DamagedState());
     }
 }

@@ -272,6 +272,19 @@ namespace osu_game_proj
                     }
                 }
             }
+            // Melee hitbox vs enemies
+            if (player.IsAttacking){
+                Rectangle meleeHitbox = player.GetMeleeHitbox();
+                if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead){
+                    if (meleeHitbox.Intersects(aspidMelee.GetBounds())){
+                        aspidMelee.TakeDamage();
+                    }
+                }else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead){
+                    if (meleeHitbox.Intersects(booflyMelee.GetBounds())){
+                        booflyMelee.TakeDamage();
+                    }
+                }
+            }
 
 
             for (int i = geos.Count - 1; i >= 0; i--)
