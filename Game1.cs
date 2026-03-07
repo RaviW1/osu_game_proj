@@ -13,6 +13,7 @@ namespace osu_game_proj
         private SpriteBatch _spriteBatch;
         private Player player;
         private KeyboardController keyboard;
+        private MouseController mouse;
         private ItemManager itemManager;
         private List<ISprite> enemies;
         private List<ISprite> blocks;
@@ -22,12 +23,14 @@ namespace osu_game_proj
         private AbilityBar abilityBar;
         private Texture2D pixelTexture;
         private SpriteFont font;
-        private LoadLevelFile levelFileLoader;
-        private TileGenerator tileGenObj;
         private List<Geo> geos;
         private Texture2D geoTexture;
         private List<TileInformation> generateTileInfo;
-
+        private LoadLevelFile level1FileLoader;
+        private TileGenerator tileGenObj1;
+        private LoadLevelFile level2FileLoader;
+        private TileGenerator tileGenObj2;
+        private TileGenerator drawTilesGen;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -121,6 +124,8 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
             keyboard.BindHeld(Keys.D3, new HealCommand());
 
+            mouse = new MouseController(this, new CycleStageCommand(-1), new CycleStageCommand(1), new CycleStageCommand(-1), new CycleStageCommand(1), new CycleStageCommand(-1));
+
 
 
             base.Initialize();
@@ -171,12 +176,25 @@ namespace osu_game_proj
             // TODO: Load tile textures
 
 
-            generateTileInfo = new List<TileInformation>();
-            levelFileLoader = new LoadLevelFile();
-            levelFileLoader.LoadFile("test_level.xml", generateTileInfo);
+            List<TileInformation> generateTileInfo = new List<TileInformation>();
+            level1FileLoader = new LoadLevelFile();
+            level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
+            // Load Level 1
+            level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
 
-            tileGenObj = new TileGenerator(generateTileInfo);
-            tileGenObj.LoadTileTextures(Content);
+            tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
+            tileGenObj1.LoadTileTextures(Content);
+
+            generateTileInfo.Clear();
+
+            // Load Level 2
+            level2FileLoader = new LoadLevelFile();
+            level2FileLoader.LoadFile("test_level2.xml", generateTileInfo);
+
+            tileGenObj2 = new TileGenerator(new List<TileInformation>(generateTileInfo));
+            tileGenObj2.LoadTileTextures(Content);
+
+            drawTilesGen = tileGenObj1;
 
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
             geos = new List<Geo>();
@@ -274,6 +292,12 @@ namespace osu_game_proj
                 command.Execute(player, gameTime);
             }
 
+            List<ICommand> currentMouseCommands = mouse.GetCommands(gameTime);
+            foreach (ICommand command in currentMouseCommands)
+            {
+                command.Execute(player, gameTime);
+            }
+
             itemManager.Update(gameTime);
 
             player.Update(gameTime);
@@ -288,9 +312,8 @@ namespace osu_game_proj
 
             _spriteBatch.Begin();
 
-            base.Draw(gameTime);
 
-            tileGenObj.Draw(_spriteBatch);
+            drawTilesGen.Draw(_spriteBatch);
 
             // TODO: break this out into a seperate class
             if (enemies.Count > 0)
@@ -362,6 +385,19 @@ namespace osu_game_proj
                 instance.currentBlockIndex = 0;
             }
         }
+        public static void CycleStage(int direction)
+
+        {
+
+            if (direction == -1)
+            {
+                instance.drawTilesGen = instance.tileGenObj1;
+            }
+            else if (direction == 1)
+            {
+                instance.drawTilesGen = instance.tileGenObj2;
+            }
+        }
 
         public void Reset()
         {
@@ -400,7 +436,7 @@ namespace osu_game_proj
         }
         private void PlaceGeosOnPlatforms()
         {
-            foreach (var tileInfo in generateTileInfo)
+            foreach (var tileInfo in instance.drawTilesGen.generateTileInfo)
             {
                 if (tileInfo.tileType == "floating_platform")
                 {

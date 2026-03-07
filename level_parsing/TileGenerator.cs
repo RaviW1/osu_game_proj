@@ -12,7 +12,7 @@ namespace osu_game_proj
     {
         // TODO: might need to add order to drawing - think about later
         private Dictionary<string, Texture2D> tileTextures;
-        private List<TileInformation> generateTileInfo;
+        public List<TileInformation> generateTileInfo;
         private List<TileBlock> tileList;
         public TileGenerator(List<TileInformation> generateTileInfo)
         {
