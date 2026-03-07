@@ -54,54 +54,8 @@ namespace osu_game_proj
 
             keyboard = new KeyboardController();
 
-
-            keyboard.BindPress(Keys.O, new CycleEnemyCommand(-1));
-            keyboard.BindPress(Keys.P, new CycleEnemyCommand(1));
-
-
-            var moveAxisCmd = new MovementAxisCommand(
-                leftKeys: new[] { Keys.A, Keys.Left },
-                rightKeys: new[] { Keys.D, Keys.Right }
-            );
-
-
-            var vertAxisCmd = new VerticalAxisCommand(
-                upKeys: new[] { Keys.W, Keys.Up },
-                downKeys: new[] { Keys.S, Keys.Down }
-            );
-
-            var jumpPressedCmd = new JumpPressedCommand();
-            var jumpHeldCmd = new JumpHeldCommand();
-
-            // ---- Horizontal movement axis (X) ----
-            // Update while held
-            keyboard.BindHeld(Keys.A, moveAxisCmd);
-            keyboard.BindHeld(Keys.Left, moveAxisCmd);
-            keyboard.BindHeld(Keys.D, moveAxisCmd);
-            keyboard.BindHeld(Keys.Right, moveAxisCmd);
-
-            // Recompute on release (so axis returns to 0 properly)
-            keyboard.BindRelease(Keys.A, moveAxisCmd);
-            keyboard.BindRelease(Keys.Left, moveAxisCmd);
-            keyboard.BindRelease(Keys.D, moveAxisCmd);
-            keyboard.BindRelease(Keys.Right, moveAxisCmd);
-
-            // ---- Vertical intent axis (Y) ----
-            // Update while held
-            keyboard.BindHeld(Keys.W, vertAxisCmd);
-            keyboard.BindHeld(Keys.Up, vertAxisCmd);
-            keyboard.BindHeld(Keys.S, vertAxisCmd);
-            keyboard.BindHeld(Keys.Down, vertAxisCmd);
-
-            // Recompute on release
-            keyboard.BindRelease(Keys.W, vertAxisCmd);
-            keyboard.BindRelease(Keys.Up, vertAxisCmd);
-            keyboard.BindRelease(Keys.S, vertAxisCmd);
-            keyboard.BindRelease(Keys.Down, vertAxisCmd);
-
-            // ---- Jump (press + release) ----
-            keyboard.BindPress(Keys.Space, jumpPressedCmd);
-            keyboard.BindHeld(Keys.Space, jumpHeldCmd);
+            BindKeyboardKeys keyBindObj = new BindKeyboardKeys(keyboard);
+            keyBindObj.bindKeys(this);
 
             // ---- Item cycling (u = previous, i = next) ----
             itemManager = new ItemManager(0.4f);
@@ -109,26 +63,8 @@ namespace osu_game_proj
             var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir, player));
             keyboard.BindPress(Keys.U, cyclePrevItemCmd);
             keyboard.BindPress(Keys.I, cycleNextItemCmd);
-            keyboard.BindPress(Keys.Q, new QuitCommand(this));
-            keyboard.BindPress(Keys.R, new ResetCommand(this));
-
-            // Block cycling (t = previous, y = next)
-            keyboard.BindPress(Keys.T, new CycleBlockCommand(-1));
-            keyboard.BindPress(Keys.Y, new CycleBlockCommand(1));
-
-            // Attack
-            keyboard.BindPress(Keys.Z, new AttackCommand());
-            keyboard.BindPress(Keys.N, new AttackCommand());
-
-            // Damage
-            keyboard.BindPress(Keys.E, new DamageCommand());
-            keyboard.BindPress(Keys.D1, new AttackCommand());
-            keyboard.BindPress(Keys.D2, new ShootFireballCommand());
-            keyboard.BindHeld(Keys.D3, new HealCommand());
 
             mouse = new MouseController(this, new CycleStageCommand(-1), new CycleStageCommand(1), new CycleStageCommand(-1), new CycleStageCommand(1), new CycleStageCommand(-1));
-
-
 
             base.Initialize();
         }
