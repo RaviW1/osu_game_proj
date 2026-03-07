@@ -39,6 +39,14 @@ public class WalkingState : IPlayerState
 
         commandReceivedThisFrame = false;
 
+        // Fall if nothing below
+        if (!PhysicsHelper.HasGroundBelow(player))
+        {
+            player.IsAirborne = true;
+            player.ChangeState(new FallingState());
+            return;
+        }
+
         // Movement applied once per frame regardless of how many keys are held
         player.Position.X += direction * WalkSpeed;
 
@@ -50,10 +58,8 @@ public class WalkingState : IPlayerState
     {
         commandReceivedThisFrame = true;
 
-        if (direction > 0)
-            player.facing = SpriteEffects.None;
-        else if (direction < 0)
-            player.facing = SpriteEffects.FlipHorizontally;
+        if (direction > 0) player.facing = SpriteEffects.None;
+        else if (direction < 0) player.facing = SpriteEffects.FlipHorizontally;
 
         this.direction = direction;
     }
@@ -61,18 +67,18 @@ public class WalkingState : IPlayerState
     public void Draw(Player player)
     {
         player.CurrentTexture = player.Textures["Walking"];
-
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
         player.sourceRectangle = new Rectangle(
             currentFrame * frameWidth, 0,
             frameWidth, player.CurrentTexture.Height);
     }
 
+    // Transitions
     public void Jump(Player player) => player.ChangeState(new JumpState());
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
 
-    // No-ops — behavior not permitted in this state
+    // No-ops
     public void Heal(Player player) { }
 
     // -------------------------------------------------------------------------
@@ -82,7 +88,6 @@ public class WalkingState : IPlayerState
     private void AdvanceFrame(float dt)
     {
         timeSinceLastFrame += dt;
-
         if (timeSinceLastFrame > SecondsPerFrame)
         {
             timeSinceLastFrame = 0f;
