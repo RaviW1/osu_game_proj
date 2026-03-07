@@ -176,17 +176,11 @@ namespace osu_game_proj
             // TODO: Load tile textures
 
 
-<<<<<<< HEAD
-            generateTileInfo = new List<TileInformation>();
-            levelFileLoader = new LoadLevelFile();
-            levelFileLoader.LoadFile("test_level.xml", generateTileInfo);
-=======
             List<TileInformation> generateTileInfo = new List<TileInformation>();
             level1FileLoader = new LoadLevelFile();
             level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
             // Load Level 1
             level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
->>>>>>> ba15fc0 (adds level changing based on mouse input)
 
             tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj1.LoadTileTextures(Content);
@@ -442,7 +436,7 @@ namespace osu_game_proj
         }
         private void PlaceGeosOnPlatforms()
         {
-            foreach (var tileInfo in generateTileInfo)
+            foreach (var tileInfo in instance.drawTilesGen.generateTileInfo)
             {
                 if (tileInfo.tileType == "floating_platform")
                 {
