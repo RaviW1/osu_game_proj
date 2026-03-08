@@ -127,6 +127,46 @@ public class Player
             hitboxHeight);
     }
 
+    public void HandleOverlap(Rectangle tileBounds)
+    {
+        Rectangle playerBounds = new Rectangle(
+            (int)(Position.X - 15),
+            (int)(Position.Y - 20),
+            30, 40);
+        Rectangle overlap = Rectangle.Intersect(playerBounds, tileBounds);
+        // vertical collsion
+        if (overlap.Width > overlap.Height)
+        {
+            // TODO: try using Physics Handler's Land On Tile Method 
+
+            // player above tile
+            if (Position.Y < tileBounds.Y)
+            {
+                Position.Y -= overlap.Height;
+                Velocity.Y = 0;
+                IsAirborne = false;
+                this.ChangeState(new IdleState());
+            }
+            else
+            {
+                Position.Y += overlap.Height;
+                Velocity.Y = 0;
+            }
+        }
+        // horizontal collision
+        else
+        {
+            if (playerBounds.X < tileBounds.X)
+            {
+                Position.X -= overlap.Width;
+            }
+            else
+            {
+                Position.X += overlap.Width;
+            }
+        }
+    }
+
     public void JumpHeld(float deltaTime)
     {
         currentState.JumpHeld(this, deltaTime);

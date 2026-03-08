@@ -16,8 +16,6 @@ public interface IPlayerState
     void Attack(Player player);
     void TakeDamage(Player player);
     void Heal(Player player);
-
-
     void JumpHeld(Player player, float deltaTime) { }
 }
 

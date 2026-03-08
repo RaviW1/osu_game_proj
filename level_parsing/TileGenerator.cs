@@ -10,20 +10,21 @@ namespace osu_game_proj
 {
     public class TileGenerator
     {
-        // TODO: might need to add order to drawing - think about later
         private Dictionary<string, Texture2D> tileTextures;
         public List<TileInformation> generateTileInfo;
-        private List<TileBlock> tileList;
+        private List<TileBlock> tileList = new List<TileBlock>();
+        public List<TileBlock> TileList
+        {
+            get { return tileList; }
+        }
         public TileGenerator(List<TileInformation> generateTileInfo)
         {
             this.generateTileInfo = generateTileInfo;
         }
         // Load necessary tile textures into scope
         // Really just a helper function to declutter load_content in the Game1 class
-        // we assign an arbitrary integer value to each tile
         public void LoadTileTextures(ContentManager Content)
         {
-            // TODO: Change integers indexes to texture names 
             tileTextures = new Dictionary<string, Texture2D>();
             tileTextures.Add("floating_platform", Content.Load<Texture2D>("floating_platform1"));
             tileTextures.Add("level1_background", Content.Load<Texture2D>("level1_background"));
@@ -36,11 +37,10 @@ namespace osu_game_proj
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
         {
-            // foreach iterates from list[0] to list [n] in order
-            tileList = new List<TileBlock>();
+            // Note about drawing order: foreach iterates from list[0] to list [n] in order
             foreach (TileInformation tile in generateTileInfo)
             {
-                TileBlock mapblock = new TileBlock(tileTextures[tile.tileType], tile.destRectangle);
+                TileBlock mapblock = new TileBlock(tileTextures[tile.tileType], tile.destRectangle, tile.isCollideable);
                 tileList.Add(mapblock);
             }
 

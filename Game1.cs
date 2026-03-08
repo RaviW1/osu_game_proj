@@ -256,9 +256,14 @@ namespace osu_game_proj
                 command.Execute(player, gameTime);
             }
 
+
             itemManager.Update(gameTime);
 
             player.Update(gameTime);
+            if (instance.drawTilesGen != null)
+            {
+                PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
+            }
             base.Update(gameTime);
         }
 
