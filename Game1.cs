@@ -259,11 +259,11 @@ namespace osu_game_proj
 
             itemManager.Update(gameTime);
 
-            player.Update(gameTime);
             if (instance.drawTilesGen != null)
             {
                 PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
             }
+            player.Update(gameTime);
             base.Update(gameTime);
         }
 

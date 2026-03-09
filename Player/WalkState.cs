@@ -40,7 +40,7 @@ public class WalkingState : IPlayerState
         commandReceivedThisFrame = false;
 
         // Fall if nothing below
-        if (!PhysicsHelper.HasGroundBelow(player))
+        if (!player.OnGround)
         {
             player.IsAirborne = true;
             player.ChangeState(new FallingState());
