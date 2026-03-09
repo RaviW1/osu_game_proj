@@ -34,6 +34,7 @@ namespace osu_game_proj
             tileTextures.Add("ground_platform", Content.Load<Texture2D>("Level1Ground"));
             tileTextures.Add("left_rocks_wall", Content.Load<Texture2D>("background_left_layer1"));
 
+            createMapBlocks(generateTileInfo);
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
         {
@@ -47,7 +48,7 @@ namespace osu_game_proj
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            this.createMapBlocks(this.generateTileInfo);
+            //this.createMapBlocks(this.generateTileInfo);
             foreach (TileBlock block in this.tileList)
             {
                 block.Draw(spriteBatch);
