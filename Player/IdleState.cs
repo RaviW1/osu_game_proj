@@ -16,10 +16,11 @@ public class IdleState : IPlayerState
     public void Update(Player player, GameTime gameTime)
     {
         // If nothing is below us, start falling
-        if (!PhysicsHelper.HasGroundBelow(player))
+        if (!player.OnGround)
         {
             player.IsAirborne = true;
             player.ChangeState(new FallingState());
+            return;
         }
     }
 

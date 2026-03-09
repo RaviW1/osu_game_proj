@@ -49,6 +49,7 @@ public class Player
     public int GeoCount { get { return geoCount; } set { geoCount = value; } }
 
     public bool IsAttacking { get; set; } = false;
+    public bool OnGround { get; set; }
 
     // Player movement variables
     public bool IsAirborne { get; set; } = false;

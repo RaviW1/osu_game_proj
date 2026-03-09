@@ -56,5 +56,22 @@ public static class PhysicsHelper
                 }
             }
         }
+
+
+        Rectangle feet = new Rectangle(
+            player.GetBounds().X,
+            player.GetBounds().Bottom,
+            player.GetBounds().Width,
+            4);
+
+        bool grounded = false;
+        foreach (TileBlock tile in tiles)
+        {
+            if (tile.isCollideable && feet.Intersects(tile.bounds))
+            {
+                grounded = true;
+            }
+        }
+        player.OnGround = grounded;
     }
 }
