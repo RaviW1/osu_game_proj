@@ -1,11 +1,11 @@
 <Level name="Forgotten_Crossroads">
-  <Tile id = "level1_background" x_pos="0" y_pos="0" x_size="900" y_size="981"/>
-  <Tile id = "left_rocks_wall" x_pos="-20" y_pos="0" x_size="300" y_size="600"/>
-  <Tile id = "right_cave_wall" x_pos="600" y_pos="0" x_size="300" y_size="500"/>
-  <Tile id = "floating_platform" x_pos="200" y_pos="300" x_size="133" y_size="42"/>
-  <Tile id = "floating_platform" x_pos="100" y_pos="100" x_size="133" y_size="42"/>
-  <Tile id = "floating_platform" x_pos="300" y_pos="200" x_size="133" y_size="42"/>
-  <Tile id = "level_tile" x_pos="0" y_pos="400" x_size="900" y_size="300"/>
-  <Tile id = "ground_platform" x_pos="0" y_pos="400" x_size="800" y_size="30"/>
-  <Tile id = "top_cave_wall" x_pos="0" y_pos="-20" x_size="800" y_size="100"/>
+  <Tile id = "level1_background" x_pos="0" y_pos="0" x_size="900" y_size="981" collide="0"/>
+  <Tile id = "left_rocks_wall" x_pos="-20" y_pos="0" x_size="300" y_size="600" collide="0"/>
+  <Tile id = "right_cave_wall" x_pos="600" y_pos="0" x_size="300" y_size="500" collide="0"/>
+  <Tile id = "floating_platform" x_pos="200" y_pos="300" x_size="133" y_size="42" collide="1"/>
+  <Tile id = "floating_platform" x_pos="100" y_pos="100" x_size="133" y_size="42" collide="1"/>
+  <Tile id = "floating_platform" x_pos="300" y_pos="200" x_size="133" y_size="42" collide="1"/>
+  <Tile id = "level_tile" x_pos="0" y_pos="400" x_size="900" y_size="300"  collide="1"/>
+  <Tile id = "ground_platform" x_pos="0" y_pos="400" x_size="800" y_size="30" collide="1"/>
+  <Tile id = "top_cave_wall" x_pos="0" y_pos="-20" x_size="800" y_size="100" collide="0"/>
 </Level>

@@ -6,6 +6,7 @@ using osu_game_proj;
 public static class PhysicsHelper
 {
     // Returns true if there is a solid tile directly below the player's feet
+    // TODO: change so we don't iterate through all colliders for a second time 
     public static bool HasGroundBelow(Player player)
     {
         Rectangle feet = new Rectangle(
@@ -37,5 +38,23 @@ public static class PhysicsHelper
         player.Position.Y = tile.Top - (playerBounds.Height / 2f);
         player.Velocity.Y = 0f;
         player.IsAirborne = false;
+    }
+    public static void CheckCollisions(Player player, TileGenerator tileGen)
+    {
+        Rectangle playerBound = player.GetBounds();
+
+        var tiles = tileGen.TileList;
+
+        foreach (TileBlock tile in tiles)
+        {
+            if (tile.isCollideable)
+            {
+                if (playerBound.Intersects(tile.bounds))
+                {
+                    // TODO: logic for resolving collisions
+                    player.HandleOverlap(tile.bounds);
+                }
+            }
+        }
     }
 }

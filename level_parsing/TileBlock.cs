@@ -5,11 +5,16 @@ public class TileBlock
 {
     private Texture2D texture;
     private Rectangle destRect;
+    public Rectangle bounds;
+    public bool isCollideable;
+    // TODO: create field to implement hazards
 
-    public TileBlock(Texture2D texture, Rectangle destRectangle)
+    public TileBlock(Texture2D texture, Rectangle destRectangle, bool isCollideable)
     {
         this.texture = texture;
         this.destRect = destRectangle;
+        this.bounds = destRectangle;
+        this.isCollideable = isCollideable;
     }
 
     public void Update()

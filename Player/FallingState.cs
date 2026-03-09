@@ -35,15 +35,15 @@ public class FallingState : IPlayerState
 
         AdvanceFrame(dt);
 
-        foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
-        {
-            if (player.GetBounds().Intersects(tile) && PhysicsHelper.IsLandingOnTile(player, tile))
-            {
-                PhysicsHelper.LandOnTile(player, tile);
-                player.ChangeState(new IdleState());
-                return;
-            }
-        }
+        //        foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
+        //        {
+        //            if (player.GetBounds().Intersects(tile) && PhysicsHelper.IsLandingOnTile(player, tile))
+        //            {
+        //                PhysicsHelper.LandOnTile(player, tile);
+        //                player.ChangeState(new IdleState());
+        //                return;
+        //            }
+        //        }
     }
 
     public void Walk(Player player, int direction)
