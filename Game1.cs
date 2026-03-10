@@ -111,12 +111,9 @@ namespace osu_game_proj
             Texture2D fungalSpikeTexture = Content.Load<Texture2D>("fungd_spikes_01");
             blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
-            // TODO: Load tile textures
-
-
             List<TileInformation> generateTileInfo = new List<TileInformation>();
             level1FileLoader = new LoadLevelFile();
-            level1FileLoader.LoadFile("test_level.xml", generateTileInfo);
+            level1FileLoader.LoadFile("level_files/test_level.xml", generateTileInfo);
 
             tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj1.LoadTileTextures(Content);
@@ -125,7 +122,7 @@ namespace osu_game_proj
 
             // Load Level 2
             level2FileLoader = new LoadLevelFile();
-            level2FileLoader.LoadFile("test_level2.xml", generateTileInfo);
+            level2FileLoader.LoadFile("level_files/test_level2.xml", generateTileInfo);
 
             tileGenObj2 = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj2.LoadTileTextures(Content);
@@ -168,76 +165,12 @@ namespace osu_game_proj
                 Exit();
 
             // TODO: Add your update logic here
-            if (enemies.Count > 0)
-            {
-                enemies[currentEnemyIndex].Update();
-            }
-            var handler = new ProjectilePlayerCollisionHandler();
-            Rectangle playerBounds = player.GetBounds();
+            // TODO: Break into physics statics class
 
-            if (enemies[currentEnemyIndex] is Aspid aspid)
-            {
-                for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
-                {
-                    if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
-                    {
-                        handler.HandleCollision(player, aspid.Projectiles[i]);
-                        aspid.Projectiles.RemoveAt(i);
-                    }
-                }
-            }
-            var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
-            ISprite currentEnemy = enemies[currentEnemyIndex];
+            PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
 
-            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
-            {
-                if (currentEnemy is Aspid aspid2 && !aspid2.IsDead)
-                {
-                    if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds()))
-                    {
-                        enemyHandler.HandleCollision(aspid2);
-                        player.Projectiles.RemoveAt(i);
-                    }
-                }
-                else if (currentEnemy is Boofly boofly && !boofly.IsDead)
-                {
-                    if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds()))
-                    {
-                        enemyHandler.HandleCollision(boofly);
-                        player.Projectiles.RemoveAt(i);
-                    }
-                }
-            }
-            // Melee hitbox vs enemies
-            if (player.IsAttacking)
-            {
-                Rectangle meleeHitbox = player.GetMeleeHitbox();
-                if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead)
-                {
-                    if (meleeHitbox.Intersects(aspidMelee.GetBounds()))
-                    {
-                        aspidMelee.TakeDamage();
-                    }
-                }
-                else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead)
-                {
-                    if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
-                    {
-                        booflyMelee.TakeDamage();
-                    }
-                }
-            }
+            PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
 
-
-            for (int i = geos.Count - 1; i >= 0; i--)
-            {
-                if (!geos[i].IsCollected && geos[i].GetBounds().Intersects(playerBounds))
-                {
-                    geos[i].Collect();
-                    player.GeoCount++;
-                }
-                geos[i].Update(gameTime);
-            }
 
             if (blocks.Count > 0)
             {
@@ -275,7 +208,6 @@ namespace osu_game_proj
 
             _spriteBatch.Begin();
 
-
             drawTilesGen.Draw(_spriteBatch);
 
             // TODO: break this out into a seperate class
@@ -301,28 +233,9 @@ namespace osu_game_proj
 
             // TODO: Break HUD drawing into seperate class
             int viewWidth = GraphicsDevice.Viewport.Width;
-            float margin = 10f;
-            float lineSpacing = 4f;
-            float yOffset = margin;
 
-            string maxHpText = "Max HP " + player.MaxPlayerHealth;
-            Vector2 maxHpSize = font.MeasureString(maxHpText);
-            _spriteBatch.DrawString(font, maxHpText, new Vector2(viewWidth - maxHpSize.X - margin, yOffset), Color.White);
-            yOffset += maxHpSize.Y + lineSpacing;
+            HUD.DrawHUD(player, _spriteBatch, viewWidth, font);
 
-            string hpText = "HP " + player.PlayerHealth;
-            Vector2 hpSize = font.MeasureString(hpText);
-            _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, yOffset), Color.White);
-            yOffset += hpSize.Y + lineSpacing;
-
-            string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
-            Vector2 dashSize = font.MeasureString(dashText);
-            _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, yOffset), Color.White);
-            yOffset += dashSize.Y + lineSpacing;
-
-            string geoText = "Geo: " + player.GeoCount;
-            Vector2 geoSize = font.MeasureString(geoText);
-            _spriteBatch.DrawString(font, geoText, new Vector2(viewWidth - geoSize.X - margin, yOffset), Color.Gold);
 
             _spriteBatch.End();
 
@@ -437,6 +350,8 @@ namespace osu_game_proj
             return texture;
         }
 
+        // DO NOT USE
+        // WILL BE REMOVED SOON
         public static List<Rectangle> GetCurrentLevelColliders()
         {
             var rects = new List<Rectangle>();
