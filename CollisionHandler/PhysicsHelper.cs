@@ -83,10 +83,6 @@ public static class PhysicsHelper
     public static void CheckEnemyCollisions(Player player, List<ISprite> enemies, int currentEnemyIndex)
     {
 
-        if (enemies.Count > 0)
-        {
-            enemies[currentEnemyIndex].Update();
-        }
         var handler = new ProjectilePlayerCollisionHandler();
         Rectangle playerBounds = player.GetBounds();
 

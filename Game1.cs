@@ -167,8 +167,12 @@ namespace osu_game_proj
             // TODO: Add your update logic here
             // TODO: Break into physics statics class
 
-            PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
 
+            if (enemies.Count > 0)
+            {
+                enemies[currentEnemyIndex].Update();
+            }
+            PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
             PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
 
 
