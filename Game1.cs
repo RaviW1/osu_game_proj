@@ -167,8 +167,67 @@ namespace osu_game_proj
             // TODO: Add your update logic here
             // TODO: Break into physics statics class
 
-            PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
+            //    PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
 
+            if (enemies.Count > 0)
+            {
+                enemies[currentEnemyIndex].Update();
+            }
+            var handler = new ProjectilePlayerCollisionHandler();
+            Rectangle playerBounds = player.GetBounds();
+
+            if (enemies[currentEnemyIndex] is Aspid aspid)
+            {
+                for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
+                {
+                    if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
+                    {
+                        handler.HandleCollision(player, aspid.Projectiles[i]);
+                        aspid.Projectiles.RemoveAt(i);
+                    }
+                }
+            }
+            var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
+            ISprite currentEnemy = enemies[currentEnemyIndex];
+
+            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (currentEnemy is Aspid aspid2 && !aspid2.IsDead)
+                {
+                    if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds()))
+                    {
+                        enemyHandler.HandleCollision(aspid2);
+                        player.Projectiles.RemoveAt(i);
+                    }
+                }
+                else if (currentEnemy is Boofly boofly && !boofly.IsDead)
+                {
+                    if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds()))
+                    {
+                        enemyHandler.HandleCollision(boofly);
+                        player.Projectiles.RemoveAt(i);
+                    }
+                }
+            }
+            // Melee hitbox vs enemies
+            if (player.IsAttacking)
+            {
+                Rectangle meleeHitbox = player.GetMeleeHitbox();
+                if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead)
+                {
+                    if (meleeHitbox.Intersects(aspidMelee.GetBounds()))
+                    {
+                        aspidMelee.TakeDamage();
+                    }
+                }
+                else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead)
+                {
+                    if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
+                    {
+                        booflyMelee.TakeDamage();
+                    }
+                }
+            }
             PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
 
 
