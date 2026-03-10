@@ -132,8 +132,8 @@ namespace osu_game_proj
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
             geosLevel1 = new List<Geo>();
             geosLevel2 = new List<Geo>();
-            PlaceGeosOnPlatforms(tileGenObj1, geosLevel1);
-            PlaceGeosOnPlatforms(tileGenObj2, geosLevel2);
+            Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
+            Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
             geos = geosLevel1;
 
             // TODO: use this.Content to load your game content here
@@ -316,31 +316,14 @@ namespace osu_game_proj
             // Reset geos for both levels
             geosLevel1.Clear();
             geosLevel2.Clear();
-            PlaceGeosOnPlatforms(tileGenObj1, geosLevel1);
-            PlaceGeosOnPlatforms(tileGenObj2, geosLevel2);
+
+            Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
+            Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
             geos = (drawTilesGen == tileGenObj1) ? geosLevel1 : geosLevel2;
 
             // Reset indices
             currentEnemyIndex = 0;
             currentBlockIndex = 0;
-        }
-        private void PlaceGeosOnPlatforms(TileGenerator tileGen, List<Geo> targetGeos)
-        {
-            foreach (var tileInfo in tileGen.generateTileInfo)
-            {
-                if (tileInfo.tileType == "floating_platform")
-                {
-                    Rectangle platform = tileInfo.destRectangle;
-                    int count = 3;
-                    float spacing = platform.Width / (float)(count + 1);
-                    for (int i = 1; i <= count; i++)
-                    {
-                        float geoX = platform.X + spacing * i - 5;
-                        float geoY = platform.Y - 18;
-                        targetGeos.Add(new Geo(geoTexture, new Vector2(geoX, geoY)));
-                    }
-                }
-            }
         }
 
         private Texture2D CreatePixelTexture()
