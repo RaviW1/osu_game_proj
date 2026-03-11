@@ -1,0 +1,10 @@
+Author of the code review: Lohith Katari
+Date of Code Review: 3/11/2026
+Sprint Number 3
+Name of files: Geo.cs, IItem.cs, ItemManager.cs, projectile.cs, TextureItem.cs
+Author of File: Akari Wu
+Time taken: 45 minutes
+
+This code review is focused on the item system, specifically the item manager and the item classes. 
+It details the design and implementation of the item system and item spawning logic.
+
