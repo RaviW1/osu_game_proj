@@ -6,7 +6,8 @@ public class FallingState : IPlayerState
 {
     // Physics constants
     private const float Gravity = 1200f;
-    private const float WalkSpeed = 3f;
+    //lower movement speed in air
+    private const float WalkSpeed = 2.3f;
 
     // Animation constants
     private const float SecondsPerFrame = 0.1f;
@@ -46,6 +47,7 @@ public class FallingState : IPlayerState
         //        }
     }
 
+    //Air strafe
     public void Walk(Player player, int direction)
     {
         if (direction > 0) player.facing = SpriteEffects.None;
