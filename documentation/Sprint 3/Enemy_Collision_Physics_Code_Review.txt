@@ -1,0 +1,39 @@
+Maintainability Review
+
+Author of the code review: Ravi Wijeratne
+Date of Code Review: 3/11/2026
+Sprint Number 3
+Name of files: Game1.cs ProjectilePlayerCollisionHandler.cs PlayerProjectileEnemyCollisionHAndler.cs
+Note: the Game1.cs code here is a specific block in the update method of the Game1 class
+Author of File: Owen Wang
+Time taken: 50 minutes
+
+This code I am looking at is specifically is the enemy collision handling logic. 
+This is split up into two handler classes for the Enemy Projectiles and the Player Projectile.
+
+Readabilty:
+The two handler classes are very readable and easy to understand. They really only contain two methods that delegate most of the work to the player and enemy classes themselves. 
+This makes understanding the reaction to the collision very easy, as the states induced are very descriptive and handle most of the necessary logic.
+The detection logic, itself, is heavily nested and placed in the Game1 class. This makes it
+harder to understand context of and harder to understand the logical flow. 
+the refactoring I recommend later would massively fix this issue.
+
+
+Maintainability:
+
+Dividing the logic between the two handler classes is a smart choice, which makes sure we can easily seperate out player and enemy damage.
+Also, we do avoid having our player accidentally attack themselves. Additionally, design-wise it remains consistent with our Command implementation structure.
+The pattern for both of these Collision Handlers is also very simple, handing off logic to the Enemy and Player State Machines to handle taking damage and resolving the collision.
+The main problem, maintainability wise, is the collision detection logic itself. 
+It is located in Game1's update logic. This is where the logic should be called from, however, the entirety of the overlap/detection logic is located here. 
+Moving forward it will be very unweildy to incorporate new changes in Game1. 
+Additionally, the current design requires separate checks for both current enemy types.
+Moving forward, I would recommend somehow making these the same check, maybe iterating on
+the same collection of enemies. The seperate collision handling logic could be handled 
+through the use of interfaces, allowing polymorphism to effectively condect the Enemy type check without manually doing it yourself.
+This change would also simplify a lot of the nesting in the code, which itself isn't a problem but may present a problem maintaining moving forward.
+
+Hypothetical Next Steps:
+Completely refactor the collision detection out of Game1.update. Whether into its own class or 
+between multiple classes is for continued debate. Additionally, new interfaces could be used to handle both enemies.
+Maybe having an extra interface that aspid could extend that handled the projectile shooting logic.
