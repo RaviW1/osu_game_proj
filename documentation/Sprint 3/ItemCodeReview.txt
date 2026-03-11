@@ -1,10 +1,33 @@
 Author of the code review: Lohith Katari
 Date of Code Review: 3/11/2026
 Sprint Number 3
-Name of files: Geo.cs, IItem.cs, ItemManager.cs, projectile.cs, TextureItem.cs
+Name of files: Geo.cs, IItem.cs, ItemManager.cs, TextureItem.cs
 Author of File: Akari Wu
 Time taken: 45 minutes
 
 This code review is focused on the item system, specifically the item manager and the item classes. 
 It details the design and implementation of the item system and item spawning logic.
 
+
+Readability:
+
+The code is generally readable because it uses clear names and standard C# structures. 
+The ternary operations in the Draw methods, like the one used to dim unselected items, are brief and do not overly complicate the logic but may lead to slightly reduced readability. 
+There is a free comment in ItemManager that explain some directions setting however it properly placed and helpful. 
+The null-conditional operator ?. is used in OnSelect and OnDeselect and before looking it up I was not sure what it did. 
+After looking it up, It seems to be a concise way to check if the action is not null before invoking it.
+Some explicit casting exists in the GetBounds and Update methods to convert between float and integer types, but these do not significantly hinder comprehension. 
+The use of magic numbers for positioning in the PlaceGeosOnPlatforms method is the only area where the intent of the specific coordinates is not immediately obvious.
+
+
+
+Maintainability:
+
+The system is highly maintainable due to the decoupling of the ItemManager from specific item implementations via the IItem interface. 
+The IItem interface is very simple and clearly defines the contract for items, which makes it easy to implement new item types without affecting existing code on the Player side.
+This structure allows for the addition of new item types without modifying existing management logic, following the open-closed principle. 
+The ItemManager uses two lists for the Items and Positinos which need to be manually synched, perhaps in the future this could be refactored to use a dictionary to store both position and item together. 
+The TextureItem class utilizes Action<Player> delegates to define behavior at instantiation, which reduces the need for extensive class hierarchies. 
+Storing positions and items in parallel lists within ItemManager keeps the data organized.
+Currently the Geo implementation has magic number values for positioning, which could be refactored to use constants or configuration values to enhance maintainability and readability.
+Overall, the modular design ensures that changes to the Geo class or the item interaction logic remain isolated and do not cause regressions in other parts of the project.
