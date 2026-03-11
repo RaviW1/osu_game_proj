@@ -2,7 +2,8 @@
 # by Team Berry 
 
 We have implemented our version of the game Hollow Knight  
-The control scheme is:  
+
+## Control Scheme  
 A/D or left/right arrow keys to move the knight left and right, respectively  
 Space to jump (tap for a small hop, hold for a higher jump)  
 e to activate a damage state  
@@ -15,6 +16,7 @@ z or n to attack
 t or y to cycle between displayed blocks  
 u or i to cycle displayed charm  
 o or p to cycle currently shown enemy  
+Left click on left or right half of game window to change to previous or next level
 
 ## Known bugs 
 none
