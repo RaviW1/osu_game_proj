@@ -1,0 +1,21 @@
+Readability Code Review: PhysicsHelper
+
+Author: Brooklynn Kongdech
+Date: 3/11/26
+Sprint #3
+
+File reviewed: PhysicsHelper.cs
+Author of file being reviewed: Lohith Katari
+Minutes to complete review: 25 min
+
+
+
+Specific comments on what is readable and what is not:
+
+- Variable names are descriptive and have consistent naming conventions
+
+- Each method has a descriptive comment that doesn't just explain code line by line, but instead is a high level overview of the method
+
+- Methods are concise and don't contain any unnecessary nesting or logic
+
+- The code is overall very readable and easy to understand

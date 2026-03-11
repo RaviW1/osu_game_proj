@@ -1,0 +1,19 @@
+Maintainability Code Review: PhysicsHelper
+
+Author: Brooklynn Kongdech
+Date: 3/11/26
+Sprint #3
+
+File reviewed: PhysicsHelper.cs
+Author of file being reviewed: Lohith Katari
+Minutes to complete review: 25 min
+
+
+
+Specific comments on code quality:
+
+- Code has high cohesion, but loose coupling which is good
+
+- Similar to the readability review for this class, the concise code means things are easier to change down the line
+
+Honestly I don't think any changes are necessary at the moment for this class. Hypothetically, enemy physics (knockback, falling after being hit off a ledge, etc.) could also be put here to reduce clutter elsewhere in the code.
