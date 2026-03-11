@@ -1,0 +1,83 @@
+Code Review: Level Classes
+Date of Code Review: 3/11/2026
+Sprint Number: 3
+Files Reviewed: LoadLevelFile.cs, TileBlock.cs, TileGenerator.cs, TileInformation.cs, Game1.cs (level parsing/generating sections)
+Author of code review: Akari Wu
+Author of File: Ravi Wijeratne
+Time to take: 40 minutes
+
+All level parsing classes work together to generate a game map using an xml file.
+The codes are working perfectly while other funtions that based on level parsing like Geo spawning works well too.
+
+Readability:
+
+Positives:
+
+1. TileBlock.cs is very clean and easy to read. The class is short, focused, and the Draw method includes helpful inline comments labeling each parameter (texture, position, sourceRectangle, color, etc.), making it immediately clear what each argument does.
+
+2. TileInformation.cs is simple and straightforward. The constructor clearly maps XML attributes to class fields, and the purpose of the class is obvious at a glance.
+
+3. LoadLevelFile.cs is concise and easy to follow. The XML-based level loading approach using XDocument and LINQ is a clean and readable choice for parsing structured level data.
+
+4. TileGenerator.cs has a clear separation between texture loading (LoadTileTextures) and drawing (Draw).
+
+5. The overall level parsing pipeline (XML file -> LoadLevelFile -> TileInformation list -> TileGenerator -> TileBlock list) follows a logical flow that is easy to trace and understand.
+
+Issues:
+
+1. In LoadLevelFile.cs, the foreach loop uses a single-letter variable name "t". This is not descriptive and should be renamed to something like "tileElement" to improve clarity.
+
+2. In LoadLevelFile.cs, the TileInformation constructor call on line 23 puts all six casted attribute reads on a single line.
+
+3. In LoadLevelFile.cs, the variable "levelName" is extracted from the XML root but never used anywhere. This is dead code and confusing to readers who might assume it serves a purpose.
+
+4. In TileBlock.cs, the Draw method uses the name "Microsoft.Xna.Framework.Color.White" instead of just "Color.White".
+
+6. In TileGenerator.cs, there is commented-out code in the Draw method. Consider removing it.
+
+7. In TileInformation.cs, the constructor parameter "collide" is an int (0 or 1) instead of a boolean.
+
+
+Maintainability:
+
+Positives:
+
+1. The decision to use XML files for level data is a strong design choice. Level layouts can be modified or added without recompiling the game code, which greatly supports maintainability.
+
+2. TileBlock.cs keeps its responsibilities minimal — it only stores tile data and draws itself. This single-responsibility design makes it easy to modify or extend without affecting other parts of the system.
+
+3. TileGenerator.cs encapsulates the entire tile creation process. The rest of the codebase (Game1.cs) only needs to call LoadTileTextures and Draw, which keeps the interface simple and reduces coupling.
+
+4. The use of a Dictionary<string, Texture2D> in TileGenerator for texture lookup by tile type is a flexible and extensible design. Adding a new tile type only requires one new entry in the dictionary.
+
+5. The isCollideable flag in TileInformation is a good approach to separating decorative tiles from functional ones, which supports adding new tile behaviors in the future.
+
+Issues:
+
+1. In LoadLevelFile.cs, there is no error handling for XML file loading or attribute parsing. Adding try-catch blocks or null checks on attributes would make the code more robust.
+
+2. In LoadLevelFile.cs, the LoadFile method takes a mutable List as a parameter and modifies it directly. Returning a new List<TileInformation> instead would be cleaner.
+
+3. In TileGenerator.cs, texture names are hardcoded. If tile types change or new tiles are added, these strings must be updated in multiple places.
+
+4. In TileInformation.cs, all fields are public with no encapsulation. They should be properties, ideally read-only since TileInformation is essentially an object that should not be modified after construction.
+
+5. In TileInformation.cs, there is no validation on the "collide" parameter. If a value other than 0 or 1 is passed (e.g., 2 or -1), isCollideable is left as its default value (false) silently, which could lead to hard-to-find bugs.
+
+6. In Game1.cs, the level loading code for level 1 and level 2 (lines 114-130) is nearly identical — duplicated code. Adding a third level would require copying the same block again. This should be refactored into a helper method like "LoadLevel(string filePath)" that returns a TileGenerator, making it easy to add new levels.
+
+7. In Game1.cs, the GetCurrentLevelColliders method (lines 402-419) filters out decorative tiles using hardcoded string comparisons ("level1_background", "left_rocks_wall", etc.). This is fragile — the isCollideable field in TileInformation already stores this information and should be used instead.
+
+8. None of the level parsing classes have a namespace declaration, while TileGenerator and Game1 use "osu_game_proj". This inconsistency could cause issues as the project grows.
+
+
+Hypothetical Change — Adding a New Level:
+
+To add a new level (e.g., level 3) to the game, the current implementation would require changes in at least four places in Game1.cs: 
+(1) add new fields for level3FileLoader and tileGenObj3, 
+(2) duplicate the loading pattern in LoadContent, 
+(3) add another branch in CycleStage, and 
+(4) update Reset. 
+This shows that the current design is not easily extensible. 
+A better approach would be to store levels in a List<TileGenerator> and use an index to track the active level, 
+so adding a new level would only require adding a new XML file path to a configuration list.
