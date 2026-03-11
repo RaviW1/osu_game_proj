@@ -94,7 +94,7 @@ public class JumpState : IPlayerState
     private void ApplyGravity(Player player, float dt)
     {
         player.Velocity.Y += Gravity * dt;
-        player.Position += player.Velocity * dt;
+        player.Position.Y += player.Velocity.Y * dt; 
     }
 
     private void AdvanceFrame(float dt)

@@ -1,58 +1,70 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 public class DamagedState : IPlayerState
 {
     private float damageTimer = 0f;
     private const float damageDuration = 0.5f;
     private float blinkTimer = 0f;
+    private bool isVisible = true;
 
     public void Update(Player player, GameTime gameTime)
     {
-        damageTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        blinkTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        damageTimer += delta;
+        blinkTimer += delta;
 
         // Apply gravity
-        player.Velocity.Y += 20f;
-        player.Position += player.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+        player.Velocity.Y += 500f * delta;
+        player.Position.Y += player.Velocity.Y * delta;
 
-        // Check floor
-        if (player.Position.Y >= 370)
+        // Use real tile collision instead of hardcoded floor
+        if (player.Tiles != null)
         {
-            player.Position.Y = 370;
-            player.Velocity.Y = 0f;
+            foreach (var tile in player.Tiles)
+            {
+                if (tile.isCollideable && player.GetBounds().Intersects(tile.bounds))
+                {
+                    player.HandleOverlap(tile.bounds);
+                }
+            }
         }
 
-        // Toggle between red and transparent for flashing
+        // Toggle visibility using a bool so it can never get stuck transparent
         if (blinkTimer >= 0.1f)
         {
-            player.DrawColor = (player.DrawColor == Color.Red) ? Color.Transparent : Color.Red;
+            isVisible = !isVisible;
+            player.DrawColor = isVisible ? Color.Red : Color.Transparent;
             blinkTimer = 0f;
         }
 
+        // Exit state after duration — always force white and visible
         if (damageTimer >= damageDuration)
         {
+            player.SuppressLandingTransition = false;
+            player.Velocity = Vector2.Zero;
             player.DrawColor = Color.White;
+            damageTimer = 0f;
             player.ChangeState(new IdleState());
+            return;
         }
     }
 
     public void Reset(Player player)
     {
-        player.Velocity.Y = 0f;
+        damageTimer = 0f;
+        blinkTimer = 0f;
+        isVisible = true;
+        player.DrawColor = Color.Red;
+        player.Velocity = Vector2.Zero;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
-    }
-    public void Heal(Player player)
-    {
-        // Can't heal while moving/jumping/attacking/damaged - do nothing
+        player.SuppressLandingTransition = true;
     }
 
-
-    public void ReturnToIdle(Player player)
-    {
-        player.ChangeState(new IdleState());
-    }
+    public void Heal(Player player) { }
+    public void ReturnToIdle(Player player) { player.ChangeState(new IdleState()); }
     public void Walk(Player player, int direction) { }
     public void Jump(Player player) { }
     public void Attack(Player player) { }

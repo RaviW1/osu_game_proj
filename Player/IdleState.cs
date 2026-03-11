@@ -9,6 +9,7 @@ public class IdleState : IPlayerState
 
     public void Reset(Player player)
     {
+        player.DrawColor = Color.White;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }

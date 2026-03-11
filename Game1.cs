@@ -146,6 +146,7 @@ namespace osu_game_proj
 
             // create new player object
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
+            player.Tiles = drawTilesGen.TileList;
 
             // Load item textures and add to item manager
             // ID 0: Unbreakable Heart (+2 HP on select), ID 1: Dashmaster (canDash on select)
@@ -235,6 +236,7 @@ namespace osu_game_proj
             {
                 blocks[currentBlockIndex].Update();
             }
+            player.Update(gameTime);
 
             List<ICommand> currentCommands = keyboard.GetCommands(gameTime);
             foreach (ICommand command in currentCommands)
@@ -250,12 +252,13 @@ namespace osu_game_proj
 
 
             itemManager.Update(gameTime);
+            
 
             if (instance.drawTilesGen != null)
             {
                 PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
             }
-            player.Update(gameTime);
+            
             base.Update(gameTime);
         }
 
@@ -343,6 +346,7 @@ namespace osu_game_proj
                 instance.drawTilesGen = instance.tileGenObj2;
                 instance.geos = instance.geosLevel2;
             }
+            instance.player.Tiles = instance.drawTilesGen.TileList;
         }
 
         public void Reset()
@@ -356,6 +360,7 @@ namespace osu_game_proj
 
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
+            player.Tiles = drawTilesGen.TileList;
 
 
             // Reset enemies
