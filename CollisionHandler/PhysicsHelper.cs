@@ -52,11 +52,18 @@ public static class PhysicsHelper
 
         foreach (TileBlock tile in tiles)
         {
-            if (tile.isCollideable)
+            if (tile.isCollideable || tile.isHarmful)
             {
                 if (playerBound.Intersects(tile.bounds))
                 {
                     player.HandleOverlap(tile.bounds);
+                }
+            }
+            if (tile.isHarmful)
+            {
+                if (playerBound.Intersects(tile.bounds))
+                {
+                    player.TakeDamage();
                 }
             }
         }
@@ -72,7 +79,7 @@ public static class PhysicsHelper
         bool grounded = false;
         foreach (TileBlock tile in tiles)
         {
-            if (tile.isCollideable && feet.Intersects(tile.bounds))
+            if ((tile.isCollideable || tile.isHarmful) && feet.Intersects(tile.bounds))
             {
                 grounded = true;
             }

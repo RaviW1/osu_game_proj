@@ -33,6 +33,7 @@ namespace osu_game_proj
             tileTextures.Add("top_cave_wall", Content.Load<Texture2D>("Level1BG_Top"));
             tileTextures.Add("ground_platform", Content.Load<Texture2D>("Level1Ground"));
             tileTextures.Add("left_rocks_wall", Content.Load<Texture2D>("background_left_layer1"));
+            tileTextures.Add("level1_spikes", Content.Load<Texture2D>("level1_spikes"));
 
             createMapBlocks(generateTileInfo);
         }
@@ -41,7 +42,7 @@ namespace osu_game_proj
             // Note about drawing order: foreach iterates from list[0] to list [n] in order
             foreach (TileInformation tile in generateTileInfo)
             {
-                TileBlock mapblock = new TileBlock(tileTextures[tile.tileType], tile.destRectangle, tile.isCollideable);
+                TileBlock mapblock = new TileBlock(tileTextures[tile.tileType], tile.destRectangle, tile.isCollideable, tile.isHarmful);
                 tileList.Add(mapblock);
             }
 

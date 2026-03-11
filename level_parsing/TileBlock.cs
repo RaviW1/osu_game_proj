@@ -7,19 +7,20 @@ public class TileBlock
     private Rectangle destRect;
     public Rectangle bounds;
     public bool isCollideable;
+    public bool isHarmful;
     // TODO: create field to implement hazards
 
-    public TileBlock(Texture2D texture, Rectangle destRectangle, bool isCollideable)
+    public TileBlock(Texture2D texture, Rectangle destRectangle, bool isCollideable, bool isHarmful)
     {
         this.texture = texture;
         this.destRect = destRectangle;
         this.bounds = destRectangle;
         this.isCollideable = isCollideable;
+        this.isHarmful = isHarmful;
     }
 
     public void Update()
     {
-        // Question: Do we need this for blocks? - Brooklynn
     }
 
     public void Draw(SpriteBatch spriteBatch)

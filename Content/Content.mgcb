@@ -128,6 +128,18 @@
 /processorParam:TextureFormat=Color
 /build:fungd_spikes_01.png
 
+#begin Geo - HUD_coin_shop.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Geo - HUD_coin_shop.png
+
 #begin hollow_knight_attack.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -224,6 +236,18 @@
 /processorParam:TextureFormat=Color
 /build:level1_background.png
 
+#begin level1_spikes.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:level1_spikes.png
+
 #begin Level1BG_Top.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -295,16 +319,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Unbreakable Heart - _0002_charm_glass_heal_full.png
-
-#begin Geo - HUD_coin_shop.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Geo - HUD_coin_shop.png
 

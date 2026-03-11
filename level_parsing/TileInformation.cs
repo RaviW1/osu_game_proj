@@ -7,8 +7,9 @@ public class TileInformation
     public string tileType;
     public Rectangle destRectangle;
     public bool isCollideable;
+    public bool isHarmful;
 
-    public TileInformation(string ID, int x_pos, int y_pos, int x_size, int y_size, int collide)
+    public TileInformation(string ID, int x_pos, int y_pos, int x_size, int y_size, int collide, int damage)
     {
         tileType = ID;
         destRectangle = new Rectangle(x_pos, y_pos, x_size, y_size);
@@ -19,6 +20,14 @@ public class TileInformation
         else if (collide == 1)
         {
             isCollideable = true;
+        }
+        if (damage == 0)
+        {
+            isHarmful = false;
+        }
+        else if (damage == 1)
+        {
+            isHarmful = true;
         }
     }
 }

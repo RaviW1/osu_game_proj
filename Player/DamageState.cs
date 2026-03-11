@@ -19,7 +19,8 @@ public class DamagedState : IPlayerState
         player.Velocity.Y += 500f * delta;
         player.Position.Y += player.Velocity.Y * delta;
 
-        // Use real tile collision instead of hardcoded floor
+        // TODO: should not be handled here
+        // TODO: use physics collider
         if (player.Tiles != null)
         {
             foreach (var tile in player.Tiles)
