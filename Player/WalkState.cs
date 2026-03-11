@@ -19,9 +19,6 @@ public class WalkingState : IPlayerState
         this.direction = direction;
     }
 
-    // -------------------------------------------------------------------------
-    // IPlayerState implementation
-    // -------------------------------------------------------------------------
 
     public void Reset(Player player)
     {
@@ -81,9 +78,6 @@ public class WalkingState : IPlayerState
     // No-ops
     public void Heal(Player player) { }
 
-    // -------------------------------------------------------------------------
-    // Private helpers
-    // -------------------------------------------------------------------------
 
     private void AdvanceFrame(float dt)
     {
