@@ -1,5 +1,3 @@
-Maintainability Review
-
 Author of the code review: Ravi Wijeratne
 Date of Code Review: 3/11/2026
 Sprint Number 3
@@ -20,7 +18,6 @@ the refactoring I recommend later would massively fix this issue.
 
 
 Maintainability:
-
 Dividing the logic between the two handler classes is a smart choice, which makes sure we can easily seperate out player and enemy damage.
 Also, we do avoid having our player accidentally attack themselves. Additionally, design-wise it remains consistent with our Command implementation structure.
 The pattern for both of these Collision Handlers is also very simple, handing off logic to the Enemy and Player State Machines to handle taking damage and resolving the collision.
