@@ -1,0 +1,113 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using osu_game_proj;
+
+public class HuskBully : ISprite
+{
+    private Texture2D texture;
+    private Vector2 position;
+    private Vector2 velocity;
+    private bool facingLeft;
+    private bool isDead;
+    private float floorY = 400f;
+    private int currentFrame;
+    private Rectangle[] frames = new Rectangle[8];
+    private TimeSpan delay;
+    private TimeSpan elapsedTime;
+
+    public bool IsDead => isDead;
+    
+    // Constructor
+    public HuskBully(Texture2D texture, Vector2 startPosition)
+    {
+        this.texture = texture;
+        this.position = startPosition;
+        this.velocity = new Vector2(-1, 0);
+        this.facingLeft = true;
+        this.isDead = false;
+
+        // Sprite setup
+        this.currentFrame = 0;
+        for (int i = 0; i < 7; i++)
+        {
+            this.frames[i] = new Rectangle(3 + 111*i, 174, 107, 128);
+        }
+        this.frames[7] = new Rectangle(492, 1165, 159, 110);
+        this.delay = TimeSpan.FromSeconds(0.125);
+        this.elapsedTime = TimeSpan.FromSeconds(0);
+    }
+
+    public Rectangle GetBounds(){
+        return new Rectangle((int)position.X, (int)position.Y, 35, 35); 
+    }
+
+    public void TakeDamage(){
+        this.isDead = true;
+        this.velocity = Vector2.Zero;
+    }
+
+    public float GetVelocityX() => velocity.X;
+    public float GetVelocityY() => velocity.Y;
+
+    public void BounceX() { velocity.X *= -1; facingLeft = !facingLeft; }
+    public void BounceY() { velocity.Y *= -1; }
+
+    public void Update(GameTime gameTime)
+    {
+        // Check if enemy is dead
+        if (this.isDead)
+        {
+            this.currentFrame = 7;
+            return;
+        }
+        else
+        {
+            this.elapsedTime += gameTime.ElapsedGameTime;
+            if (this.elapsedTime >= this.delay)
+            {
+                this.elapsedTime -= this.delay;
+
+                // change animation frame
+                this.currentFrame = (this.currentFrame + 1) % 7;
+            }
+
+            // Otherwise continue walking around
+            position.X += velocity.X;
+
+            if (position.X > 760 || position.X < 0)
+            {
+                velocity.X *= -1;
+                this.facingLeft = velocity.X < 0; // Update facing direction
+            }
+        }
+    }
+    
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords){
+        // Scale to a reasonable size
+        float scale = 0.35f;
+
+        // Check direction
+        var direction = SpriteEffects.None;
+        if (!this.facingLeft)
+        {
+            direction = SpriteEffects.FlipHorizontally;
+        }
+
+        if (texture != null)
+        {        
+        spriteBatch.Draw(
+            this.texture,               // texture
+            this.position,              // position
+            this.frames[currentFrame],  // sourceRectangle
+            Color.White,                // color
+            0f,                         // rotation
+            Vector2.Zero,               // origin
+            scale,                      // scale
+            direction,                  // effects
+            0f                          // layerDepth
+            );
+        }
+    }
+}

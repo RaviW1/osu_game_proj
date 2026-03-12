@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using osu_game_proj;
 
@@ -125,6 +125,14 @@ public static class PhysicsHelper
                     player.Projectiles.RemoveAt(i);
                 }
             }
+            else if (currentEnemy is HuskBully huskBully && !huskBully.IsDead)
+            {
+                if (player.Projectiles[i].GetBounds().Intersects(huskBully.GetBounds()))
+                {
+                    enemyHandler.HandleCollision(huskBully);
+                    player.Projectiles.RemoveAt(i);
+                }
+            }
         }
         // Melee hitbox vs enemies
         if (player.IsAttacking)
@@ -144,7 +152,16 @@ public static class PhysicsHelper
                     booflyMelee.TakeDamage();
                 }
             }
+            else if (currentEnemy is HuskBully huskBullyMelee && !huskBullyMelee.IsDead)
+            {
+                if (meleeHitbox.Intersects(huskBullyMelee.GetBounds()))
+                {
+                    huskBullyMelee.TakeDamage();
+                }
+            }
         }
+
+        // Enemy/block collisions
         foreach (TileBlock tile in tileGen.TileList){
             if (!tile.isCollideable) continue;
             if (currentEnemy is Aspid aspidB && !aspidB.IsDead){
@@ -156,11 +173,29 @@ public static class PhysicsHelper
                     if (isSideCollision){
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && aspidB.GetVelocityX() > 0) || (!hitFromLeft && aspidB.GetVelocityX() < 0))
-                            aspidB.BounceX();
+                        {
+                            if (tile.isHarmful)
+                            {
+                                aspidB.TakeDamage();
+                            }
+                            else
+                            {
+                                aspidB.BounceX();
+                            }
+                        }
                     }else{
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && aspidB.GetVelocityY() > 0) || (!hitFromTop && aspidB.GetVelocityY() < 0))
-                            aspidB.BounceY();
+                        {
+                            if (tile.isHarmful)
+                            {
+                                aspidB.TakeDamage();
+                            }
+                            else
+                            {
+                                aspidB.BounceY();
+                            }
+                        }
                     }
                 }
             }else if (currentEnemy is Boofly booflyB && !booflyB.IsDead){
@@ -172,11 +207,70 @@ public static class PhysicsHelper
                     if (isSideCollision){
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && booflyB.GetVelocityX() > 0) || (!hitFromLeft && booflyB.GetVelocityX() < 0))
-                            booflyB.BounceX();
-                    }else{
+                        {
+                            if (tile.isHarmful)
+                            {
+                                booflyB.TakeDamage();
+                            }
+                            else
+                            {
+                                booflyB.BounceX();
+                            }
+                        }
+                    }
+                    else{
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
-                            booflyB.BounceY();
+                        {
+                            if (tile.isHarmful)
+                            {
+                                booflyB.TakeDamage();
+                            }
+                            else
+                            {
+                                booflyB.BounceY();
+                            }
+                        }
+                    }
+                }
+            }
+            else if (currentEnemy is HuskBully huskBullyB && !huskBullyB.IsDead)
+            {
+                Rectangle b = huskBullyB.GetBounds();
+                if (b.Intersects(tile.bounds))
+                {
+                    Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
+                    bool isSideCollision = overlap.Width < overlap.Height;
+
+                    if (isSideCollision)
+                    {
+                        bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
+                        if ((hitFromLeft && huskBullyB.GetVelocityX() > 0) || (!hitFromLeft && huskBullyB.GetVelocityX() < 0))
+                        {
+                            if (tile.isHarmful)
+                            {
+                                huskBullyB.TakeDamage();
+                            }
+                            else
+                            {
+                                huskBullyB.BounceX();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
+                        if ((hitFromTop && huskBullyB.GetVelocityY() > 0) || (!hitFromTop && huskBullyB.GetVelocityY() < 0))
+                        {
+                            if (tile.isHarmful)
+                            {
+                                huskBullyB.TakeDamage();
+                            }
+                            else
+                            {
+                                huskBullyB.BounceY();
+                            }
+                        }
                     }
                 }
             }

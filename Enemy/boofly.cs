@@ -1,12 +1,13 @@
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Numerics;
-using Microsoft.Xna.Framework.Graphics;
 
 public class Boofly : ISprite
 {
     private Texture2D texture;
-    private Vector2 position;
-    private Vector2 velocity;
+    private System.Numerics.Vector2 position;
+    private System.Numerics.Vector2 velocity;
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
@@ -16,11 +17,11 @@ public class Boofly : ISprite
     public bool IsDead => isDead;
     
     
-    public Boofly(Texture2D texture, Vector2 startPosition)
+    public Boofly(Texture2D texture, System.Numerics.Vector2 startPosition)
     {
         this.texture = texture;
         this.position = startPosition;
-        this.velocity = new Vector2(50, 0);
+        this.velocity = new System.Numerics.Vector2(50, 0);
     }
 
     public Microsoft.Xna.Framework.Rectangle GetBounds(){
@@ -31,11 +32,11 @@ public class Boofly : ISprite
     public void BounceY() { velocity.Y *= -1; }
     public void TakeDamage(){
         isDead = true;
-        velocity = Vector2.Zero;
+        velocity = System.Numerics.Vector2.Zero;
     }
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
-    public void Update()
+    public void Update(GameTime gameTime)
     {
         if (isDead){
             deathVelocityY += 20f;
@@ -54,9 +55,9 @@ public class Boofly : ISprite
         bobTimer += 0.016f;
     }
     
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords){
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords){
     float bobOffset = (float)Math.Sin(bobTimer * 3) * 20;
-    Vector2 drawPos = new Vector2(position.X, position.Y + bobOffset);
+    System.Numerics.Vector2 drawPos = new System.Numerics.Vector2(position.X, position.Y + bobOffset);
     
     var xnaDrawPos = new Microsoft.Xna.Framework.Vector2(drawPos.X, drawPos.Y);
     

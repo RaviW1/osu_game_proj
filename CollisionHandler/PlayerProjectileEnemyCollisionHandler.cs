@@ -9,4 +9,9 @@ public class PlayerProjectileEnemyCollisionHandler
     {
         boofly.TakeDamage();
     }
+
+    public void HandleCollision(HuskBully huskBully)
+    {
+        huskBully.TakeDamage();
+    }
 }

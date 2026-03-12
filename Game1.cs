@@ -80,6 +80,9 @@ namespace osu_game_proj
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
+            Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
+            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
+            
             // Create pixel texture for UI
             pixelTexture = CreatePixelTexture();
 
@@ -166,14 +169,14 @@ namespace osu_game_proj
                 Exit();
 
             // TODO: Add your update logic here
-            // TODO: Break into physics statics class
+            // TODO: Break into physics statics classw
 
             //    PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
             
 
             if (enemies.Count > 0)
             {
-                enemies[currentEnemyIndex].Update();
+                enemies[currentEnemyIndex].Update(gameTime);
             }
             var handler = new ProjectilePlayerCollisionHandler();
             Rectangle playerBounds = player.GetBounds();
@@ -210,6 +213,14 @@ namespace osu_game_proj
                         player.Projectiles.RemoveAt(i);
                     }
                 }
+                else if (currentEnemy is HuskBully huskBully && !huskBully.IsDead)
+                {
+                    if (player.Projectiles[i].GetBounds().Intersects(huskBully.GetBounds()))
+                    {
+                        enemyHandler.HandleCollision(huskBully);
+                        player.Projectiles.RemoveAt(i);
+                    }
+                }
             }
             // Melee hitbox vs enemies
             if (player.IsAttacking)
@@ -229,13 +240,20 @@ namespace osu_game_proj
                         booflyMelee.TakeDamage();
                     }
                 }
+                else if (currentEnemy is HuskBully huskBullyMelee && !huskBullyMelee.IsDead)
+                {
+                    if (meleeHitbox.Intersects(huskBullyMelee.GetBounds()))
+                    {
+                        huskBullyMelee.TakeDamage();
+                    }
+                }
             }
             PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
 
 
             if (blocks.Count > 0)
             {
-                blocks[currentBlockIndex].Update();
+                blocks[currentBlockIndex].Update(gameTime);
             }
             player.Update(gameTime);
 
@@ -371,6 +389,8 @@ namespace osu_game_proj
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
+            Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
+            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
 
             // Reset item manager
             itemManager = new ItemManager(0.4f);

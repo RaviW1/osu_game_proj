@@ -1,13 +1,13 @@
-using System;
-using System.Numerics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 public class Aspid : ISprite
 {
     private Texture2D texture;
     private Texture2D fireballTexture;
-    private Vector2 position;
+    private System.Numerics.Vector2 position;
     private Vector2 velocity;
     private float hoverTimer = 0f;
     private float shootTimer = 0f;
@@ -24,7 +24,7 @@ public class Aspid : ISprite
 
     public List<Projectile> Projectiles { get; private set; }
 
-    public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)
+    public Aspid(Texture2D texture, Texture2D fireballTexture, System.Numerics.Vector2 startPosition)
     {
         this.texture = texture;
         this.fireballTexture = fireballTexture;
@@ -53,7 +53,7 @@ public class Aspid : ISprite
         Projectiles.Clear();
     }
 
-    public void Update()
+    public void Update(GameTime gameTime)
     {
         if (isDead)
         {
@@ -90,7 +90,7 @@ public class Aspid : ISprite
         // Update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
-            Projectiles[i].Update();
+            Projectiles[i].Update(gameTime);
 
             // Remove off-screen projectiles
             var projPos = Projectiles[i].GetPosition();
@@ -103,12 +103,12 @@ public class Aspid : ISprite
 
     private void ShootFireball()
     {
-        Vector2 fireballVelocity = facingLeft ? new Vector2(-150, 0) : new Vector2(150, 0);
+        System.Numerics.Vector2 fireballVelocity = facingLeft ? new System.Numerics.Vector2(-150, 0) : new System.Numerics.Vector2(150, 0);
         Projectile fireball = new Projectile(fireballTexture, position, fireballVelocity);
         Projectiles.Add(fireball);
     }
 
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
     {
         float hoverOffset = (float)Math.Sin(hoverTimer * 5) * 10;
         Vector2 drawPos = new Vector2(position.X, position.Y + hoverOffset);
@@ -139,7 +139,7 @@ public class Aspid : ISprite
         // Draw projectiles
         foreach (var projectile in Projectiles)
         {
-            projectile.Draw(spriteBatch, Vector2.Zero);
+            projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
         }
     }
 }

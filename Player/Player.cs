@@ -73,7 +73,7 @@ public class Player
         // Update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
-            Projectiles[i].Update();
+            Projectiles[i].Update(gameTime);
 
             // Remove off-screen projectiles
             var projPos = Projectiles[i].GetPosition();

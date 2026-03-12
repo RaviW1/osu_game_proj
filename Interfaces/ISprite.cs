@@ -1,8 +1,8 @@
-using System.Numerics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public interface ISprite
 {
-    void Update();
-    void Draw(SpriteBatch spriteBatch, Vector2 startCoords);
+    void Update(GameTime gameTime);
+    void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords);
 }
