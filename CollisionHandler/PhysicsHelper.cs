@@ -160,6 +160,8 @@ public static class PhysicsHelper
                 }
             }
         }
+
+        // Enemy/block collisions
         foreach (TileBlock tile in tileGen.TileList){
             if (!tile.isCollideable) continue;
             if (currentEnemy is Aspid aspidB && !aspidB.IsDead){
@@ -171,11 +173,24 @@ public static class PhysicsHelper
                     if (isSideCollision){
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && aspidB.GetVelocityX() > 0) || (!hitFromLeft && aspidB.GetVelocityX() < 0))
-                            aspidB.BounceX();
+                            if (tile.isHarmful)
+                            {
+                                aspidB.TakeDamage();
+                            } else
+                            {
+                                aspidB.BounceX();
+                            }
                     }else{
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && aspidB.GetVelocityY() > 0) || (!hitFromTop && aspidB.GetVelocityY() < 0))
-                            aspidB.BounceY();
+                            if (tile.isHarmful)
+                            {
+                                aspidB.TakeDamage();
+                            }
+                            else
+                            {
+                                aspidB.BounceY();
+                            }
                     }
                 }
             }else if (currentEnemy is Boofly booflyB && !booflyB.IsDead){
@@ -187,11 +202,26 @@ public static class PhysicsHelper
                     if (isSideCollision){
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && booflyB.GetVelocityX() > 0) || (!hitFromLeft && booflyB.GetVelocityX() < 0))
-                            booflyB.BounceX();
-                    }else{
+                            if (tile.isHarmful)
+                            {
+                                booflyB.TakeDamage();
+                            }
+                            else
+                            {
+                                booflyB.BounceX();
+                            }
+                    }
+                    else{
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
-                            booflyB.BounceY();
+                            if (tile.isHarmful)
+                            {
+                                booflyB.TakeDamage();
+                            }
+                            else
+                            {
+                                booflyB.BounceY();
+                            }
                     }
                 }
             }
@@ -207,17 +237,32 @@ public static class PhysicsHelper
                     {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && huskBullyB.GetVelocityX() > 0) || (!hitFromLeft && huskBullyB.GetVelocityX() < 0))
-                            huskBullyB.BounceX();
+                            if (tile.isHarmful)
+                            {
+                                huskBullyB.TakeDamage();
+                            }
+                            else
+                            {
+                                huskBullyB.BounceX();
+                            }
                     }
                     else
                     {
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && huskBullyB.GetVelocityY() > 0) || (!hitFromTop && huskBullyB.GetVelocityY() < 0))
-                            huskBullyB.BounceY();
+                            if (tile.isHarmful)
+                            {
+                                huskBullyB.TakeDamage();
+                            }
+                            else
+                            {
+                                huskBullyB.BounceY();
+                            }
                     }
                 }
             }
         }
+
     }
     public static void CheckPlayerGeosCollisions(Player player, List<Geo> geos, GameTime gameTime)
     {
