@@ -9,11 +9,11 @@ public class HuskBully : ISprite
     private Texture2D texture;
     private Vector2 position;
     private Vector2 velocity;
-    private bool facingLeft = true;
-    private bool isDead = false;
-    private float deathVelocityY = 0f;
-    private const float floorY = 400f;
+    private bool facingLeft;
+    private bool isDead;
+    private float floorY = 400f;
     private int currentFrame;
+    private Rectangle[] frames = new Rectangle[8];
     
     public bool IsDead => isDead;
     
@@ -23,57 +23,74 @@ public class HuskBully : ISprite
         this.texture = texture;
         this.position = startPosition;
         this.velocity = new Vector2(50, 0);
+        this.facingLeft = true;
+        this.isDead = false;
+        this.floorY = 400f;
+
+        // Sprite setup
         this.currentFrame = 0;
+        for (int i = 0; i < 7; i++)
+        {
+            this.frames[i] = new Rectangle(3 + 111*i, 174, 107, 128);
+        }
+        this.frames[7] = new Rectangle(492, 1165, 159, 110);
     }
 
     public Rectangle GetBounds(){
-        return new Rectangle((int)position.X, (int)position.Y, 56, 64); 
+        return new Rectangle((int)position.X, (int)position.Y, 159, 128); 
     }
+
     public void TakeDamage(){
         this.isDead = true;
         this.velocity = Vector2.Zero;
     }
+
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
+
     public void Update()
     {
+        // Check if enemy is dead
         if (this.isDead){
-            deathVelocityY += 20f;
-            position.Y += deathVelocityY * 0.016f;
-            if (position.Y >= floorY)
-                position.Y = floorY;
+            this.currentFrame = 7;
             return;
         }
+
+        // Otherwise continue walking around
         position.X += velocity.X * 0.016f;
         
         if (position.X > 700 || position.X < 100)
         {
             velocity.X *= -1;
+            this.facingLeft = velocity.X < 0; // Update facing direction
         }
         
     }
     
     public void Draw(SpriteBatch spriteBatch, Vector2 startCoords){
-        Vector2 drawPos = new Vector2(position.X, position.Y);
-    
-        var xnaDrawPos = new Vector2(drawPos.X, drawPos.Y);
-    
-        if (texture != null)
-        {
-        
-        int frameWidth = 280;   
-        int frameHeight = 320;  
-        int frameX = 868;       
-        int frameY = 70;         
-        
-        var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
-        
-        // Scale it to reasonable size
+        // Scale to a reasonable size
         float scale = 0.2f;
-        
-        spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
-                        0f, Microsoft.Xna.Framework.Vector2.Zero, scale,
-                        Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+
+        // Check direction
+        var direction = SpriteEffects.None;
+        if (!this.facingLeft)
+        {
+            direction = SpriteEffects.FlipHorizontally;
+        }
+
+        if (texture != null)
+        {        
+        spriteBatch.Draw(
+            this.texture,               // texture
+            this.position,              // position
+            this.frames[currentFrame],  // sourceRectangle
+            Color.White,                // color
+            0f,                         // rotation
+            Vector2.Zero,               // origin
+            scale,                      // scale
+            direction,                  // effects
+            0f                          // layerDepth
+            );
         }
     }
 }
