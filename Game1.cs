@@ -82,6 +82,7 @@ namespace osu_game_proj
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
             enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(500, 50)));
+            
             // Create pixel texture for UI
             pixelTexture = CreatePixelTexture();
 
@@ -388,6 +389,8 @@ namespace osu_game_proj
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
+            Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
+            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(500, 50)));
 
             // Reset item manager
             itemManager = new ItemManager(0.4f);
