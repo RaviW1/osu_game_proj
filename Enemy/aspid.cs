@@ -53,7 +53,7 @@ public class Aspid : ISprite
         Projectiles.Clear();
     }
 
-    public void Update(GameTime gameTime, GameWindow window)
+    public void Update(GameTime gameTime)
     {
         if (isDead)
         {
@@ -90,7 +90,7 @@ public class Aspid : ISprite
         // Update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
-            Projectiles[i].Update();
+            Projectiles[i].Update(gameTime);
 
             // Remove off-screen projectiles
             var projPos = Projectiles[i].GetPosition();

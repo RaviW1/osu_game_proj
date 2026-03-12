@@ -1,10 +1,11 @@
 using System.Numerics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public class Projectile : ISprite
 {
-    private Vector2 position;
-    private Vector2 velocity;
+    private System.Numerics.Vector2 position;
+    private System.Numerics.Vector2 velocity;
     private Texture2D texture;
     private bool movingRight;
     
@@ -14,7 +15,7 @@ public class Projectile : ISprite
     private float animationTimer = 0f;
     private float frameTime = 0.1f; // 0.1 seconds per frame
     
-    public Projectile(Texture2D texture, Vector2 startPos, Vector2 velocity)
+    public Projectile(Texture2D texture, System.Numerics.Vector2 startPos, System.Numerics.Vector2 velocity)
     {
         this.texture = texture;
         this.position = startPos;
@@ -22,7 +23,7 @@ public class Projectile : ISprite
         this.movingRight = velocity.X > 0;
     }
     
-    public void Update()
+    public void Update(GameTime gameTime)
     {
         position += velocity * 0.016f;
         
@@ -35,12 +36,12 @@ public class Projectile : ISprite
         }
     }
     
-    public Vector2 GetPosition()
+    public System.Numerics.Vector2 GetPosition()
     {
         return position;
     }
     
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
     {
         var xnaPos = new Microsoft.Xna.Framework.Vector2(position.X, position.Y);
         if (texture != null)

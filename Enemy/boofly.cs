@@ -36,7 +36,7 @@ public class Boofly : ISprite
     }
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
-    public void Update(GameTime gameTime, GameWindow window)
+    public void Update(GameTime gameTime)
     {
         if (isDead){
             deathVelocityY += 20f;

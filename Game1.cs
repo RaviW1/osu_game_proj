@@ -165,7 +165,6 @@ namespace osu_game_proj
 
         protected override void Update(GameTime gameTime)
         {
-            GameWindow window = Game1.instance.Window;
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -177,7 +176,7 @@ namespace osu_game_proj
 
             if (enemies.Count > 0)
             {
-                enemies[currentEnemyIndex].Update(gameTime, window);
+                enemies[currentEnemyIndex].Update(gameTime);
             }
             var handler = new ProjectilePlayerCollisionHandler();
             Rectangle playerBounds = player.GetBounds();
@@ -254,7 +253,7 @@ namespace osu_game_proj
 
             if (blocks.Count > 0)
             {
-                blocks[currentBlockIndex].Update(gameTime, window);
+                blocks[currentBlockIndex].Update(gameTime);
             }
             player.Update(gameTime);
 

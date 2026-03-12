@@ -1,24 +1,25 @@
 using System.Numerics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
 public class MapBlock : ISprite
 {
     private Texture2D texture;
-    public Vector2 position;
+    public System.Numerics.Vector2 position;
 
-    public MapBlock(Texture2D texture, Vector2 startPosition)
+    public MapBlock(Texture2D texture, System.Numerics.Vector2 startPosition)
     {
         this.texture = texture;
         this.position = startPosition;
     }
 
-    public void Update()
+    public void Update(GameTime gameTime)
     {
-        // Question: Do we need this for blocks? - Brooklynn
+        
     }
 
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
     {
         spriteBatch.Draw(
             this.texture,                           // texture
@@ -26,7 +27,7 @@ public class MapBlock : ISprite
             null,                                   // sourceRectangle
             Microsoft.Xna.Framework.Color.White,    // color
             0.0f,                                   // rotation
-            new Vector2(0, 0),                      // origin
+            new System.Numerics.Vector2(0, 0),      // origin
             1.0f,                                   // scale
             SpriteEffects.None,                     // effects
             0.0f                                    // layerDepth
