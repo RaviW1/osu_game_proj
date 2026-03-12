@@ -10,6 +10,7 @@ public class Husk_Bully : ISprite
     private Texture2D texture;
     private Vector2 position;
     private Vector2 velocity;
+    private int health;
     private bool facingLeft = true;
     private bool isDead = false;
     private float deathVelocityY = 0f;
@@ -32,7 +33,6 @@ public class Husk_Bully : ISprite
     {
         isDead = true;
         velocity = Vector2.Zero;
-        Projectiles.Clear();
     }
 
     public void Update()
@@ -58,28 +58,6 @@ public class Husk_Bully : ISprite
         if (position.Y > 400 || position.Y < 50)
             velocity.Y *= -1;
 
-        hoverTimer += 0.016f;
-
-        // Shooting logic
-        shootTimer += 0.016f;
-        if (shootTimer >= shootInterval)
-        {
-            ShootFireball();
-            shootTimer = 0f;
-        }
-
-        // Update projectiles
-        for (int i = Projectiles.Count - 1; i >= 0; i--)
-        {
-            Projectiles[i].Update();
-
-            // Remove off-screen projectiles
-            var projPos = Projectiles[i].GetPosition();
-            if (projPos.X < -50 || projPos.X > 850 || projPos.Y < -50 || projPos.Y > 650)
-            {
-                Projectiles.RemoveAt(i);
-            }
-        }
     }
     public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
     {
@@ -107,12 +85,6 @@ public class Husk_Bully : ISprite
             spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
                             0f, Microsoft.Xna.Framework.Vector2.Zero, scale,
                             spriteEffect, 0f);
-        }
-
-        // Draw projectiles
-        foreach (var projectile in Projectiles)
-        {
-            projectile.Draw(spriteBatch, Vector2.Zero);
         }
     }
 }
