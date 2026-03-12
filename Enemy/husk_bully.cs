@@ -24,10 +24,9 @@ public class HuskBully : ISprite
     {
         this.texture = texture;
         this.position = startPosition;
-        this.velocity = new Vector2(-40, 0);
+        this.velocity = new Vector2(-1, 0);
         this.facingLeft = true;
         this.isDead = false;
-        this.floorY = 400f;
 
         // Sprite setup
         this.currentFrame = 0;
@@ -41,7 +40,7 @@ public class HuskBully : ISprite
     }
 
     public Rectangle GetBounds(){
-        return new Rectangle((int)position.X, (int)position.Y, 107, 128); 
+        return new Rectangle((int)position.X, (int)position.Y, 35, 35); 
     }
 
     public void TakeDamage(){
@@ -52,7 +51,7 @@ public class HuskBully : ISprite
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
 
-    public void BounceX() { velocity.X *= -1; }
+    public void BounceX() { velocity.X *= -1; facingLeft = !facingLeft; }
     public void BounceY() { velocity.Y *= -1; }
 
     public void Update(GameTime gameTime)
@@ -75,9 +74,9 @@ public class HuskBully : ISprite
             }
 
             // Otherwise continue walking around
-            position.X += velocity.X * 0.016f;
+            position.X += velocity.X;
 
-            if (position.X > 750 || position.X < 0)
+            if (position.X > 760 || position.X < 0)
             {
                 velocity.X *= -1;
                 this.facingLeft = velocity.X < 0; // Update facing direction

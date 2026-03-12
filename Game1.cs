@@ -81,7 +81,7 @@ namespace osu_game_proj
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
-            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 365)));
+            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
             
             // Create pixel texture for UI
             pixelTexture = CreatePixelTexture();
@@ -390,7 +390,7 @@ namespace osu_game_proj
             Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
-            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 365)));
+            enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
 
             // Reset item manager
             itemManager = new ItemManager(0.4f);
