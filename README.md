@@ -16,7 +16,8 @@ z or n to attack
 t or y to cycle between displayed blocks  
 u or i to cycle displayed charm  
 o or p to cycle currently shown enemy  
-Left click on left or right half of game window to change to previous or next level
+Left click on top left of game window to switch to level 1
+Right click on top right of game window to switch to level 2
 
 ## Known bugs 
 none
