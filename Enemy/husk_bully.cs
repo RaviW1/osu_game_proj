@@ -14,7 +14,7 @@ public class HuskBully : ISprite
     private float floorY = 400f;
     private int currentFrame;
     private Rectangle[] frames = new Rectangle[8];
-    private TimeSpan delay = TimeSpan.FromSeconds(0.125);
+    private TimeSpan delay;
     private TimeSpan elapsedTime;
 
     public bool IsDead => isDead;
@@ -36,10 +36,12 @@ public class HuskBully : ISprite
             this.frames[i] = new Rectangle(3 + 111*i, 174, 107, 128);
         }
         this.frames[7] = new Rectangle(492, 1165, 159, 110);
+        this.delay = TimeSpan.FromSeconds(0.125);
+        this.elapsedTime = TimeSpan.FromSeconds(0);
     }
 
     public Rectangle GetBounds(){
-        return new Rectangle((int)position.X, (int)position.Y, 159, 128); 
+        return new Rectangle((int)position.X, (int)position.Y, 107, 128); 
     }
 
     public void TakeDamage(){
@@ -53,10 +55,12 @@ public class HuskBully : ISprite
     public void Update(GameTime gameTime, GameWindow window)
     {
         // Check if enemy is dead
-        if (this.isDead){
+        if (this.isDead)
+        {
             this.currentFrame = 7;
             return;
-        } else
+        }
+        else
         {
             this.elapsedTime += gameTime.ElapsedGameTime;
             if (this.elapsedTime >= this.delay)
@@ -67,18 +71,18 @@ public class HuskBully : ISprite
                 this.currentFrame = this.currentFrame % 7;
             }
 
-        // Otherwise continue walking around
-        position.X += velocity.X * 0.016f;
-        
-        if (position.X > 700 || position.X < 100)
-        {
-            velocity.X *= -1;
-            this.facingLeft = velocity.X < 0; // Update facing direction
+            // Otherwise continue walking around
+            position.X += velocity.X * 0.016f;
+
+            if (position.X > 700 || position.X < 100)
+            {
+                velocity.X *= -1;
+                this.facingLeft = velocity.X < 0; // Update facing direction
+            }
         }
-        
     }
     
-    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords){
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords){
         // Scale to a reasonable size
         float scale = 0.2f;
 
