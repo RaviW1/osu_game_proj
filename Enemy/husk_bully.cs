@@ -14,7 +14,9 @@ public class HuskBully : ISprite
     private float floorY = 400f;
     private int currentFrame;
     private Rectangle[] frames = new Rectangle[8];
-    
+    private TimeSpan delay = TimeSpan.FromSeconds(0.125);
+    private TimeSpan elapsedTime;
+
     public bool IsDead => isDead;
     
     // Constructor
@@ -48,13 +50,22 @@ public class HuskBully : ISprite
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
 
-    public void Update()
+    public void Update(GameTime gameTime, GameWindow window)
     {
         // Check if enemy is dead
         if (this.isDead){
             this.currentFrame = 7;
             return;
-        }
+        } else
+        {
+            this.elapsedTime += gameTime.ElapsedGameTime;
+            if (this.elapsedTime >= this.delay)
+            {
+                this.elapsedTime -= this.delay;
+
+                // change animation frame
+                this.currentFrame = this.currentFrame % 7;
+            }
 
         // Otherwise continue walking around
         position.X += velocity.X * 0.016f;
