@@ -24,7 +24,7 @@ public class HuskBully : ISprite
     {
         this.texture = texture;
         this.position = startPosition;
-        this.velocity = new Vector2(50, 0);
+        this.velocity = new Vector2(-40, 0);
         this.facingLeft = true;
         this.isDead = false;
         this.floorY = 400f;
@@ -71,13 +71,13 @@ public class HuskBully : ISprite
                 this.elapsedTime -= this.delay;
 
                 // change animation frame
-                this.currentFrame = this.currentFrame % 7;
+                this.currentFrame = (this.currentFrame + 1) % 7;
             }
 
             // Otherwise continue walking around
             position.X += velocity.X * 0.016f;
 
-            if (position.X > 700 || position.X < 100)
+            if (position.X > 750 || position.X < 0)
             {
                 velocity.X *= -1;
                 this.facingLeft = velocity.X < 0; // Update facing direction
@@ -87,7 +87,7 @@ public class HuskBully : ISprite
     
     public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords){
         // Scale to a reasonable size
-        float scale = 0.2f;
+        float scale = 0.35f;
 
         // Check direction
         var direction = SpriteEffects.None;
