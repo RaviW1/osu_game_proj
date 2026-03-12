@@ -125,6 +125,14 @@ public static class PhysicsHelper
                     player.Projectiles.RemoveAt(i);
                 }
             }
+            else if (currentEnemy is HuskBully huskBully && !huskBully.IsDead)
+            {
+                if (player.Projectiles[i].GetBounds().Intersects(huskBully.GetBounds()))
+                {
+                    enemyHandler.HandleCollision(huskBully);
+                    player.Projectiles.RemoveAt(i);
+                }
+            }
         }
         // Melee hitbox vs enemies
         if (player.IsAttacking)
@@ -142,6 +150,13 @@ public static class PhysicsHelper
                 if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
                 {
                     booflyMelee.TakeDamage();
+                }
+            }
+            else if (currentEnemy is HuskBully huskBullyMelee && !huskBullyMelee.IsDead)
+            {
+                if (meleeHitbox.Intersects(huskBullyMelee.GetBounds()))
+                {
+                    huskBullyMelee.TakeDamage();
                 }
             }
         }
@@ -177,6 +192,28 @@ public static class PhysicsHelper
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
                             booflyB.BounceY();
+                    }
+                }
+            }
+            else if (currentEnemy is HuskBully huskBullyB && !huskBullyB.IsDead)
+            {
+                Rectangle b = huskBullyB.GetBounds();
+                if (b.Intersects(tile.bounds))
+                {
+                    Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
+                    bool isSideCollision = overlap.Width < overlap.Height;
+
+                    if (isSideCollision)
+                    {
+                        bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
+                        if ((hitFromLeft && huskBullyB.GetVelocityX() > 0) || (!hitFromLeft && huskBullyB.GetVelocityX() < 0))
+                            huskBullyB.BounceX();
+                    }
+                    else
+                    {
+                        bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
+                        if ((hitFromTop && huskBullyB.GetVelocityY() > 0) || (!hitFromTop && huskBullyB.GetVelocityY() < 0))
+                            huskBullyB.BounceY();
                     }
                 }
             }

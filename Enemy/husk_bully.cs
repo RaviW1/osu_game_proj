@@ -52,6 +52,9 @@ public class HuskBully : ISprite
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
 
+    public void BounceX() { velocity.X *= -1; }
+    public void BounceY() { velocity.Y *= -1; }
+
     public void Update(GameTime gameTime, GameWindow window)
     {
         // Check if enemy is dead
