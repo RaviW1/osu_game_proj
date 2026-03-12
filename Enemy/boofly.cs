@@ -11,8 +11,10 @@ public class Boofly : ISprite
     private bool isDead = false;
     private float deathVelocityY = 0f;
     private const float floorY = 400f;
+    
 
     public bool IsDead => isDead;
+    
     
     public Boofly(Texture2D texture, Vector2 startPosition)
     {
@@ -25,11 +27,14 @@ public class Boofly : ISprite
         return new Microsoft.Xna.Framework.Rectangle(
             (int)position.X, (int)position.Y, 56, 64); 
     }
+    public void BounceX() { velocity.X *= -1; }
+    public void BounceY() { velocity.Y *= -1; }
     public void TakeDamage(){
         isDead = true;
         velocity = Vector2.Zero;
     }
-    
+    public float GetVelocityX() => velocity.X;
+    public float GetVelocityY() => velocity.Y;
     public void Update()
     {
         if (isDead){

@@ -16,8 +16,10 @@ public class Aspid : ISprite
     private bool isDead = false;
     private float deathVelocityY = 0f;
     private const float floorY = 400f;
+    private float bounceCooldown = 0f;
 
     public bool IsDead => isDead;
+    
 
 
     public List<Projectile> Projectiles { get; private set; }
@@ -35,6 +37,15 @@ public class Aspid : ISprite
         return new Microsoft.Xna.Framework.Rectangle(
         (int)position.X, (int)position.Y, 45, 60);
     }
+    public void BounceX(){
+        if (bounceCooldown > 0f) return;
+        velocity.X *= -1;
+        facingLeft = velocity.X < 0;
+        bounceCooldown = 0.5f;
+    }
+    public void BounceY() { velocity.Y *= -1; }
+    public float GetVelocityX() => velocity.X;
+    public float GetVelocityY() => velocity.Y;
     public void TakeDamage()
     {
         isDead = true;
@@ -55,6 +66,7 @@ public class Aspid : ISprite
 
         position.X += velocity.X * 0.016f;
         position.Y += velocity.Y * 0.016f;
+        if (bounceCooldown > 0f) bounceCooldown -= 0.016f;
 
         // Bounce off edges and flip direction
         if (position.X > 700 || position.X < 100)

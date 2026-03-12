@@ -169,6 +169,7 @@ namespace osu_game_proj
             // TODO: Break into physics statics class
 
             //    PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
+            
 
             if (enemies.Count > 0)
             {
@@ -257,6 +258,7 @@ namespace osu_game_proj
             if (instance.drawTilesGen != null)
             {
                 PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
+                PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, drawTilesGen);
             }
             
             base.Update(gameTime);

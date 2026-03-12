@@ -87,7 +87,7 @@ public static class PhysicsHelper
         player.OnGround = grounded;
     }
 
-    public static void CheckEnemyCollisions(Player player, List<ISprite> enemies, int currentEnemyIndex)
+    public static void CheckEnemyCollisions(Player player, List<ISprite> enemies, int currentEnemyIndex, TileGenerator tileGen)
     {
 
         var handler = new ProjectilePlayerCollisionHandler();
@@ -142,6 +142,42 @@ public static class PhysicsHelper
                 if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
                 {
                     booflyMelee.TakeDamage();
+                }
+            }
+        }
+        foreach (TileBlock tile in tileGen.TileList){
+            if (!tile.isCollideable) continue;
+            if (currentEnemy is Aspid aspidB && !aspidB.IsDead){
+                Rectangle b = aspidB.GetBounds();
+                if (b.Intersects(tile.bounds)){
+                    Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
+                    bool isSideCollision = overlap.Width < overlap.Height;
+
+                    if (isSideCollision){
+                        bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
+                        if ((hitFromLeft && aspidB.GetVelocityX() > 0) || (!hitFromLeft && aspidB.GetVelocityX() < 0))
+                            aspidB.BounceX();
+                    }else{
+                        bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
+                        if ((hitFromTop && aspidB.GetVelocityY() > 0) || (!hitFromTop && aspidB.GetVelocityY() < 0))
+                            aspidB.BounceY();
+                    }
+                }
+            }else if (currentEnemy is Boofly booflyB && !booflyB.IsDead){
+                Rectangle b = booflyB.GetBounds();
+                if (b.Intersects(tile.bounds)){
+                    Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
+                    bool isSideCollision = overlap.Width < overlap.Height;
+
+                    if (isSideCollision){
+                        bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
+                        if ((hitFromLeft && booflyB.GetVelocityX() > 0) || (!hitFromLeft && booflyB.GetVelocityX() < 0))
+                            booflyB.BounceX();
+                    }else{
+                        bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
+                        if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
+                            booflyB.BounceY();
+                    }
                 }
             }
         }
