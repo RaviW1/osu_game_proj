@@ -5,7 +5,7 @@ using System;
 public class JumpState : IPlayerState
 {
     // Physics constants
-    private const float InitialVelocity = -400f;
+    private const float InitialVelocity = -440f;
     private const float Gravity = 1200f;
 
     // Variable jump height — extra upward force applied while jump is held
@@ -39,6 +39,8 @@ public class JumpState : IPlayerState
     public void Update(Player player, GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        player.SuppressLandingTransition = true;
 
         ApplyGravity(player, dt);
         AdvanceFrame(dt);
