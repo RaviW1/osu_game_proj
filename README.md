@@ -17,10 +17,11 @@ t or y to cycle between displayed blocks
 u or i to cycle displayed charm  
 o or p to cycle currently shown enemy  
 Left click on top left of game window to switch to level 1
-Right click on top right of game window to switch to level 2
+Left click on top right of game window to switch to level 2
 
 ## Known bugs 
-none
+There is an animation jump when beginning to fall.
 
 ## Documention
-Code Reviews and sprint reflection are in the documentation folder
+Code Reviews / sprint reflection are in the documentation/Sprint_3 folder
+Maintainability and Code Quality reviews are included in the same file.

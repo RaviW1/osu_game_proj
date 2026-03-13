@@ -52,7 +52,7 @@ public static class PhysicsHelper
 
         foreach (TileBlock tile in tiles)
         {
-            if (tile.isCollideable || tile.isHarmful)
+            if (tile.isCollideable)
             {
                 if (playerBound.Intersects(tile.bounds))
                 {
@@ -80,7 +80,7 @@ public static class PhysicsHelper
         bool grounded = false;
         foreach (TileBlock tile in tiles)
         {
-            if ((tile.isCollideable || tile.isHarmful) && feet.Intersects(tile.bounds))
+            if ((tile.isCollideable) && feet.Intersects(tile.bounds))
             {
                 grounded = true;
             }

@@ -1,0 +1,9 @@
+Author of the code review: Owen Wang
+Date of the code review: Mar 12
+Sprint number: Sprint 3
+Name of the .cs file being reviewed: husk_bully.cs
+Author of the .cs file being reviewed: Brooklyn
+Number of minutes taken to complete the review: 25
+Specific comments on code readability: This code is easy to read. Field declarations are grouped on the top and metho names clearly communicate the function of the method. The constructor walks through in a correct order. The update’s bollean logic is easy to follow. One part is the magic number that is used may be hard to track for future changes if needed. However, overall is good.
+
+Specific comments on code maintainability: The class is easy to modify in isolation. If a change in sprite is needed, the values can all be found here and changed accordingly. It is possible to take some of the common methods for every enemy that share in common out and put them in a new file to save some space. Overall, the code quality is high,
