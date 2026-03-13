@@ -1,4 +1,4 @@
-﻿ using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using osu_game_proj;
 
@@ -64,6 +64,7 @@ public static class PhysicsHelper
                 if (playerBound.Intersects(tile.bounds))
                 {
                     player.TakeDamage();
+                    player.PlayerHealth--;
                 }
             }
         }
@@ -162,15 +163,19 @@ public static class PhysicsHelper
         }
 
         // Enemy/block collisions
-        foreach (TileBlock tile in tileGen.TileList){
+        foreach (TileBlock tile in tileGen.TileList)
+        {
             if (!tile.isCollideable) continue;
-            if (currentEnemy is Aspid aspidB && !aspidB.IsDead){
+            if (currentEnemy is Aspid aspidB && !aspidB.IsDead)
+            {
                 Rectangle b = aspidB.GetBounds();
-                if (b.Intersects(tile.bounds)){
+                if (b.Intersects(tile.bounds))
+                {
                     Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
                     bool isSideCollision = overlap.Width < overlap.Height;
 
-                    if (isSideCollision){
+                    if (isSideCollision)
+                    {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && aspidB.GetVelocityX() > 0) || (!hitFromLeft && aspidB.GetVelocityX() < 0))
                         {
@@ -183,7 +188,9 @@ public static class PhysicsHelper
                                 aspidB.BounceX();
                             }
                         }
-                    }else{
+                    }
+                    else
+                    {
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && aspidB.GetVelocityY() > 0) || (!hitFromTop && aspidB.GetVelocityY() < 0))
                         {
@@ -198,13 +205,17 @@ public static class PhysicsHelper
                         }
                     }
                 }
-            }else if (currentEnemy is Boofly booflyB && !booflyB.IsDead){
+            }
+            else if (currentEnemy is Boofly booflyB && !booflyB.IsDead)
+            {
                 Rectangle b = booflyB.GetBounds();
-                if (b.Intersects(tile.bounds)){
+                if (b.Intersects(tile.bounds))
+                {
                     Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
                     bool isSideCollision = overlap.Width < overlap.Height;
 
-                    if (isSideCollision){
+                    if (isSideCollision)
+                    {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && booflyB.GetVelocityX() > 0) || (!hitFromLeft && booflyB.GetVelocityX() < 0))
                         {
@@ -218,7 +229,8 @@ public static class PhysicsHelper
                             }
                         }
                     }
-                    else{
+                    else
+                    {
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
                         {
