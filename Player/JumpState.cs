@@ -5,7 +5,7 @@ using System;
 public class JumpState : IPlayerState
 {
     // Physics constants
-    private const float InitialVelocity = -500f;
+    private const float InitialVelocity = -400f;
     private const float Gravity = 1200f;
 
     // Variable jump height — extra upward force applied while jump is held
@@ -20,6 +20,8 @@ public class JumpState : IPlayerState
     private float jumpHeldTime = 0f;
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
+
+    
 
     // -------------------------------------------------------------------------
     // IPlayerState implementation
@@ -42,13 +44,16 @@ public class JumpState : IPlayerState
         AdvanceFrame(dt);
 
         // Hand off to FallingState once we start moving downward
-        if (player.Velocity.Y >= 0f)
+        if (player.Velocity.Y >= 0f) {
+            player.SuppressLandingTransition = false;
             player.ChangeState(new FallingState());
+        }
     }
 
     // Called every frame the jump button is held — boosts jump height up to MaxHoldTime
     public void JumpHeld(Player player, float deltaTime)
     {
+        player.SuppressLandingTransition = true;
         if (jumpHeldTime >= MaxHoldTime)
             return;
 

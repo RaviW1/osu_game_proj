@@ -138,37 +138,31 @@ public class Player
             (int)(Position.Y - 20),
             30, 40);
         Rectangle overlap = Rectangle.Intersect(playerBounds, tileBounds);
-        // vertical collsion
+
         if (overlap.Width > overlap.Height)
         {
-            // TODO: try using Physics Handler's Land On Tile Method 
-
-            // player above tile
-            if (Position.Y < tileBounds.Y)
+            // Player is above the tile and moving downward (landing) — not jumping through it
+            if (Position.Y < tileBounds.Y && !SuppressLandingTransition)
             {
                 Position.Y -= overlap.Height;
                 Velocity.Y = 0;
                 IsAirborne = false;
-                if (!SuppressLandingTransition)
-                    this.ChangeState(new IdleState());
+                ChangeState(new IdleState());
             }
-            else
+            else if (Position.Y >= tileBounds.Y)
             {
+                // Bonked a ceiling
                 Position.Y += overlap.Height;
                 Velocity.Y = 0;
             }
+            // If SuppressLandingTransition is true and player is above tile, do nothing — let them pass through
         }
-        // horizontal collision
         else
         {
             if (playerBounds.X < tileBounds.X)
-            {
                 Position.X -= overlap.Width;
-            }
             else
-            {
                 Position.X += overlap.Width;
-            }
         }
     }
 
