@@ -1,0 +1,12 @@
+Sprint 3 Code Metrics
+
+
+Average maintainability index: 89.91
+
+Average cyclomatic complexity: 3.33
+
+Overall our code metrics are still strong. It was not that difficult to build on top of our work from Sprint 2, and we hope this will continue into Sprint 4. We had a slight increase in maintainability which is nice, but also a bit of an increase in cyclomatic complexity. However, the complexity is still relatively low, so we are not too concerned.
+
+In terms of outliers, the Update() and LoadContent() methods in the Game1 class had low maintainability indices, however this will hopefully be solved with a lot of refactoring, which we have been putting on the back burner given the approaching Sprint 3 deadline. While they were not necessarily outliers, other places with low maintainability included our PhysicsHelper class and a few miscellaneous "setup" methods (such as methods dealing with keybinds). 
+
+Additionally, our Aspid, PhysicsHelper, Player, and Game1 classes had very high cyclomatic complexity. While it makes more sense for the latter three classes to have higher complexity simply due to their nature, the Aspid class implements the behavior for just one enemy, and none of the other enemy classes have such high complexity. This is definitely an outlier and may need to be looked at in the future.
