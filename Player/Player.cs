@@ -20,7 +20,6 @@ public class Player
     public Color DrawColor = Color.White;
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
-    public List<TileBlock> Tiles { get; set; }
 
     public bool SuppressLandingTransition { get; set; } = false;
 

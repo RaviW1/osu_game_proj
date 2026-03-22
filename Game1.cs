@@ -57,6 +57,7 @@ namespace osu_game_proj
             BindKeyboardKeys keyBindObj = new BindKeyboardKeys(keyboard);
             keyBindObj.bindKeys(this);
 
+            //TODO: Pull this out of Game1
             // ---- Item cycling (u = previous, i = next) ----
             itemManager = new ItemManager(0.4f);
             var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir, player));
@@ -82,7 +83,7 @@ namespace osu_game_proj
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
             enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
-            
+
             // Create pixel texture for UI
             pixelTexture = CreatePixelTexture();
 
@@ -114,6 +115,7 @@ namespace osu_game_proj
             Texture2D fungalSpikeTexture = Content.Load<Texture2D>("fungd_spikes_01");
             blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
+            // Load tile generators
             List<TileInformation> generateTileInfo = new List<TileInformation>();
             level1FileLoader = new LoadLevelFile();
             level1FileLoader.LoadFile("level_files/test_level.xml", generateTileInfo);
@@ -172,7 +174,7 @@ namespace osu_game_proj
             // TODO: Break into physics statics classw
 
             //    PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
-            
+
 
             if (enemies.Count > 0)
             {
@@ -271,14 +273,14 @@ namespace osu_game_proj
 
 
             itemManager.Update(gameTime);
-            
+
 
             if (instance.drawTilesGen != null)
             {
                 PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
                 PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, drawTilesGen);
             }
-            
+
             base.Update(gameTime);
         }
 
@@ -366,7 +368,6 @@ namespace osu_game_proj
                 instance.drawTilesGen = instance.tileGenObj2;
                 instance.geos = instance.geosLevel2;
             }
-            instance.player.Tiles = instance.drawTilesGen.TileList;
         }
 
         public void Reset()
