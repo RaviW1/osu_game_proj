@@ -66,6 +66,9 @@ namespace osu_game_proj
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Test
+            Texture2D elderbug = Content.Load<Texture2D>("NPC Sprites\\Elderbug");
+
             // Load enemy textures
             enemies = new List<ISprite>();
             Texture2D enemyTexture = Content.Load<Texture2D>("boofly");

@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Aspid.png
+/build:Aspid.png;Enemy Sprites/aspid_hunter
 
 #begin background_left_layer1.png
 /importer:TextureImporter
@@ -35,7 +35,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:background_left_layer1.png
+/build:background_left_layer1.png;Environment/background_left_layer1
 
 #begin boofly.png
 /importer:TextureImporter
@@ -47,7 +47,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:boofly.png
+/build:boofly.png;Enemy Sprites/boofly
 
 #begin Dashmaster_0011_charm_generic_03.png
 /importer:TextureImporter
@@ -116,6 +116,18 @@
 /processorParam:TextureFormat=Color
 /build:floating_platform1.png
 
+#begin floating_platform1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:floating_platform1.png;Environment/floating_platform1
+
 #begin fungd_spikes_01.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -127,6 +139,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:fungd_spikes_01.png
+
+#begin fungd_spikes_01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fungd_spikes_01.png;Environment/fungd_spikes_01
 
 #begin Geo - HUD_coin_shop.png
 /importer:TextureImporter
@@ -186,7 +210,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:husk_bully.png
+/build:husk_bully.png;Enemy Sprites/husk_bully
 
 #begin knight_attack.png
 /importer:TextureImporter
@@ -248,6 +272,18 @@
 /processorParam:TextureFormat=Color
 /build:level1_background.png
 
+#begin level1_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:level1_background.png;Environment/level1_background
+
 #begin level1_spikes.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -283,6 +319,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Level1Ground.png
+
+#begin NPC Sprites/Elderbug.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:NPC Sprites/Elderbug.png
 
 #begin Soul_orb_fills.png
 /importer:TextureImporter
