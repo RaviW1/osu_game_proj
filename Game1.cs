@@ -71,12 +71,12 @@ namespace osu_game_proj
 
             // Load enemy textures
             enemies = new List<ISprite>();
-            Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
+            Texture2D enemyTexture = Content.Load<Texture2D>("Enemy Sprites\\boofly");
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D aspidTexture = Content.Load<Texture2D>("Enemy Sprites\\aspid_hunter");
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
-            Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
+            Texture2D huskBullyTexture = Content.Load<Texture2D>("Enemy Sprites\\husk_bully");
             enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
 
             // Create pixel texture for UI
@@ -349,11 +349,11 @@ namespace osu_game_proj
 
             // Reset enemies
             enemies.Clear();
-            Texture2D enemyTexture = Content.Load<Texture2D>("boofly");
+            Texture2D enemyTexture = Content.Load<Texture2D>("Enemy Sprites\\boofly");
             enemies.Add(new Boofly(enemyTexture, new System.Numerics.Vector2(500, 50)));
-            Texture2D aspidTexture = Content.Load<Texture2D>("Aspid");
+            Texture2D aspidTexture = Content.Load<Texture2D>("Enemy Sprites\\aspid_hunter");
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
-            Texture2D huskBullyTexture = Content.Load<Texture2D>("husk_bully");
+            Texture2D huskBullyTexture = Content.Load<Texture2D>("Enemy Sprites\\husk_bully");
             enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
 
             // Reset item manager
