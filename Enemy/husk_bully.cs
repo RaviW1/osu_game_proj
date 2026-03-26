@@ -11,7 +11,6 @@ public class HuskBully : ISprite
     private Vector2 velocity;
     private bool facingLeft;
     private bool isDead;
-    private float floorY = 400f;
     private int currentFrame;
     private Rectangle[] frames = new Rectangle[8];
     private TimeSpan delay;
@@ -32,7 +31,7 @@ public class HuskBully : ISprite
         this.currentFrame = 0;
         for (int i = 0; i < 7; i++)
         {
-            this.frames[i] = new Rectangle(3 + 111*i, 174, 107, 128);
+            this.frames[i] = new Rectangle(4 + 111*i, 175, 106, 128);
         }
         this.frames[7] = new Rectangle(492, 1165, 159, 110);
         this.delay = TimeSpan.FromSeconds(0.125);
