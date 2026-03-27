@@ -9,6 +9,7 @@ namespace osu_game_proj
 {
     public class Game1 : Game
     {
+        // TODO: too many fields here
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player player;
@@ -23,16 +24,7 @@ namespace osu_game_proj
         private AbilityBar abilityBar;
         private Texture2D pixelTexture;
         private SpriteFont font;
-        private List<Geo> geos;
-        private List<Geo> geosLevel1;
-        private List<Geo> geosLevel2;
-        private Texture2D geoTexture;
-        private List<TileInformation> generateTileInfo;
-        private LoadLevelFile level1FileLoader;
-        private TileGenerator tileGenObj1;
-        private LoadLevelFile level2FileLoader;
-        private TileGenerator tileGenObj2;
-        private TileGenerator drawTilesGen;
+        private LevelsHandler levels;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -57,6 +49,7 @@ namespace osu_game_proj
             BindKeyboardKeys keyBindObj = new BindKeyboardKeys(keyboard);
             keyBindObj.bindKeys(this);
 
+            //TODO: Pull this out of Game1
             // ---- Item cycling (u = previous, i = next) ----
             itemManager = new ItemManager(0.4f);
             var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir, player));
@@ -85,7 +78,7 @@ namespace osu_game_proj
             enemies.Add(new Aspid(aspidTexture, fireballTexture, new System.Numerics.Vector2(500, 50)));
             Texture2D huskBullyTexture = Content.Load<Texture2D>("Enemy Sprites\\husk_bully");
             enemies.Add(new HuskBully(huskBullyTexture, new System.Numerics.Vector2(100, 360)));
-            
+
             // Create pixel texture for UI
             pixelTexture = CreatePixelTexture();
 
@@ -117,30 +110,10 @@ namespace osu_game_proj
             Texture2D fungalSpikeTexture = Content.Load<Texture2D>("fungd_spikes_01");
             blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
-            List<TileInformation> generateTileInfo = new List<TileInformation>();
-            level1FileLoader = new LoadLevelFile();
-            level1FileLoader.LoadFile("level_files/test_level.xml", generateTileInfo);
+            // Load tile generators
+            levels = new LevelsHandler();
+            levels.LoadLevelTiles(Content);
 
-            tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-            tileGenObj1.LoadTileTextures(Content);
-
-            generateTileInfo.Clear();
-
-            // Load Level 2
-            level2FileLoader = new LoadLevelFile();
-            level2FileLoader.LoadFile("level_files/test_level2.xml", generateTileInfo);
-
-            tileGenObj2 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-            tileGenObj2.LoadTileTextures(Content);
-
-            drawTilesGen = tileGenObj1;
-
-            geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
-            geosLevel1 = new List<Geo>();
-            geosLevel2 = new List<Geo>();
-            Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
-            Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
-            geos = geosLevel1;
 
             // TODO: use this.Content to load your game content here
 
@@ -152,7 +125,6 @@ namespace osu_game_proj
 
             // create new player object
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
-            player.Tiles = drawTilesGen.TileList;
 
             // Load item textures and add to item manager
             // ID 0: Unbreakable Heart (+2 HP on select), ID 1: Dashmaster (canDash on select)
@@ -175,7 +147,7 @@ namespace osu_game_proj
             // TODO: Break into physics statics classw
 
             //    PhysicsHelper.CheckEnemyCollisions(player, enemies, currentBlockIndex);
-            
+
 
             if (enemies.Count > 0)
             {
@@ -251,7 +223,7 @@ namespace osu_game_proj
                     }
                 }
             }
-            PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
+            PhysicsHelper.CheckPlayerGeosCollisions(player, levels.currentGeos, gameTime);
 
 
             if (blocks.Count > 0)
@@ -274,14 +246,14 @@ namespace osu_game_proj
 
 
             itemManager.Update(gameTime);
-            
 
-            if (instance.drawTilesGen != null)
+
+            if (levels.currentTilesGen != null)
             {
-                PhysicsHelper.CheckCollisions(player, instance.drawTilesGen);
-                PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, drawTilesGen);
+                PhysicsHelper.CheckCollisions(player, levels.currentTilesGen);
+                PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, levels.currentTilesGen);
             }
-            
+
             base.Update(gameTime);
         }
 
@@ -293,7 +265,7 @@ namespace osu_game_proj
 
             _spriteBatch.Begin();
 
-            drawTilesGen.Draw(_spriteBatch);
+            levels.Draw(_spriteBatch);
 
             // TODO: break this out into a seperate class
             if (enemies.Count > 0)
@@ -308,7 +280,7 @@ namespace osu_game_proj
             abilityBar.Draw(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
 
-            foreach (var geo in geos)
+            foreach (var geo in levels.currentGeos)
             {
                 geo.Draw(_spriteBatch);
             }
@@ -316,7 +288,6 @@ namespace osu_game_proj
             player.Draw(_spriteBatch, gameTime);
             itemManager.Draw(_spriteBatch);
 
-            // TODO: Break HUD drawing into seperate class
             int viewWidth = GraphicsDevice.Viewport.Width;
 
             HUD.DrawHUD(player, _spriteBatch, viewWidth, font);
@@ -359,17 +330,7 @@ namespace osu_game_proj
         }
         public static void CycleStage(int direction)
         {
-            if (direction == -1)
-            {
-                instance.drawTilesGen = instance.tileGenObj1;
-                instance.geos = instance.geosLevel1;
-            }
-            else if (direction == 1)
-            {
-                instance.drawTilesGen = instance.tileGenObj2;
-                instance.geos = instance.geosLevel2;
-            }
-            instance.player.Tiles = instance.drawTilesGen.TileList;
+            instance.levels.CycleStage(direction);
         }
 
         public void Reset()
@@ -383,7 +344,7 @@ namespace osu_game_proj
 
             Texture2D fireballTexture = Content.Load<Texture2D>("fireball");
             player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
-            player.Tiles = drawTilesGen.TileList;
+            //player.Tiles = drawTilesGen.TileList;
 
 
             // Reset enemies
@@ -403,44 +364,19 @@ namespace osu_game_proj
             itemManager.AddItem(new TextureItem(1, dashmaster, p => p.CanDash = true, p => p.CanDash = false), new Vector2(100, 10));
 
             // Reset geos for both levels
-            geosLevel1.Clear();
-            geosLevel2.Clear();
-
-            Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
-            Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
-            geos = (drawTilesGen == tileGenObj1) ? geosLevel1 : geosLevel2;
+            instance.levels.ClearGeos();
 
             // Reset indices
             currentEnemyIndex = 0;
             currentBlockIndex = 0;
         }
 
+        // TODO: maybe move this out to its own static helper class
         private Texture2D CreatePixelTexture()
         {
             Texture2D texture = new Texture2D(GraphicsDevice, 1, 1);
             texture.SetData(new[] { Color.White });
             return texture;
-        }
-
-        // DO NOT USE
-        // WILL BE REMOVED SOON
-        public static List<Rectangle> GetCurrentLevelColliders()
-        {
-            var rects = new List<Rectangle>();
-
-            foreach (var tile in instance.drawTilesGen.generateTileInfo)
-            {
-                // Skip decorative background tiles
-                if (tile.tileType == "level1_background" ||
-                    tile.tileType == "left_rocks_wall" ||
-                    tile.tileType == "right_cave_wall" ||
-                    tile.tileType == "top_cave_wall")
-                    continue;
-
-                rects.Add(tile.destRectangle);
-            }
-
-            return rects;
         }
     }
 }

@@ -45,17 +45,6 @@ public class AttackState : IPlayerState
         {
             ApplyAirbornePhysics(player, dt);
 
-            // Check if we landed on a tile mid-attack
-            //            foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
-            //            {
-            //                if (player.GetBounds().Intersects(tile) && PhysicsHelper.IsLandingOnTile(player, tile))
-            //                {
-            //                    PhysicsHelper.LandOnTile(player, tile);
-            //                    player.IsAttacking = false;
-            //                    player.ChangeState(new IdleState());
-            //                    return;
-            //                }
-            //            }
         }
 
         // Attack finished — return to appropriate state

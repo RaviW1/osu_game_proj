@@ -20,7 +20,6 @@ public class Player
     public Color DrawColor = Color.White;
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
-    public List<TileBlock> Tiles { get; set; }
 
     public bool SuppressLandingTransition { get; set; } = false;
 
@@ -90,6 +89,7 @@ public class Player
     }
     public void ShootFireball()
     {
+        // TODO: break into new class
         // Shoot in the direction player is facing
         float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
         System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
