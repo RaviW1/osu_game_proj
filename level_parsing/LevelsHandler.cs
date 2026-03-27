@@ -28,7 +28,6 @@ namespace osu_game_proj
             levelGenList.Add(tileGenObj);
             generateTileInfo.Clear();
         }
-        // TODO: incorporate Geo logic and use this in Game1
         // TODO: add arg to specify starting level
         public void LoadLevelTiles(ContentManager Content)
         {
@@ -80,16 +79,9 @@ namespace osu_game_proj
             }
             else if (direction == 1)
             {
-                if (currentLevelNum < levelGenList.Count)
+                if (currentLevelNum < levelGenList.Count - 1)
                 {
                     currentLevelNum++;
-                    currentTilesGen = levelGenList[currentLevelNum];
-                    currentGeos = allLevelGeos[currentLevelNum];
-                }
-                else
-                {
-
-                    currentLevelNum = levelGenList.Count - 1;
                     currentTilesGen = levelGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
                 }
@@ -97,7 +89,6 @@ namespace osu_game_proj
         }
         public void ClearGeos()
         {
-
             allLevelGeos.Clear();
             foreach (TileGenerator tileGen in levelGenList)
             {
