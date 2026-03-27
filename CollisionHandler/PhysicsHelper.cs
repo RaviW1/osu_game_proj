@@ -5,22 +5,6 @@ using osu_game_proj;
 
 public static class PhysicsHelper
 {
-    // CURRENTLY UNUSED
-    // IVE KEPT THESE FUNCTIONS JUST IN CASE
-    // Returns true if there is a solid tile directly below the player's feet
-    public static bool HasGroundBelow(Player player)
-    {
-        Rectangle feet = new Rectangle(
-            player.GetBounds().X,
-            player.GetBounds().Bottom,
-            player.GetBounds().Width,
-            4);
-
-        foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
-            if (feet.Intersects(tile)) return true;
-
-        return false;
-    }
 
     // CURRENTLY UNUSED
     // IVE KEPT THESE FUNCTIONS JUST IN CASE

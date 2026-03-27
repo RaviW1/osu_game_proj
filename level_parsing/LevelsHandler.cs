@@ -7,41 +7,52 @@ namespace osu_game_proj
 
     public class LevelsHandler
     {
-        private LoadLevelFile level1FileLoader;
-        private TileGenerator tileGenObj1;
-        private LoadLevelFile level2FileLoader;
-        private TileGenerator tileGenObj2;
         private List<TileGenerator> levelGenList;
         private int currentLevelNum;
+        private Texture2D geoTexture;
+        private List<List<Geo>> allLevelGeos;
 
+        public List<Geo> currentGeos;
         public TileGenerator currentTilesGen;
+
+        public void LoadSingleLevel(string level_path, ContentManager Content)
+        {
+
+            List<TileInformation> generateTileInfo = new List<TileInformation>();
+            LoadLevelFile levelFileLoader = new LoadLevelFile();
+            levelFileLoader.LoadFile(level_path, generateTileInfo);
+
+            TileGenerator tileGenObj = new TileGenerator(new List<TileInformation>(generateTileInfo));
+            tileGenObj.LoadTileTextures(Content);
+
+            levelGenList.Add(tileGenObj);
+            generateTileInfo.Clear();
+        }
         // TODO: incorporate Geo logic and use this in Game1
+        // TODO: add arg to specify starting level
         public void LoadLevelTiles(ContentManager Content)
         {
             // TODO: Create new method for these code blocks
 
+            geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
+            levelGenList = new List<TileGenerator>();
+            allLevelGeos = new List<List<Geo>>();
+
             // Load level1
-            List<TileInformation> generateTileInfo = new List<TileInformation>();
-            level1FileLoader = new LoadLevelFile();
-            level1FileLoader.LoadFile("level_files/test_level.xml", generateTileInfo);
-
-            tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-            tileGenObj1.LoadTileTextures(Content);
-
-            levelGenList.Add(tileGenObj1);
-            generateTileInfo.Clear();
+            this.LoadSingleLevel("level_files/test_level.xml", Content);
 
             // Load Level 2
-            level2FileLoader = new LoadLevelFile();
-            level2FileLoader.LoadFile("level_files/test_level2.xml", generateTileInfo);
+            this.LoadSingleLevel("level_files/test_level2.xml", Content);
 
-            tileGenObj2 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-            tileGenObj2.LoadTileTextures(Content);
+            foreach (TileGenerator tileGen in levelGenList)
+            {
+                List<Geo> geo_level = new List<Geo>();
+                Geo.PlaceGeosOnPlatforms(tileGen, geo_level, geoTexture);
+                allLevelGeos.Add(geo_level);
+            }
 
-            levelGenList.Add(tileGenObj2);
-            generateTileInfo.Clear();
-
-            currentTilesGen = tileGenObj1;
+            currentTilesGen = levelGenList[0];
+            currentGeos = allLevelGeos[0];
             currentLevelNum = 0;
 
         }
@@ -57,21 +68,44 @@ namespace osu_game_proj
                 {
                     currentLevelNum--;
                     currentTilesGen = levelGenList[currentLevelNum];
-                    //instance.geos = instance.geosLevel1;
+                    currentGeos = allLevelGeos[currentLevelNum];
 
                 }
                 else
                 {
                     currentLevelNum = 0;
                     currentTilesGen = levelGenList[currentLevelNum];
+                    currentGeos = allLevelGeos[currentLevelNum];
                 }
             }
             else if (direction == 1)
             {
-                currentLevelNum++;
-                currentTilesGen = levelGenList[currentLevelNum];
-                //instance.geos = instance.geosLevel2;
+                if (currentLevelNum < levelGenList.Count)
+                {
+                    currentLevelNum++;
+                    currentTilesGen = levelGenList[currentLevelNum];
+                    currentGeos = allLevelGeos[currentLevelNum];
+                }
+                else
+                {
+
+                    currentLevelNum = levelGenList.Count - 1;
+                    currentTilesGen = levelGenList[currentLevelNum];
+                    currentGeos = allLevelGeos[currentLevelNum];
+                }
             }
+        }
+        public void ClearGeos()
+        {
+
+            allLevelGeos.Clear();
+            foreach (TileGenerator tileGen in levelGenList)
+            {
+                List<Geo> geo_level = new List<Geo>();
+                Geo.PlaceGeosOnPlatforms(tileGen, geo_level, geoTexture);
+                allLevelGeos.Add(geo_level);
+            }
+            currentGeos = allLevelGeos[currentLevelNum];
         }
     }
 }

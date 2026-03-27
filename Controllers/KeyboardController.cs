@@ -19,22 +19,6 @@ public class KeyboardController : IController
         mappings[key] = command;
     }
 
-    //public void Update()
-    //{
-    //    KeyboardState current = Keyboard.GetState();
-    //
-    //    foreach (var pair in mappings)
-    //    {
-    //        Keys key = pair.Key;
-    //
-    //        if (current.IsKeyDown(key) && previousState.IsKeyUp(key))
-    //        {
-    //            pair.Value.Execute();
-    //        }
-    //    }
-    //
-    //    previousState = current;
-    //}
 
     public List<ICommand> GetCommands(GameTime gameTime)
     {

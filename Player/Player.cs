@@ -89,6 +89,7 @@ public class Player
     }
     public void ShootFireball()
     {
+        // TODO: break into new class
         // Shoot in the direction player is facing
         float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
         System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
