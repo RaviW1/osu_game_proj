@@ -1,4 +1,4 @@
-using osu_game_proj; // ADD THIS LINE
+using osu_game_proj;
 using Microsoft.Xna.Framework;
 public class CycleStageCommand : ICommand
 {

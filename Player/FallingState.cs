@@ -33,24 +33,11 @@ public class FallingState : IPlayerState
 
         player.Velocity.Y += Gravity * dt;
         player.Position.Y += player.Velocity.Y * dt;
-        
         AdvanceFrame(dt);
-
-        //        foreach (Rectangle tile in Game1.GetCurrentLevelColliders())
-        //        {
-        //            if (player.GetBounds().Intersects(tile) && PhysicsHelper.IsLandingOnTile(player, tile))
-        //            {
-        //                PhysicsHelper.LandOnTile(player, tile);
-        //                player.ChangeState(new IdleState());
-        //                return;
-        //            }
-        //        }
-        
     }
 
     public void Walk(Player player, int direction)
     {
-        
         if (direction > 0) player.facing = SpriteEffects.None;
         else if (direction < 0) player.facing = SpriteEffects.FlipHorizontally;
         player.Position.X += direction * WalkSpeed;

@@ -1,6 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
 
 public class DamagedState : IPlayerState
 {
@@ -21,16 +19,16 @@ public class DamagedState : IPlayerState
 
         // TODO: should not be handled here
         // TODO: use physics collider
-        if (player.Tiles != null)
-        {
-            foreach (var tile in player.Tiles)
-            {
-                if (tile.isCollideable && player.GetBounds().Intersects(tile.bounds))
-                {
-                    player.HandleOverlap(tile.bounds);
-                }
-            }
-        }
+        //if (player.Tiles != null)
+        //{
+        //    foreach (var tile in player.Tiles)
+        //    {
+        //        if (tile.isCollideable && player.GetBounds().Intersects(tile.bounds))
+        //        {
+        //            player.HandleOverlap(tile.bounds);
+        //        }
+        //    }
+        //}
 
         // Toggle visibility using a bool so it can never get stuck transparent
         if (blinkTimer >= 0.1f)
