@@ -464,7 +464,7 @@
 /processorParam:TextureFormat=Color
 /build:Level1Ground.png
 
-#begin NPC Sprites/Cornifer.png
+#begin NPC Sprites/cornifer.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -474,9 +474,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:NPC Sprites/Cornifer.png;NPC Sprites/cornifer.png
+/build:NPC Sprites/cornifer.png
 
-#begin NPC Sprites/Elderbug.png
+#begin NPC Sprites/elderbug.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -486,7 +486,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:NPC Sprites/Elderbug.png;NPC Sprites/elderbug.png
+/build:NPC Sprites/elderbug.png
 
 #begin NPC Sprites/grub.png
 /importer:TextureImporter
