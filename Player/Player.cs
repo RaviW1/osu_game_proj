@@ -15,7 +15,7 @@ public class Player
     public Rectangle sourceRectangle;
     public SpriteEffects facing = SpriteEffects.None;
 
-    private IPlayerState currentState;
+    private IEnemyState currentState;
 
     public Color DrawColor = Color.White;
     public List<Projectile> Projectiles { get; private set; }
@@ -82,7 +82,7 @@ public class Player
             }
         }
     }
-    public void ChangeState(IPlayerState newState)
+    public void ChangeState(IEnemyState newState)
     {
         currentState = newState;
         newState.Reset(this);

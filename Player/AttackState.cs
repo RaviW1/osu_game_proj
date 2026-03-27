@@ -51,7 +51,7 @@ public class AttackState : IPlayerState
         if (attackTimer >= AttackDuration)
         {
             player.IsAttacking = false;
-            player.ChangeState(wasJumping ? (IPlayerState)new FallingState() : new IdleState());
+            player.ChangeState(wasJumping ? (IEnemyState)new FallingState() : new IdleState());
         }
     }
 
