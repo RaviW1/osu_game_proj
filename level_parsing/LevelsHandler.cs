@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace osu_game_proj
 {
 
+    // TODO: incorporate Enemies as part of LevelsHandler
     public class LevelsHandler
     {
         private List<TileGenerator> levelGenList;
@@ -39,7 +40,6 @@ namespace osu_game_proj
 
             // Load level1
             this.LoadSingleLevel("level_files/test_level.xml", Content);
-
             // Load Level 2
             this.LoadSingleLevel("level_files/test_level2.xml", Content);
 
