@@ -33,6 +33,8 @@ namespace osu_game_proj
         private LoadLevelFile level2FileLoader;
         private TileGenerator tileGenObj2;
         private TileGenerator drawTilesGen;
+
+        private IScene _currentScene;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -280,6 +282,8 @@ namespace osu_game_proj
             }
             
             base.Update(gameTime);
+
+            _currentScene = new GameScene(GraphicsDevice, Content);
         }
 
         protected override void Draw(GameTime gameTime)
