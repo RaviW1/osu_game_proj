@@ -38,6 +38,18 @@ namespace osu_game_proj
         private int currentEnemyIndex;
         private int currentBlockIndex;
 
+        private List<Geo> geos;
+        private List<Geo> geosLevel1;
+        private List<Geo> geosLevel2;
+        private Texture2D geoTexture;
+        private List<TileInformation> generateTileInfo;
+        private LoadLevelFile level1FileLoader;
+        private TileGenerator tileGenObj1;
+        private LoadLevelFile level2FileLoader;
+        private TileGenerator tileGenObj2;
+        private TileGenerator drawTilesGen;
+
+        private IScene _currentScene;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -120,6 +132,8 @@ namespace osu_game_proj
             }
 
             base.Update(gameTime);
+
+            _currentScene = new GameScene(GraphicsDevice, Content);
         }
 
 
