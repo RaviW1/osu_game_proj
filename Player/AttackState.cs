@@ -45,6 +45,13 @@ public class AttackState : IPlayerState
         {
             ApplyAirbornePhysics(player, dt);
 
+            // Check if we landed on a tile mid-attack
+            if (player.OnGround)
+            {
+                player.IsAirborne = false;
+                player.ChangeState(new IdleState());
+                return;
+            }
         }
 
         // Attack finished — return to appropriate state

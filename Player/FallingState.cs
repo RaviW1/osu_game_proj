@@ -33,7 +33,16 @@ public class FallingState : IPlayerState
 
         player.Velocity.Y += Gravity * dt;
         player.Position.Y += player.Velocity.Y * dt;
+
         AdvanceFrame(dt);
+
+        if (player.OnGround)
+        {
+            player.IsAirborne = false;
+            player.ChangeState(new IdleState());
+            return;
+        }
+
     }
 
     public void Walk(Player player, int direction)

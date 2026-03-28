@@ -192,4 +192,8 @@ public class Player
     {
         currentState.Heal(this);
     }
+    public void LookUp(int direction)
+    {
+        currentState.LookUp(this, direction);
+    }
 }
