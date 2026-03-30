@@ -24,6 +24,10 @@ public class IdleState : IPlayerState
             return;
         }
     }
+    public void LookUp(Player player, int direction)
+    {
+        player.ChangeState(new LookUpState(direction));
+    }
 
     public void Walk(Player player, int direction) => player.ChangeState(new WalkingState(direction));
     public void Jump(Player player) => player.ChangeState(new JumpState());

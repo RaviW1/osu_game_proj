@@ -11,4 +11,5 @@ public interface IPlayerState
     void TakeDamage(Player player);
     void Heal(Player player);
     void JumpHeld(Player player, float deltaTime) { }
+    public void LookUp(Player player, int direction);
 }

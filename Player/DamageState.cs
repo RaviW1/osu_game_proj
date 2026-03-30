@@ -29,6 +29,12 @@ public class DamagedState : IPlayerState
         //        }
         //    }
         //}
+        if (player.OnGround)
+        {
+            player.IsAirborne = false;
+            player.ChangeState(new IdleState());
+            return;
+        }
 
         // Toggle visibility using a bool so it can never get stuck transparent
         if (blinkTimer >= 0.1f)
