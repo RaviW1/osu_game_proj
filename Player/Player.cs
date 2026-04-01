@@ -21,6 +21,10 @@ public class Player
     public List<Projectile> Projectiles { get; private set; }
     private Texture2D fireballTexture;
 
+    private float invincibilityTimer = 0f;
+    private const float InvincibilityDuration = 1.0f;
+    public bool IsInvincible => invincibilityTimer > 0f;
+
     public bool SuppressLandingTransition { get; set; } = false;
 
     // Player status variables
@@ -67,6 +71,12 @@ public class Player
 
     public void Update(GameTime gameTime)
     {
+
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if (invincibilityTimer > 0f)
+            invincibilityTimer -= dt;
+
         currentState.Update(this, gameTime);
 
         // Update projectiles
@@ -81,6 +91,9 @@ public class Player
                 Projectiles.RemoveAt(i);
             }
         }
+
+
+        
     }
     public void ChangeState(IPlayerState newState)
     {
@@ -163,6 +176,8 @@ public class Player
                 Position.X -= overlap.Width;
             else
                 Position.X += overlap.Width;
+
+            Velocity.X = 0;
         }
     }
 
@@ -186,6 +201,8 @@ public class Player
 
     public void TakeDamage()
     {
+        if (IsInvincible) return;
+        invincibilityTimer = InvincibilityDuration;
         currentState.TakeDamage(this);
     }
     public void Heal()

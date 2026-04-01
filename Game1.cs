@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 
 namespace osu_game_proj
 {
@@ -50,12 +50,12 @@ namespace osu_game_proj
         private TileGenerator drawTilesGen;
 
         private IScene _currentScene;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            instance = this;
         }
 
 
@@ -98,6 +98,8 @@ namespace osu_game_proj
 
             levels = new LevelsHandler();
             levels.LoadLevelTiles(Content);
+            _currentScene = new GameScene(GraphicsDevice, Content, this);
+            _currentScene.Load();
         }
 
 
@@ -131,9 +133,12 @@ namespace osu_game_proj
                 PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, levels.currentTilesGen);
             }
 
-            base.Update(gameTime);
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+                || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 
-            _currentScene = new GameScene(GraphicsDevice, Content);
+            _currentScene.Update(gameTime);
+            base.Update(gameTime);
         }
 
 
@@ -159,6 +164,7 @@ namespace osu_game_proj
             abilityBar.Draw(_spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             HUD.DrawHUD(player, _spriteBatch, GraphicsDevice.Viewport.Width, font);
 
+            _currentScene.Draw(_spriteBatch, gameTime);
             _spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -308,5 +314,10 @@ namespace osu_game_proj
             texture.SetData(new[] { Color.White });
             return texture;
         }
+=======
+            _currentScene.Draw(_spriteBatch, gameTime);
+            base.Draw(gameTime);
+        }
+>>>>>>> b353c20 (camera system and bug fixes)
     }
 }

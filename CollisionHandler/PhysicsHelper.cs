@@ -2,59 +2,42 @@
 using System.Collections.Generic;
 using osu_game_proj;
 
-
 public static class PhysicsHelper
 {
-
-    // CURRENTLY UNUSED
-    // IVE KEPT THESE FUNCTIONS JUST IN CASE
-    // Returns true if player is falling and their feet are near the top of a tile
-    public static bool IsLandingOnTile(Player player, Rectangle tile)
-    {
-        Rectangle playerBounds = player.GetBounds();
-        bool isFalling = player.Velocity.Y > 0;
-        bool feetNearTop = playerBounds.Bottom - tile.Top < 20;
-
-        return isFalling && feetNearTop;
-    }
-
-    // CURRENTLY UNUSED
-    // IVE KEPT THESE FUNCTIONS JUST IN CASE
-    // Snaps player to the top of a tile and zeroes vertical velocity
-    public static void LandOnTile(Player player, Rectangle tile)
-    {
-        Rectangle playerBounds = player.GetBounds();
-        player.Position.Y = tile.Top - (playerBounds.Height / 2f);
-        player.Velocity.Y = 0f;
-        player.IsAirborne = false;
-    }
     public static void CheckCollisions(Player player, TileGenerator tileGen)
     {
         Rectangle playerBound = player.GetBounds();
-
         var tiles = tileGen.TileList;
 
+        var overlapping = new List<TileBlock>();
         foreach (TileBlock tile in tiles)
         {
-            if (tile.isCollideable || tile.isHarmful)
+            if ((tile.isCollideable || tile.isHarmful) && playerBound.Intersects(tile.bounds))
+                overlapping.Add(tile);
+        }
+
+        foreach (TileBlock tile in overlapping)
+        {
+            Rectangle overlap = Rectangle.Intersect(player.GetBounds(), tile.bounds);
+            if (overlap.Height <= overlap.Width)
+                player.HandleOverlap(tile.bounds);
+        }
+        foreach (TileBlock tile in overlapping)
+        {
+            Rectangle overlap = Rectangle.Intersect(player.GetBounds(), tile.bounds);
+            if (overlap.Width < overlap.Height)
+                player.HandleOverlap(tile.bounds);
+        }
+
+        foreach (TileBlock tile in overlapping)
+        {
+            if (tile.isHarmful && !player.IsInvincible)
             {
-                if (playerBound.Intersects(tile.bounds))
-                {
-                    player.HandleOverlap(tile.bounds);
-                }
-            }
-            if (tile.isHarmful)
-            {
-                if (playerBound.Intersects(tile.bounds))
-                {
-                    player.TakeDamage();
-                    player.PlayerHealth--;
-                }
+                player.TakeDamage();
+                player.PlayerHealth--;
             }
         }
 
-
-        // TODO: figure out how to merge these two loops
         Rectangle feet = new Rectangle(
             player.GetBounds().X,
             player.GetBounds().Bottom,
@@ -67,6 +50,7 @@ public static class PhysicsHelper
             if ((tile.isCollideable || tile.isHarmful) && feet.Intersects(tile.bounds))
             {
                 grounded = true;
+                break;
             }
         }
         player.OnGround = grounded;
@@ -74,7 +58,6 @@ public static class PhysicsHelper
 
     public static void CheckEnemyCollisions(Player player, List<ISprite> enemies, int currentEnemyIndex, TileGenerator tileGen)
     {
-
         var handler = new ProjectilePlayerCollisionHandler();
         Rectangle playerBounds = player.GetBounds();
 
@@ -89,6 +72,7 @@ public static class PhysicsHelper
                 }
             }
         }
+
         var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
         ISprite currentEnemy = enemies[currentEnemyIndex];
 
@@ -119,37 +103,31 @@ public static class PhysicsHelper
                 }
             }
         }
-        // Melee hitbox vs enemies
+
         if (player.IsAttacking)
         {
             Rectangle meleeHitbox = player.GetMeleeHitbox();
             if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead)
             {
                 if (meleeHitbox.Intersects(aspidMelee.GetBounds()))
-                {
                     aspidMelee.TakeDamage();
-                }
             }
             else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead)
             {
                 if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
-                {
                     booflyMelee.TakeDamage();
-                }
             }
             else if (currentEnemy is HuskBully huskBullyMelee && !huskBullyMelee.IsDead)
             {
                 if (meleeHitbox.Intersects(huskBullyMelee.GetBounds()))
-                {
                     huskBullyMelee.TakeDamage();
-                }
             }
         }
 
-        // Enemy/block collisions
         foreach (TileBlock tile in tileGen.TileList)
         {
             if (!tile.isCollideable) continue;
+
             if (currentEnemy is Aspid aspidB && !aspidB.IsDead)
             {
                 Rectangle b = aspidB.GetBounds();
@@ -157,20 +135,13 @@ public static class PhysicsHelper
                 {
                     Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
                     bool isSideCollision = overlap.Width < overlap.Height;
-
                     if (isSideCollision)
                     {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && aspidB.GetVelocityX() > 0) || (!hitFromLeft && aspidB.GetVelocityX() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                aspidB.TakeDamage();
-                            }
-                            else
-                            {
-                                aspidB.BounceX();
-                            }
+                            if (tile.isHarmful) aspidB.TakeDamage();
+                            else aspidB.BounceX();
                         }
                     }
                     else
@@ -178,14 +149,8 @@ public static class PhysicsHelper
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && aspidB.GetVelocityY() > 0) || (!hitFromTop && aspidB.GetVelocityY() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                aspidB.TakeDamage();
-                            }
-                            else
-                            {
-                                aspidB.BounceY();
-                            }
+                            if (tile.isHarmful) aspidB.TakeDamage();
+                            else aspidB.BounceY();
                         }
                     }
                 }
@@ -197,20 +162,13 @@ public static class PhysicsHelper
                 {
                     Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
                     bool isSideCollision = overlap.Width < overlap.Height;
-
                     if (isSideCollision)
                     {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && booflyB.GetVelocityX() > 0) || (!hitFromLeft && booflyB.GetVelocityX() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                booflyB.TakeDamage();
-                            }
-                            else
-                            {
-                                booflyB.BounceX();
-                            }
+                            if (tile.isHarmful) booflyB.TakeDamage();
+                            else booflyB.BounceX();
                         }
                     }
                     else
@@ -218,14 +176,8 @@ public static class PhysicsHelper
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && booflyB.GetVelocityY() > 0) || (!hitFromTop && booflyB.GetVelocityY() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                booflyB.TakeDamage();
-                            }
-                            else
-                            {
-                                booflyB.BounceY();
-                            }
+                            if (tile.isHarmful) booflyB.TakeDamage();
+                            else booflyB.BounceY();
                         }
                     }
                 }
@@ -237,20 +189,13 @@ public static class PhysicsHelper
                 {
                     Rectangle overlap = Rectangle.Intersect(b, tile.bounds);
                     bool isSideCollision = overlap.Width < overlap.Height;
-
                     if (isSideCollision)
                     {
                         bool hitFromLeft = b.Center.X < tile.bounds.Center.X;
                         if ((hitFromLeft && huskBullyB.GetVelocityX() > 0) || (!hitFromLeft && huskBullyB.GetVelocityX() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                huskBullyB.TakeDamage();
-                            }
-                            else
-                            {
-                                huskBullyB.BounceX();
-                            }
+                            if (tile.isHarmful) huskBullyB.TakeDamage();
+                            else huskBullyB.BounceX();
                         }
                     }
                     else
@@ -258,20 +203,15 @@ public static class PhysicsHelper
                         bool hitFromTop = b.Center.Y < tile.bounds.Center.Y;
                         if ((hitFromTop && huskBullyB.GetVelocityY() > 0) || (!hitFromTop && huskBullyB.GetVelocityY() < 0))
                         {
-                            if (tile.isHarmful)
-                            {
-                                huskBullyB.TakeDamage();
-                            }
-                            else
-                            {
-                                huskBullyB.BounceY();
-                            }
+                            if (tile.isHarmful) huskBullyB.TakeDamage();
+                            else huskBullyB.BounceY();
                         }
                     }
                 }
             }
         }
     }
+
     public static void CheckPlayerGeosCollisions(Player player, List<Geo> geos, GameTime gameTime)
     {
         Rectangle playerBounds = player.GetBounds();
