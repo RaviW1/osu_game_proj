@@ -112,6 +112,6 @@ public class AttackState : IPlayerState
     private void ApplyAirbornePhysics(Player player, float dt)
     {
         player.Velocity.Y += Gravity * dt;
-        player.Position += player.Velocity * dt;
+        player.Position.Y += player.Velocity.Y * dt;  // Y only
     }
 }

@@ -1,17 +1,19 @@
 using Microsoft.Xna.Framework;
-using osu_game_proj; // ADD THIS LINE
+using osu_game_proj;
 
 public class CycleEnemyCommand : ICommand
 {
     private int direction;
-    
-    public CycleEnemyCommand(int direction)
+    private GameScene scene;
+
+    public CycleEnemyCommand(int direction, GameScene scene)
     {
         this.direction = direction;
+        this.scene = scene;
     }
-    
+
     public void Execute(Player player, GameTime gameTime)
     {
-        Game1.CycleEnemy(direction);
+        scene.CycleEnemy(direction);
     }
 }

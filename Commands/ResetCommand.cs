@@ -1,17 +1,16 @@
 using Microsoft.Xna.Framework;
-using osu_game_proj;
 
 public class ResetCommand : ICommand
 {
-    private readonly Game1 game;
+    private readonly GameScene scene;
 
-    public ResetCommand(Game1 game)
+    public ResetCommand(GameScene scene)
     {
-        this.game = game;
+        this.scene = scene;
     }
 
     public void Execute(Player player, GameTime gameTime)
     {
-        game.Reset();
+        scene.Reset();
     }
 }
