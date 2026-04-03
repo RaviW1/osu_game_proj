@@ -8,7 +8,7 @@ public class RoomA : RoomBase
 {
     public RoomA()
     {
-        Bounds = new Rectangle(0, 0, 400, 900);
+        Bounds = new Rectangle(0, 0, 1000, 900);
     }
 
     public override void Load(ContentManager content)
