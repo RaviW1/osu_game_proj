@@ -18,10 +18,14 @@ namespace osu_game_proj
 
             foreach (var t in doc.Descendants("Tile"))
             {
-                // TODO: Create new tile object for each tile in XML File
-                //  for each tile object we add to a list then pass that list to tileGenerator
+                // Create new tile object for each tile in XML File
+                // for each tile object we add to a list then pass that list to tileGenerator
                 TileInformation tileInfo = new TileInformation((string)t.Attribute("id"), (int)t.Attribute("x_pos"), (int)t.Attribute("y_pos"), (int)t.Attribute("x_size"), (int)t.Attribute("y_size"), (int)t.Attribute("collide"), (int)t.Attribute("damage"));
                 generateTileInfo.Add(tileInfo);
+            }
+            foreach (var t in doc.Descendants("Enemy"))
+            {
+                EnemyInformation enemyInfo = new EnemyInformation();
             }
         }
     }
