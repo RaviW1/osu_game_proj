@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using osu_game_proj;
 
-public class HuskBully : ISprite
+public class HuskBully : ISprite, IEnemy
 {
     private Texture2D texture;
     private Vector2 position;
@@ -18,8 +18,7 @@ public class HuskBully : ISprite
     private TimeSpan elapsedTime;
 
     public bool IsDead => isDead;
-    
-    // Constructor
+
     public HuskBully(Texture2D texture, Vector2 startPosition)
     {
         this.texture = texture;
@@ -27,87 +26,77 @@ public class HuskBully : ISprite
         this.velocity = new Vector2(-1, 0);
         this.facingLeft = true;
         this.isDead = false;
-
-        // Sprite setup
         this.currentFrame = 0;
         for (int i = 0; i < 7; i++)
-        {
-            this.frames[i] = new Rectangle(3 + 111*i, 174, 107, 128);
-        }
+            this.frames[i] = new Rectangle(3 + 111 * i, 174, 107, 128);
         this.frames[7] = new Rectangle(492, 1165, 159, 110);
         this.delay = TimeSpan.FromSeconds(0.125);
         this.elapsedTime = TimeSpan.FromSeconds(0);
     }
 
-    public Rectangle GetBounds(){
-        return new Rectangle((int)position.X, (int)position.Y, 35, 35); 
+    public Rectangle GetBounds()
+    {
+        return new Rectangle((int)position.X, (int)position.Y, 35, 35);
     }
 
-    public void TakeDamage(){
-        this.isDead = true;
-        this.velocity = Vector2.Zero;
-    }
-
+    public void TakeDamage() { isDead = true; velocity = Vector2.Zero; }
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
-
     public void BounceX() { velocity.X *= -1; facingLeft = !facingLeft; }
     public void BounceY() { velocity.Y *= -1; }
 
-    public void Update(GameTime gameTime)
+    public void ResolveCollisions(List<CollisionResult> results)
     {
-        // Check if enemy is dead
-        if (this.isDead)
+        foreach (var result in results)
         {
-            this.currentFrame = 7;
-            return;
-        }
-        else
-        {
-            this.elapsedTime += gameTime.ElapsedGameTime;
-            if (this.elapsedTime >= this.delay)
+            if (result.IsHarmful)
             {
-                this.elapsedTime -= this.delay;
-
-                // change animation frame
-                this.currentFrame = (this.currentFrame + 1) % 7;
+                TakeDamage();
+                continue;
             }
 
-            // Otherwise continue walking around
-            position.X += velocity.X;
+            if (!result.IsCollideable) continue;
 
-            if (position.X > 760 || position.X < 0)
+            switch (result.Direction)
             {
-                velocity.X *= -1;
-                this.facingLeft = velocity.X < 0; // Update facing direction
+                case CollisionDirection.Left:
+                case CollisionDirection.Right:
+                    BounceX();
+                    break;
+                case CollisionDirection.Up:
+                case CollisionDirection.Down:
+                    BounceY();
+                    break;
             }
         }
     }
-    
-    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords){
-        // Scale to a reasonable size
-        float scale = 0.35f;
 
-        // Check direction
-        var direction = SpriteEffects.None;
-        if (!this.facingLeft)
+    public void Update(GameTime gameTime)
+    {
+        if (isDead) { currentFrame = 7; return; }
+
+        elapsedTime += gameTime.ElapsedGameTime;
+        if (elapsedTime >= delay)
         {
-            direction = SpriteEffects.FlipHorizontally;
+            elapsedTime -= delay;
+            currentFrame = (currentFrame + 1) % 7;
         }
 
+        position.X += velocity.X;
+        if (position.X > 760 || position.X < 0)
+        {
+            velocity.X *= -1;
+            facingLeft = velocity.X < 0;
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
+    {
+        var direction = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (texture != null)
-        {        
-        spriteBatch.Draw(
-            this.texture,               // texture
-            this.position,              // position
-            this.frames[currentFrame],  // sourceRectangle
-            Color.White,                // color
-            0f,                         // rotation
-            Vector2.Zero,               // origin
-            scale,                      // scale
-            direction,                  // effects
-            0f                          // layerDepth
-            );
+        {
+            spriteBatch.Draw(texture, position, frames[currentFrame],
+                Color.White, 0f, Vector2.Zero, 0.35f, direction, 0f);
         }
     }
 }

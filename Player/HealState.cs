@@ -6,7 +6,7 @@ public class HealingState : IPlayerState
     private const float healDuration = 0.5f;
     private float blinkTimer = 0f;
 
-    public void Reset(Player player)
+    public void OnEnter(Player player)
     {
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
@@ -41,5 +41,9 @@ public class HealingState : IPlayerState
     public void Jump(Player player) { }
     public void Attack(Player player) { }
     public void TakeDamage(Player player) { }
+
+    public void StopWalking(Player player) { }
+
+    public void JumpHeld(Player player, float deltaTime) { }
     public void Heal(Player player) { }
 }

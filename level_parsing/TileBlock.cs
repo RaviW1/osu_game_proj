@@ -8,32 +8,30 @@ public class TileBlock
     public Rectangle bounds;
     public bool isCollideable;
     public bool isHarmful;
-    // TODO: create field to implement hazards
+    public string tileType;  
 
-    public TileBlock(Texture2D texture, Rectangle destRectangle, bool isCollideable, bool isHarmful)
+    public TileBlock(Texture2D texture, Rectangle destRectangle, bool isCollideable, bool isHarmful, string tileType = "")
     {
         this.texture = texture;
         this.destRect = destRectangle;
         this.bounds = destRectangle;
         this.isCollideable = isCollideable;
         this.isHarmful = isHarmful;
+        this.tileType = tileType;  
     }
 
-    public void Update()
-    {
-    }
+    public void Update() { }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         spriteBatch.Draw(
-            this.texture,                           // texture
-            this.destRect,                          // position
-            null,                                   // sourceRectangle
-            Microsoft.Xna.Framework.Color.White,    // color
-            0.0f,                                   // rotation
-            new Vector2(0, 0),                      // origin
-            SpriteEffects.None,                     // effects
-            0.0f                                    // layerDepth
-            );
+            this.texture,
+            this.destRect,
+            null,
+            Color.White,
+            0.0f,
+            new Vector2(0, 0),
+            SpriteEffects.None,
+            0.0f);
     }
 }

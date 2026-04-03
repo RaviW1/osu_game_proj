@@ -39,13 +39,21 @@ namespace osu_game_proj
         }
         public void createMapBlocks(List<TileInformation> generateTileInfo)
         {
-            // Note about drawing order: foreach iterates from list[0] to list [n] in order
             foreach (TileInformation tile in generateTileInfo)
             {
-                TileBlock mapblock = new TileBlock(tileTextures[tile.tileType], tile.destRectangle, tile.isCollideable, tile.isHarmful);
+                if (!tileTextures.ContainsKey(tile.tileType))
+                {
+                    System.Console.WriteLine($"MISSING TEXTURE KEY: {tile.tileType}");
+                    continue;
+                }
+                TileBlock mapblock = new TileBlock(
+                    tileTextures[tile.tileType],
+                    tile.destRectangle,
+                    tile.isCollideable,
+                    tile.isHarmful,
+                    tile.tileType);
                 tileList.Add(mapblock);
             }
-
         }
         public void Draw(SpriteBatch spriteBatch)
         {

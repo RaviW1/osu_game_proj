@@ -4,13 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using osu_game_proj;
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 public class GameScene : IScene
 {
     private readonly GraphicsDevice _graphics;
     private readonly ContentManager _content;
-    private readonly Game1 _game;  
+    private readonly Game1 _game;
 
     // Game state
     private Player player;
@@ -28,11 +27,11 @@ public class GameScene : IScene
     private List<Geo> geosLevel1;
     private List<Geo> geosLevel2;
     private Texture2D geoTexture;
-    private LoadLevelFile level1FileLoader;
-    private LoadLevelFile level2FileLoader;
-    private TileGenerator tileGenObj1;
-    private TileGenerator tileGenObj2;
-    private TileGenerator drawTilesGen;
+
+    // Rooms
+    private RoomBase _currentRoom;
+    private RoomBase _roomA;
+    private RoomBase _roomB;
 
     // Camera
     private Camera2D _camera;
@@ -49,7 +48,7 @@ public class GameScene : IScene
         // Input
         keyboard = new KeyboardController();
         BindKeys keyBindObj = new BindKeys(keyboard);
-        keyBindObj.bindKeys(this, _game);  // ONE call, passing both
+        keyBindObj.bindKeys(this, _game);
 
         itemManager = new ItemManager(0.4f);
         var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir, player));
@@ -95,26 +94,19 @@ public class GameScene : IScene
         Texture2D fungalSpikeTexture = _content.Load<Texture2D>("fungd_spikes_01");
         blocks.Add(new MapBlock(fungalSpikeTexture, new System.Numerics.Vector2(50, 50)));
 
-        // Tiles
-        List<TileInformation> generateTileInfo = new List<TileInformation>();
-        level1FileLoader = new LoadLevelFile();
-        level1FileLoader.LoadFile("level_files/test_level.xml", generateTileInfo);
-        tileGenObj1 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-        tileGenObj1.LoadTileTextures(_content);
-        generateTileInfo.Clear();
-
-        level2FileLoader = new LoadLevelFile();
-        level2FileLoader.LoadFile("level_files/test_level2.xml", generateTileInfo);
-        tileGenObj2 = new TileGenerator(new List<TileInformation>(generateTileInfo));
-        tileGenObj2.LoadTileTextures(_content);
-        drawTilesGen = tileGenObj1;
+        // Rooms
+        _roomA = new RoomA();
+        _roomB = new RoomB();
+        _roomA.Load(_content);
+        _roomB.Load(_content);
+        _currentRoom = _roomA;
 
         // Geos
         geoTexture = _content.Load<Texture2D>("Geo - HUD_coin_shop");
         geosLevel1 = new List<Geo>();
         geosLevel2 = new List<Geo>();
-        Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
-        Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
+        Geo.PlaceGeosOnPlatforms(_roomA.Tiles, geosLevel1, geoTexture);
+        Geo.PlaceGeosOnPlatforms(_roomB.Tiles, geosLevel2, geoTexture);
         geos = geosLevel1;
 
         // Player
@@ -124,7 +116,7 @@ public class GameScene : IScene
         playerTextures.Add("Attacking", _content.Load<Texture2D>("knight_attack"));
         playerTextures.Add("Attack", _content.Load<Texture2D>("hollow_knight_attack"));
         player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
-        player.Tiles = drawTilesGen.TileList;
+
 
         // Items
         Texture2D unbreakableHeart = _content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
@@ -136,88 +128,27 @@ public class GameScene : IScene
 
         // Camera — always last
         _camera = new Camera2D(_graphics);
-        _camera.RoomBounds = new Rectangle(0, 0, 3200, 720);
+        _camera.RoomBounds = _currentRoom.Bounds;
         _camera.SnapTo(player.Position);
     }
 
     public void Update(GameTime gameTime)
     {
-        if (enemies.Count > 0)
-            enemies[currentEnemyIndex].Update(gameTime);
-
         Rectangle playerBounds = player.GetBounds();
-        var handler = new ProjectilePlayerCollisionHandler();
-
-        if (enemies[currentEnemyIndex] is Aspid aspid)
-        {
-            for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
-            {
-                if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
-                {
-                    handler.HandleCollision(player, aspid.Projectiles[i]);
-                    aspid.Projectiles.RemoveAt(i);
-                }
-            }
-        }
-
-        var enemyHandler = new PlayerProjectileEnemyCollisionHandler();
         ISprite currentEnemy = enemies[currentEnemyIndex];
 
-        for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+        // 1. Collision first — sets OnGround
+        _currentRoom.Update(gameTime, player);
+
+        // 2. Enemy collision
+        if (currentEnemy is IEnemy enemyCollision && !enemyCollision.IsDead)
         {
-            if (currentEnemy is Aspid aspid2 && !aspid2.IsDead)
-            {
-                if (player.Projectiles[i].GetBounds().Intersects(aspid2.GetBounds()))
-                {
-                    enemyHandler.HandleCollision(aspid2);
-                    player.Projectiles.RemoveAt(i);
-                }
-            }
-            else if (currentEnemy is Boofly boofly && !boofly.IsDead)
-            {
-                if (player.Projectiles[i].GetBounds().Intersects(boofly.GetBounds()))
-                {
-                    enemyHandler.HandleCollision(boofly);
-                    player.Projectiles.RemoveAt(i);
-                }
-            }
-            else if (currentEnemy is HuskBully huskBully && !huskBully.IsDead)
-            {
-                if (player.Projectiles[i].GetBounds().Intersects(huskBully.GetBounds()))
-                {
-                    enemyHandler.HandleCollision(huskBully);
-                    player.Projectiles.RemoveAt(i);
-                }
-            }
+            var enemyVelocity = new Vector2(enemyCollision.GetVelocityX(), enemyCollision.GetVelocityY());
+            var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), _currentRoom.Tiles, enemyVelocity);
+            enemyCollision.ResolveCollisions(enemyResults);
         }
 
-        if (player.IsAttacking)
-        {
-            Rectangle meleeHitbox = player.GetMeleeHitbox();
-            if (currentEnemy is Aspid aspidMelee && !aspidMelee.IsDead)
-            {
-                if (meleeHitbox.Intersects(aspidMelee.GetBounds()))
-                    aspidMelee.TakeDamage();
-            }
-            else if (currentEnemy is Boofly booflyMelee && !booflyMelee.IsDead)
-            {
-                if (meleeHitbox.Intersects(booflyMelee.GetBounds()))
-                    booflyMelee.TakeDamage();
-            }
-            else if (currentEnemy is HuskBully huskBullyMelee && !huskBullyMelee.IsDead)
-            {
-                if (meleeHitbox.Intersects(huskBullyMelee.GetBounds()))
-                    huskBullyMelee.TakeDamage();
-            }
-        }
-
-        PhysicsHelper.CheckPlayerGeosCollisions(player, geos, gameTime);
-
-        if (blocks.Count > 0)
-            blocks[currentBlockIndex].Update(gameTime);
-
-        player.Update(gameTime);
-
+        // 3. Input next — sets commandReceivedThisFrame before player.Update reads it
         List<ICommand> currentCommands = keyboard.GetCommands(gameTime);
         foreach (ICommand command in currentCommands)
             command.Execute(player, gameTime);
@@ -226,24 +157,75 @@ public class GameScene : IScene
         foreach (ICommand command in currentMouseCommands)
             command.Execute(player, gameTime);
 
-        itemManager.Update(gameTime);
+        // 4. Player update — states now see correct OnGround AND correct input
+        player.Update(gameTime);
 
-        if (drawTilesGen != null)
+        // 5. Enemy update
+        if (enemies.Count > 0)
+            enemies[currentEnemyIndex].Update(gameTime);
+
+        // 6. Aspid projectiles vs player
+        if (currentEnemy is Aspid aspid)
         {
-            PhysicsHelper.CheckCollisions(player, drawTilesGen);
-            PhysicsHelper.CheckEnemyCollisions(player, enemies, currentEnemyIndex, drawTilesGen);
+            for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
+                {
+                    if (!player.IsInvincible)
+                    {
+                        player.PlayerHealth--;
+                        player.TakeDamage();
+                    }
+                    aspid.Projectiles.RemoveAt(i);
+                }
+            }
         }
 
-        // Camera always last
+        // 7. Player projectiles vs enemy
+        if (currentEnemy is IEnemy targetEnemy && !targetEnemy.IsDead)
+        {
+            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (player.Projectiles[i].GetBounds().Intersects(targetEnemy.GetBounds()))
+                {
+                    targetEnemy.TakeDamage();
+                    player.Projectiles.RemoveAt(i);
+                }
+            }
+        }
+
+        // 8. Melee vs enemy
+        if (player.IsAttacking && currentEnemy is IEnemy meleeTarget && !meleeTarget.IsDead)
+        {
+            if (player.GetMeleeHitbox().Intersects(meleeTarget.GetBounds()))
+                meleeTarget.TakeDamage();
+        }
+
+        // 9. Geo collection
+        for (int i = geos.Count - 1; i >= 0; i--)
+        {
+            if (!geos[i].IsCollected && geos[i].GetBounds().Intersects(playerBounds))
+            {
+                geos[i].Collect();
+                player.GeoCount++;
+            }
+            geos[i].Update(gameTime);
+        }
+
+        if (blocks.Count > 0)
+            blocks[currentBlockIndex].Update(gameTime);
+
+        itemManager.Update(gameTime);
+
         _camera.Follow(player.Position);
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        // Pass 1 — world space, moves with camera
+        // Pass 1 — world space
         spriteBatch.Begin(transformMatrix: _camera.GetTransform());
 
-        drawTilesGen.Draw(spriteBatch);
+        _currentRoom.Draw(spriteBatch);
 
         if (enemies.Count > 0)
             enemies[currentEnemyIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
@@ -258,7 +240,7 @@ public class GameScene : IScene
 
         spriteBatch.End();
 
-        // Pass 2 — screen space, HUD never moves
+        // Pass 2 — screen space HUD
         spriteBatch.Begin();
 
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
@@ -270,9 +252,6 @@ public class GameScene : IScene
 
     public void Unload() { }
 
-    // -------------------------------------------------------------------------
-    // Stage / enemy / block cycling — replaces old Game1 static methods
-    // -------------------------------------------------------------------------
     public void CycleEnemy(int direction)
     {
         if (enemies.Count == 0) return;
@@ -289,22 +268,19 @@ public class GameScene : IScene
     {
         if (direction == -1)
         {
-            drawTilesGen = tileGenObj1;
+            _currentRoom = _roomA;
             geos = geosLevel1;
         }
         else if (direction == 1)
         {
-            drawTilesGen = tileGenObj2;
+            _currentRoom = _roomB;
             geos = geosLevel2;
         }
-        player.Tiles = drawTilesGen.TileList;
-        _camera.RoomBounds = new Rectangle(0, 0, 3200, 720);
+
+        _camera.RoomBounds = _currentRoom.Bounds;
         _camera.SnapTo(player.Position);
     }
 
-    // -------------------------------------------------------------------------
-    // Reset
-    // -------------------------------------------------------------------------
     public void Reset()
     {
         var playerTextures = new Dictionary<string, Texture2D>();
@@ -315,7 +291,7 @@ public class GameScene : IScene
 
         Texture2D fireballTexture = _content.Load<Texture2D>("fireball");
         player = new Player(playerTextures, fireballTexture, new Vector2(350, 370));
-        player.Tiles = drawTilesGen.TileList;
+
 
         enemies.Clear();
         Texture2D enemyTexture = _content.Load<Texture2D>("boofly");
@@ -333,9 +309,9 @@ public class GameScene : IScene
 
         geosLevel1.Clear();
         geosLevel2.Clear();
-        Geo.PlaceGeosOnPlatforms(tileGenObj1, geosLevel1, geoTexture);
-        Geo.PlaceGeosOnPlatforms(tileGenObj2, geosLevel2, geoTexture);
-        geos = (drawTilesGen == tileGenObj1) ? geosLevel1 : geosLevel2;
+        Geo.PlaceGeosOnPlatforms(_roomA.Tiles, geosLevel1, geoTexture);
+        Geo.PlaceGeosOnPlatforms(_roomB.Tiles, geosLevel2, geoTexture);
+        geos = (_currentRoom == _roomA) ? geosLevel1 : geosLevel2;
 
         currentEnemyIndex = 0;
         currentBlockIndex = 0;
@@ -343,29 +319,10 @@ public class GameScene : IScene
         _camera.SnapTo(player.Position);
     }
 
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
     private Texture2D CreatePixelTexture()
     {
         Texture2D texture = new Texture2D(_graphics, 1, 1);
         texture.SetData(new[] { Color.White });
         return texture;
-    }
-
-    // DO NOT USE — WILL BE REMOVED SOON
-    public List<Rectangle> GetCurrentLevelColliders()
-    {
-        var rects = new List<Rectangle>();
-        foreach (var tile in drawTilesGen.generateTileInfo)
-        {
-            if (tile.tileType == "level1_background" ||
-                tile.tileType == "left_rocks_wall" ||
-                tile.tileType == "right_cave_wall" ||
-                tile.tileType == "top_cave_wall")
-                continue;
-            rects.Add(tile.destRectangle);
-        }
-        return rects;
     }
 }
