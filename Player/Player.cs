@@ -115,8 +115,7 @@ public class Player
             {
                 case CollisionDirection.Down:
                     if (Velocity.Y < 0) break;
-
-                    Position.Y -= result.Overlap.Height - 1; // leave 1px overlap
+                    Position.Y -= result.Overlap.Height - 1;
                     Velocity.Y = 0;
                     IsAirborne = false;
                     OnGround = true;
@@ -197,7 +196,7 @@ public class Player
     public void Jump() => currentState.Jump(this);
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
-
+    
     public void TakeDamage()
     {
         if (IsInvincible) return;
