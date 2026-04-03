@@ -5,7 +5,6 @@ using System;
 public class Camera2D
 {
     private readonly GraphicsDevice _graphics;
-
     public Vector2 Position { get; private set; }
     public float Zoom { get; set; } = 1f;
     public Rectangle RoomBounds { get; set; }
@@ -26,8 +25,8 @@ public class Camera2D
         );
         Position = Vector2.Lerp(Position, desired, LerpSpeed);
         Position = new Vector2(
-            Math.Clamp(Position.X, RoomBounds.Left, RoomBounds.Right - vp.Width),
-            Math.Clamp(Position.Y, RoomBounds.Top, RoomBounds.Bottom - vp.Height)
+            Math.Clamp(Position.X, RoomBounds.Left, Math.Max(RoomBounds.Left, RoomBounds.Right - vp.Width)),
+            Math.Clamp(Position.Y, RoomBounds.Top, Math.Max(RoomBounds.Top, RoomBounds.Bottom - vp.Height))
         );
     }
 
@@ -39,8 +38,8 @@ public class Camera2D
             target.Y - vp.Height / 2f
         );
         Position = new Vector2(
-            Math.Clamp(Position.X, RoomBounds.Left, RoomBounds.Right - vp.Width),
-            Math.Clamp(Position.Y, RoomBounds.Top, RoomBounds.Bottom - vp.Height)
+            Math.Clamp(Position.X, RoomBounds.Left, Math.Max(RoomBounds.Left, RoomBounds.Right - vp.Width)),
+            Math.Clamp(Position.Y, RoomBounds.Top, Math.Max(RoomBounds.Top, RoomBounds.Bottom - vp.Height))
         );
     }
 

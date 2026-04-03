@@ -7,8 +7,11 @@ public class IdleState : IPlayerState
     // IPlayerState implementation
     // -------------------------------------------------------------------------
 
-    public void Reset(Player player)
+    // IdleState.OnEnter
+    public void OnEnter(Player player)
     {
+        player.SuppressLandingTransition = false;
+        player.Velocity.X = 0;  
         player.DrawColor = Color.White;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
@@ -16,16 +19,18 @@ public class IdleState : IPlayerState
 
     public void Update(Player player, GameTime gameTime)
     {
-        // If nothing is below us, start falling
-        if (!player.OnGround)
+        if (!player.OnGround && player.Velocity.Y > 0)
         {
             player.IsAirborne = true;
             player.ChangeState(new FallingState());
-            return;
         }
     }
 
-    public void Walk(Player player, int direction) => player.ChangeState(new WalkingState(direction));
+    public void Walk(Player player, int direction)
+    {
+        if (direction == 0) return;  
+        player.ChangeState(new WalkingState(direction));
+    }
     public void Jump(Player player) => player.ChangeState(new JumpState());
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
@@ -33,4 +38,12 @@ public class IdleState : IPlayerState
 
     // No-ops
     public void Draw(Player player) { }
+
+    public void JumpHeld(Player player, float deltaTime) { }
+    // WalkingState.StopWalking
+    public void StopWalking(Player player)
+    {
+        player.Velocity.X = 0;
+        player.ChangeState(new IdleState());
+    }
 }
