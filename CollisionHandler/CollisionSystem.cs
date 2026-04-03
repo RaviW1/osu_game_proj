@@ -14,7 +14,7 @@ public static class CollisionSystem
             if (!bounds.Intersects(tile.bounds)) continue;
 
             Rectangle overlap = Rectangle.Intersect(bounds, tile.bounds);
-            CollisionDirection dir = GetDirection(overlap, velocity);
+            CollisionDirection dir = GetDirection(bounds, tile.bounds, overlap, velocity);
 
             results.Add(new CollisionResult
             {
@@ -39,24 +39,33 @@ public static class CollisionSystem
         return results;
     }
 
-    private static CollisionDirection GetDirection(Rectangle overlap, Vector2 velocity)
+    private static CollisionDirection GetDirection(Rectangle mover, Rectangle tile, Rectangle overlap, Vector2 velocity)
     {
         if (overlap.Width > overlap.Height)
         {
-            return velocity.Y >= 0 ? CollisionDirection.Down : CollisionDirection.Up;
+            // Vertical — use position, not velocity
+            return mover.Center.Y < tile.Center.Y
+                ? CollisionDirection.Down
+                : CollisionDirection.Up;
         }
         else if (overlap.Height > overlap.Width)
         {
-            return velocity.X >= 0 ? CollisionDirection.Right : CollisionDirection.Left;
+            // Horizontal — use velocity since position is less reliable here
+            return velocity.X >= 0
+                ? CollisionDirection.Right
+                : CollisionDirection.Left;
         }
         else
         {
-            // Perfect corner — strictly use dominant velocity axis
-            // No bias — if you didn't clear the height you don't land
+            // Perfect corner — dominant velocity axis decides
             if (Math.Abs(velocity.X) > Math.Abs(velocity.Y))
-                return velocity.X >= 0 ? CollisionDirection.Right : CollisionDirection.Left;
+                return mover.Center.X < tile.Center.X
+                    ? CollisionDirection.Right
+                    : CollisionDirection.Left;
             else
-                return velocity.Y >= 0 ? CollisionDirection.Down : CollisionDirection.Up;
+                return mover.Center.Y < tile.Center.Y
+                    ? CollisionDirection.Down
+                    : CollisionDirection.Up;
         }
     }
 }
