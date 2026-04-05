@@ -1,6 +1,5 @@
 using osu_game_proj;
 using Microsoft.Xna.Framework;
-
 public class CycleStageCommand : ICommand
 {
     private int direction;
@@ -17,3 +16,5 @@ public class CycleStageCommand : ICommand
         scene.CycleStage(direction);
     }
 }
+
+

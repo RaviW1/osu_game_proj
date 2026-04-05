@@ -11,16 +11,9 @@ public class RoomB : RoomBase
         Bounds = new Rectangle(0, 0, 1000, 900);
     }
 
-    public override void Load(ContentManager content)
+    public override void Load(ContentManager content, TileGenerator tilGen)
     {
-        List<TileInformation> tileInfo = new List<TileInformation>();
-        LoadLevelFile loader = new LoadLevelFile();
-        loader.LoadFile("level_files/test_level2.xml", tileInfo);
-
-        TileGenerator gen = new TileGenerator(tileInfo);
-        gen.LoadTileTextures(content);
-
-        Tiles.AddRange(gen.TileList);
+        Tiles.AddRange(tilGen.TileList);
 
         spawnPoints["default"] = new Vector2(350, 370);
         spawnPoints["fromLeft"] = new Vector2(100, 370);

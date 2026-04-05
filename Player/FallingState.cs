@@ -19,7 +19,8 @@ public class FallingState : IPlayerState
     public void Update(Player player, GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        System.Console.WriteLine($"FallingState: OnGround={player.OnGround} VelY={player.Velocity.Y} PosY={player.Position.Y}");
+        // DEBUG MESSAGE:
+        // System.Console.WriteLine($"FallingState: OnGround={player.OnGround} VelY={player.Velocity.Y} PosY={player.Position.Y}");
         AdvanceFrame(dt);
 
         if (player.OnGround && !player.SuppressLandingTransition)

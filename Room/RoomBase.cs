@@ -10,7 +10,7 @@ public abstract class RoomBase : IRoom
     public List<TileBlock> Tiles { get; protected set; } = new List<TileBlock>();
     protected Dictionary<string, Vector2> spawnPoints = new Dictionary<string, Vector2>();
 
-    public virtual void Load(ContentManager content) { }
+    public virtual void Load(ContentManager content, TileGenerator tilege) { }
 
     public virtual void Update(GameTime gameTime, Player player)
     {

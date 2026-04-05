@@ -84,6 +84,6 @@ public class WalkingState : IPlayerState
     }
 
     public void JumpHeld(Player player, float deltaTime) { }
-    
-    
+
+
 }
