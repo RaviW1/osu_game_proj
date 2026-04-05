@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using osu_game_proj;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 public class GameScene : IScene
 {
@@ -73,9 +75,12 @@ public class GameScene : IScene
         player = CreatePlayer();
         // Enemies
         enemies = CreateEnemies();
-
         // Items
         fireballTexture = _content.Load<Texture2D>("fireball");
+        // Music
+        SoundManager.Initialize(_content);
+        SoundManager.PlayBGMusic();
+
 
         // Camera — always last
         _camera = new Camera2D(_graphics);
