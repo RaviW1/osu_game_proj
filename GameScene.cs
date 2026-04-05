@@ -1,0 +1,346 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using osu_game_proj;
+using System.Collections.Generic;
+
+public class GameScene : IScene
+{
+    private readonly GraphicsDevice _graphics;
+    private readonly ContentManager _content;
+    private readonly Game1 _game;
+
+    // Game state
+    private Player player;
+    private KeyboardController keyboard;
+    private MouseController mouse;
+    private ItemManager itemManager;
+    private List<ISprite> enemies;
+    private List<ISprite> blocks;
+    private int currentEnemyIndex = 0;
+    private int currentBlockIndex = 0;
+    private AbilityBar abilityBar;
+    private Texture2D pixelTexture;
+    private SpriteFont font;
+    private Texture2D fireballTexture;
+
+    // Rooms
+    private LevelsHandler levels;
+
+    // Camera
+    private Camera2D _camera;
+
+    public GameScene(GraphicsDevice graphics, ContentManager content, Game1 game)
+    {
+        _graphics = graphics;
+        _content = content;
+        _game = game;
+    }
+    public void Initialize()
+    {
+
+    }
+
+    public void Load()
+    {
+        // Input
+        keyboard = new KeyboardController();
+        BindKeys keyBindObj = new BindKeys(keyboard);
+        keyBindObj.bindKeys(this, _game);
+
+        itemManager = new ItemManager(0.4f);
+        var cyclePrevItemCmd = new CycleItemCommand(-1, (dir) => itemManager.CycleItem(dir, player));
+        var cycleNextItemCmd = new CycleItemCommand(1, (dir) => itemManager.CycleItem(dir, player));
+        keyboard.BindPress(Keys.U, cyclePrevItemCmd);
+        keyboard.BindPress(Keys.I, cycleNextItemCmd);
+
+        mouse = new MouseController(_game,
+            new CycleStageCommand(-1, this),
+            new CycleStageCommand(1, this),
+            new CycleStageCommand(-1, this),
+            new CycleStageCommand(1, this),
+            new CycleStageCommand(-1, this));
+        levels = new LevelsHandler();
+        levels.LoadLevelTiles(_content);
+        pixelTexture = CreatePixelTexture();
+        font = _content.Load<SpriteFont>("DefaultFont");
+        // UI
+        abilityBar = CreateAbilityBar();
+        // Blocks
+        blocks = CreateBlocks();
+        // Player
+        player = CreatePlayer();
+        // Enemies
+        enemies = CreateEnemies();
+
+        // Items
+        fireballTexture = _content.Load<Texture2D>("fireball");
+
+        // Camera — always last
+        _camera = new Camera2D(_graphics);
+        _camera.RoomBounds = levels.currentRoom.Bounds;
+        _camera.SnapTo(player.Position);
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        Rectangle playerBounds = player.GetBounds();
+        ISprite currentEnemy = enemies[currentEnemyIndex];
+
+        // 1. Collision first — sets OnGround
+        levels.currentRoom.Update(gameTime, player);
+
+        // 2. Enemy collision
+        if (currentEnemy is IEnemy enemyCollision && !enemyCollision.IsDead)
+        {
+            var enemyVelocity = new Vector2(enemyCollision.GetVelocityX(), enemyCollision.GetVelocityY());
+            var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), levels.currentRoom.Tiles, enemyVelocity);
+            enemyCollision.ResolveCollisions(enemyResults);
+        }
+
+        // 3. Input next — sets commandReceivedThisFrame before player.Update reads it
+        ProcessInput(gameTime);
+
+        // 4. Player update — states now see correct OnGround AND correct input
+        player.Update(gameTime);
+
+        // 5. Enemy update
+        if (enemies.Count > 0)
+            enemies[currentEnemyIndex].Update(gameTime);
+        if (blocks.Count > 0)
+            blocks[currentBlockIndex].Update(gameTime);
+        // 6. Aspid projectiles vs player
+        if (currentEnemy is Aspid aspid)
+        {
+            for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
+                {
+                    if (!player.IsInvincible)
+                    {
+                        player.PlayerHealth--;
+                        player.TakeDamage();
+                    }
+                    aspid.Projectiles.RemoveAt(i);
+                }
+            }
+        }
+
+        // 7. Player projectiles vs enemy
+        if (currentEnemy is IEnemy targetEnemy && !targetEnemy.IsDead)
+        {
+            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+            {
+                if (player.Projectiles[i].GetBounds().Intersects(targetEnemy.GetBounds()))
+                {
+                    targetEnemy.TakeDamage();
+                    player.Projectiles.RemoveAt(i);
+                }
+            }
+        }
+
+        // 8. Melee vs enemy
+        if (player.IsAttacking && currentEnemy is IEnemy meleeTarget && !meleeTarget.IsDead)
+        {
+            if (player.GetMeleeHitbox().Intersects(meleeTarget.GetBounds()))
+                meleeTarget.TakeDamage();
+        }
+
+        // 9. Geo collection
+        for (int i = levels.currentGeos.Count - 1; i >= 0; i--)
+        {
+            if (!levels.currentGeos[i].IsCollected && levels.currentGeos[i].GetBounds().Intersects(playerBounds))
+            {
+                levels.currentGeos[i].Collect();
+                player.GeoCount++;
+            }
+            levels.currentGeos[i].Update(gameTime);
+        }
+
+        if (blocks.Count > 0)
+            blocks[currentBlockIndex].Update(gameTime);
+
+        itemManager.Update(gameTime);
+
+        _camera.Follow(player.Position);
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        // Pass 1 — world space
+        spriteBatch.Begin(transformMatrix: _camera.GetTransform());
+        levels.Draw(spriteBatch);
+
+
+
+        if (blocks.Count > 0)
+            blocks[currentBlockIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
+
+        foreach (var geo in levels.currentGeos)
+            geo.Draw(spriteBatch);
+
+        player.Draw(spriteBatch, gameTime);
+
+        if (enemies.Count > 0)
+            enemies[currentEnemyIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
+        spriteBatch.End();
+
+        // Pass 2 — screen space HUD
+        spriteBatch.Begin();
+        abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
+        itemManager.Draw(spriteBatch);
+        HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font);
+
+        spriteBatch.End();
+    }
+
+    public void Unload() { }
+
+    // Wraps the enemy index with modular arithmetic so it loops around.
+    public void CycleEnemy(int direction)
+    {
+        if (enemies.Count == 0) return;
+        currentEnemyIndex += direction;
+        if (currentEnemyIndex < 0)
+            currentEnemyIndex = enemies.Count - 1;
+        else if (currentEnemyIndex >= enemies.Count)
+            currentEnemyIndex = 0;
+    }
+
+    // Wraps the block index with modular arithmetic so it loops around.
+    public void CycleBlock(int direction)
+    {
+        if (blocks.Count == 0) return;
+        currentBlockIndex += direction;
+        if (currentBlockIndex < 0)
+            currentBlockIndex = blocks.Count - 1;
+        else if (currentBlockIndex >= blocks.Count)
+            currentBlockIndex = 0;
+    }
+
+    public void CycleStage(int direction)
+    {
+        levels.CycleStage(direction);
+
+        _camera.RoomBounds = levels.currentRoom.Bounds;
+        _camera.SnapTo(player.Position);
+    }
+
+    // Resets all game state to its initial configuration. Reuses the same
+    // Create* helpers as LoadContent to avoid duplication.
+    // Bound to the R key via ResetCommand
+    public void Reset()
+    {
+        enemies = CreateEnemies();
+        player = CreatePlayer();
+
+        itemManager = new ItemManager(0.4f);
+        LoadItems();
+
+        currentEnemyIndex = 0;
+        currentBlockIndex = 0;
+
+        _camera.SnapTo(player.Position);
+    }
+
+    // =====================================================================
+    //  Private helpers — each builds one logical group of game objects.
+    //  _contentManager caches textures, so duplicate Load<T> calls are cheap.
+    // =====================================================================
+
+    // Polls both controllers and executes every queued command against the player.
+    private void ProcessInput(GameTime gameTime)
+    {
+        foreach (ICommand cmd in keyboard.GetCommands(gameTime))
+            cmd.Execute(player, gameTime);
+        foreach (ICommand cmd in mouse.GetCommands(gameTime))
+            cmd.Execute(player, gameTime);
+    }
+
+    private List<ISprite> CreateEnemies()
+    {
+        Texture2D booflyTex = _content.Load<Texture2D>("Enemy Sprites\\boofly");
+        Texture2D aspidTex = _content.Load<Texture2D>("Enemy Sprites\\aspid_hunter");
+        Texture2D huskBullyTex = _content.Load<Texture2D>("Enemy Sprites\\husk_bully");
+
+        return new List<ISprite>
+            {
+                new Boofly(booflyTex, new System.Numerics.Vector2(500, 50)),
+                new Aspid(aspidTex, fireballTexture, new System.Numerics.Vector2(500, 50)),
+                new HuskBully(huskBullyTex, new System.Numerics.Vector2(100, 360))
+            };
+    }
+
+    private List<ISprite> CreateBlocks()
+    {
+        Texture2D spikeTex = _content.Load<Texture2D>("spike_back");
+        Texture2D fungalSpikeTex = _content.Load<Texture2D>("fungd_spikes_01");
+
+        return new List<ISprite>
+            {
+                new MapBlock(spikeTex, new System.Numerics.Vector2(50, 50)),
+                new MapBlock(fungalSpikeTex, new System.Numerics.Vector2(50, 50))
+            };
+    }
+
+    private Player CreatePlayer()
+    {
+        var textures = new Dictionary<string, Texture2D>
+            {
+                { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
+                { "Jumping", _content.Load<Texture2D>("knight_jumping") },
+                { "Attacking", _content.Load<Texture2D>("knight_attack") },
+                { "Attack", _content.Load<Texture2D>("hollow_knight_attack") }
+            };
+        return new Player(textures, fireballTexture, new Vector2(350, 370));
+    }
+
+
+    // Builds the bottom-of-screen ability bar. Each ability needs both an icon
+    // texture and a source rectangle that crops the correct region from its sprite sheet.
+    private AbilityBar CreateAbilityBar()
+    {
+        Texture2D playerTex = _content.Load<Texture2D>("hollow_knight_walking");
+        fireballTexture = _content.Load<Texture2D>("fireball");
+
+        var icons = new Dictionary<string, Texture2D>
+            {
+                { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
+                { "Fireball", fireballTexture },
+                { "Heal", playerTex }
+            };
+
+        var sourceRects = new Dictionary<string, Rectangle?>
+            {
+                { "Attack", new Rectangle(896, 0, 128, 128) },
+                { "Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2) },
+                { "Heal", new Rectangle(0, 0, playerTex.Width / 8, playerTex.Height) }
+            };
+
+        return new AbilityBar(pixelTexture, icons, sourceRects, Vector2.Zero);
+    }
+
+
+    // Registers equippable items. Each TextureItem takes an onEquip and onUnequip
+    // callback so item effects are self-contained.
+    private void LoadItems()
+    {
+        Texture2D heartTex = _content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
+        Texture2D dashTex = _content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
+
+        itemManager.AddItem(
+            new TextureItem(0, heartTex, p => p.MaxPlayerHealth += 2, p => p.MaxPlayerHealth -= 2),
+            new Vector2(10, 10));
+        itemManager.AddItem(
+            new TextureItem(1, dashTex, p => p.CanDash = true, p => p.CanDash = false),
+            new Vector2(100, 10));
+    }
+    //Creates a 1x1 white pixel used as a building block for UI rectangles.
+    private Texture2D CreatePixelTexture()
+    {
+        Texture2D texture = new Texture2D(_graphics, 1, 1);
+        texture.SetData(new[] { Color.White });
+        return texture;
+    }
+}

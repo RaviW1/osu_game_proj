@@ -1,16 +1,19 @@
-using osu_game_proj; // ADD THIS LINE
 using Microsoft.Xna.Framework;
+using osu_game_proj;
+
 public class CycleBlockCommand : ICommand
 {
     private int direction;
+    private GameScene scene;
 
-    public CycleBlockCommand(int direction)
+    public CycleBlockCommand(int direction, GameScene scene)
     {
         this.direction = direction;
+        this.scene = scene;
     }
 
     public void Execute(Player player, GameTime gameTime)
     {
-        Game1.CycleBlock(direction);
+        scene.CycleBlock(direction);
     }
 }

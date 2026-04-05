@@ -4,13 +4,10 @@ using osu_game_proj;
 
 public class AttackState : IPlayerState
 {
-    // Timing constants
     private const float AttackDuration = 0.3f;
-    private const float Gravity = 1200f;
     private const float SecondsPerFrame = 0.1f;
     private const int TotalFrames = 6;
 
-    // Runtime state
     private float attackTimer = 0f;
     private bool wasJumping = false;
     private int currentFrame = 0;
@@ -21,15 +18,16 @@ public class AttackState : IPlayerState
         this.wasJumping = wasJumping;
     }
 
-    // -------------------------------------------------------------------------
-    // IPlayerState implementation
-    // -------------------------------------------------------------------------
-
-    public void Reset(Player player)
+    public void OnEnter(Player player)
     {
         player.CurrentTexture = player.Textures["Attack"];
         player.sourceRectangle = new Rectangle(896, 0, 128, 128);
         player.IsAttacking = true;
+
+        // Always clear suppression on enter — attack should never inherit
+        // stale landing suppression from a previous state
+        if (!wasJumping)
+            player.SuppressLandingTransition = false;
     }
 
     public void Update(Player player, GameTime gameTime)
@@ -41,17 +39,22 @@ public class AttackState : IPlayerState
 
         AdvanceFrame();
 
-        if (wasJumping)
-        {
-            ApplyAirbornePhysics(player, dt);
 
-        }
-
-        // Attack finished — return to appropriate state
         if (attackTimer >= AttackDuration)
         {
             player.IsAttacking = false;
-            player.ChangeState(wasJumping ? (IPlayerState)new FallingState() : new IdleState());
+
+            if (wasJumping)
+            {
+                // Always clear suppression before returning to falling
+                // so the player can land normally after an air attack
+                player.SuppressLandingTransition = false;
+                player.ChangeState(new FallingState());
+            }
+            else
+            {
+                player.ChangeState(new IdleState());
+            }
         }
     }
 
@@ -59,9 +62,13 @@ public class AttackState : IPlayerState
     {
         if (!wasJumping) return;
 
-        if (direction > 0) player.facing = SpriteEffects.None;
-        else if (direction < 0) player.facing = SpriteEffects.FlipHorizontally;
-        player.Position.X += direction * 3f;
+        if (direction > 0)
+            player.facing = SpriteEffects.None;
+        else if (direction < 0)
+            player.facing = SpriteEffects.FlipHorizontally;
+
+        player.Velocity.X = direction * 3f;
+        player.Position.X += player.Velocity.X;
     }
 
     public void Draw(Player player)
@@ -73,21 +80,18 @@ public class AttackState : IPlayerState
             frameWidth, player.CurrentTexture.Height);
     }
 
-    // Transitions
     public void TakeDamage(Player player)
     {
         player.IsAttacking = false;
+        player.SuppressLandingTransition = false;  // clean up before leaving
         player.ChangeState(new DamagedState());
     }
 
-    // No-ops
     public void Jump(Player player) { }
     public void Attack(Player player) { }
     public void Heal(Player player) { }
-
-    // -------------------------------------------------------------------------
-    // Private helpers
-    // -------------------------------------------------------------------------
+    public void JumpHeld(Player player, float deltaTime) { }
+    public void StopWalking(Player player) { }
 
     private void AdvanceFrame()
     {
@@ -96,11 +100,5 @@ public class AttackState : IPlayerState
             timeSinceLastFrame = 0f;
             currentFrame = (currentFrame + 1) % TotalFrames;
         }
-    }
-
-    private void ApplyAirbornePhysics(Player player, float dt)
-    {
-        player.Velocity.Y += Gravity * dt;
-        player.Position += player.Velocity * dt;
     }
 }

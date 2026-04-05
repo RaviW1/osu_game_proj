@@ -6,8 +6,9 @@ public sealed class MovementAxisCommand : ICommand
 {
     private readonly Keys[] _leftKeys;
     private readonly Keys[] _rightKeys;
+    private int _lastFrame = -1;  // ADD THIS
 
-    public int AxisX { get; private set; } // -1,0,+1
+    public int AxisX { get; private set; }
 
     public MovementAxisCommand(Keys[] leftKeys, Keys[] rightKeys)
     {
@@ -17,13 +18,15 @@ public sealed class MovementAxisCommand : ICommand
 
     public void Execute(Player player, GameTime gameTime)
     {
+        // Only execute once per frame regardless of how many keys triggered it
+        int currentFrame = (int)gameTime.TotalGameTime.TotalMilliseconds;
+        if (currentFrame == _lastFrame) return;
+        _lastFrame = currentFrame;
+
         var s = Keyboard.GetState();
         bool left = AnyDown(s, _leftKeys);
         bool right = AnyDown(s, _rightKeys);
-
         AxisX = (left == right) ? 0 : (left ? -1 : 1);
-
-        // Later:
         player.Walk(AxisX);
     }
 

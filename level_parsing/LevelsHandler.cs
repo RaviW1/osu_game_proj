@@ -11,9 +11,11 @@ namespace osu_game_proj
         private int currentLevelNum;
         private Texture2D geoTexture;
         private List<List<Geo>> allLevelGeos;
+        private List<IRoom> allRoomObjs;
 
         public List<Geo> currentGeos;
         public TileGenerator currentTilesGen;
+        public IRoom currentRoom;
 
         public void LoadSingleLevel(string level_path, ContentManager Content)
         {
@@ -36,12 +38,22 @@ namespace osu_game_proj
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
             levelGenList = new List<TileGenerator>();
             allLevelGeos = new List<List<Geo>>();
+            allRoomObjs = new List<IRoom>();
 
+            // To add a new level:
+            // add xml to load here 
+            // create a new Room object to handle collisions
             // Load level1
             this.LoadSingleLevel("level_files/test_level.xml", Content);
+            RoomA roomA = new RoomA();
+            roomA.Load(Content, levelGenList[0]);
+            allRoomObjs.Add(roomA);
 
             // Load Level 2
             this.LoadSingleLevel("level_files/test_level2.xml", Content);
+            RoomB roomB = new RoomB();
+            roomB.Load(Content, levelGenList[1]);
+            allRoomObjs.Add(roomB);
 
             foreach (TileGenerator tileGen in levelGenList)
             {
@@ -52,6 +64,7 @@ namespace osu_game_proj
 
             currentTilesGen = levelGenList[0];
             currentGeos = allLevelGeos[0];
+            currentRoom = allRoomObjs[0];
             currentLevelNum = 0;
 
         }
@@ -68,6 +81,7 @@ namespace osu_game_proj
                     currentLevelNum--;
                     currentTilesGen = levelGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
+                    currentRoom = allRoomObjs[currentLevelNum];
 
                 }
                 else
@@ -75,6 +89,7 @@ namespace osu_game_proj
                     currentLevelNum = 0;
                     currentTilesGen = levelGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
+                    currentRoom = allRoomObjs[currentLevelNum];
                 }
             }
             else if (direction == 1)
@@ -84,6 +99,7 @@ namespace osu_game_proj
                     currentLevelNum++;
                     currentTilesGen = levelGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
+                    currentRoom = allRoomObjs[currentLevelNum];
                 }
             }
         }
