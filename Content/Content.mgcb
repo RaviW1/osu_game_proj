@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:background_left_layer1.png;Environment/background_left_layer1
 
+#begin background_music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:background_music.mp3
+
 #begin Dashmaster_0011_charm_generic_03.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -331,6 +337,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Geo - HUD_coin_shop.png
+
+#begin hero_jump.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hero_jump.wav
+
+#begin hero_run_footsteps_stone.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hero_run_footsteps_stone.wav
 
 #begin hollow_knight_attack.png
 /importer:TextureImporter

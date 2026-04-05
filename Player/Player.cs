@@ -88,6 +88,16 @@ public class Player
 
         currentState.Update(this, gameTime);
 
+        // play walking sound
+        if (currentState is WalkingState)
+        {
+            SoundManager.StartWalkingSound();
+        }
+        else
+        {
+            SoundManager.StopWalkingSound();
+        }
+
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
             Projectiles[i].Update(gameTime);
@@ -196,7 +206,7 @@ public class Player
     public void Jump() => currentState.Jump(this);
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
-    
+
     public void TakeDamage()
     {
         if (IsInvincible) return;

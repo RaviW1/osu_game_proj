@@ -11,7 +11,7 @@ public class IdleState : IPlayerState
     public void OnEnter(Player player)
     {
         player.SuppressLandingTransition = false;
-        player.Velocity.X = 0;  
+        player.Velocity.X = 0;
         player.DrawColor = Color.White;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
@@ -28,10 +28,13 @@ public class IdleState : IPlayerState
 
     public void Walk(Player player, int direction)
     {
-        if (direction == 0) return;  
+        if (direction == 0) return;
         player.ChangeState(new WalkingState(direction));
     }
-    public void Jump(Player player) => player.ChangeState(new JumpState());
+    public void Jump(Player player)
+    {
+        player.ChangeState(new JumpState());
+    }
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Heal(Player player) => player.ChangeState(new HealingState());
