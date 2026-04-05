@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public static class SoundManager
 {
     private static Dictionary<string, SoundEffect> sfx;
+    private static SoundEffectInstance walkingLoop;
+
     private static Song background_music;
 
     public static void Initialize(ContentManager content)
@@ -13,11 +15,14 @@ public static class SoundManager
         sfx = new Dictionary<string, SoundEffect>();
         // load sfx
         sfx.Add("Jump", content.Load<SoundEffect>("hero_jump"));
-        sfx.Add("Walk", content.Load<SoundEffect>("hero_run_footsteps_stone"));
 
         background_music = content.Load<Song>("background_music");
         MediaPlayer.IsRepeating = true;
         MediaPlayer.Volume = .7f;
+        // load walking loop
+        var walkSFX = content.Load<SoundEffect>("hero_run_footsteps_stone");
+        walkingLoop = walkSFX.CreateInstance();
+        walkingLoop.IsLooped = true;
     }
     public static void PlaySFX(string name)
     {
@@ -36,5 +41,19 @@ public static class SoundManager
     public static void StopMusic()
     {
         MediaPlayer.Stop();
+    }
+    public static void StartWalkingSound()
+    {
+        if (walkingLoop.State != SoundState.Playing)
+        {
+            walkingLoop.Play();
+        }
+    }
+    public static void StopWalkingSound()
+    {
+        if (walkingLoop.State == SoundState.Playing)
+        {
+            walkingLoop.Stop();
+        }
     }
 }

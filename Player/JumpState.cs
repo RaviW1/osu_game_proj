@@ -16,6 +16,7 @@ public class JumpState : IPlayerState
 
     public void OnEnter(Player player)
     {
+        SoundManager.PlaySFX("Jump");
         player.Velocity.Y = InitialVelocity;
         player.OnGround = false;
         player.IsAirborne = true;
