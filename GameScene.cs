@@ -42,6 +42,12 @@ public class GameScene : IScene
     private Rectangle _restartButtonRect;
     private MouseState _previousMouse;
     private bool _isPaused;
+    private bool _isTransitioning;
+    private float _transitionAlpha;
+    private int _pendingTransitionDirection;
+    private enum TransitionPhase { FadeOut, FadeIn }
+    private TransitionPhase _transitionPhase;
+    private const float TransitionSpeed = 2.0f;
 
     // Rooms
     private LevelsHandler levels;
@@ -130,6 +136,26 @@ public class GameScene : IScene
     {
         if (_isPaused){
             ProcessInput(gameTime); 
+            return;
+        }
+        if (_isTransitioning){
+            if (_transitionPhase == TransitionPhase.FadeOut){
+                _transitionAlpha += TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (_transitionAlpha >= 1f){
+                    _transitionAlpha = 1f;
+                    levels.CycleStage(_pendingTransitionDirection);
+                    _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
+                    _camera.RoomBounds = levels.currentRoom.Bounds;
+                    _camera.SnapTo(player.Position);
+                    _transitionPhase = TransitionPhase.FadeIn;
+                }
+            }else {
+                _transitionAlpha -= TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (_transitionAlpha <= 0f){
+                    _transitionAlpha = 0f;
+                    _isTransitioning = false;
+                }
+            }
             return;
         }
         if (_isGameOver)
@@ -285,6 +311,8 @@ public class GameScene : IScene
             DrawGameOver(spriteBatch);
         if (_isWin)
             DrawWinScreen(spriteBatch);
+        
+        if (_isTransitioning) spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.Black * _transitionAlpha);
 
         spriteBatch.End();
     }
@@ -317,11 +345,11 @@ public class GameScene : IScene
 
     public void CycleStage(int direction)
     {
-        levels.CycleStage(direction);
-        _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
-
-        _camera.RoomBounds = levels.currentRoom.Bounds;
-        _camera.SnapTo(player.Position);
+        if (_isTransitioning) return;
+        _isTransitioning = true;
+        _transitionAlpha = 0f;
+        _transitionPhase = TransitionPhase.FadeOut;
+        _pendingTransitionDirection = direction;
     }
 
     public void Reset()
