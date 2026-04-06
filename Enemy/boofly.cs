@@ -97,15 +97,15 @@ public class Boofly : ISprite, IEnemy
         if (texture != null)
         {
 
-            int frameWidth = 280;
-            int frameHeight = 320;
-            int frameX = 868;
-            int frameY = 70;
+            int frameWidth = 309;
+            int frameHeight = 335;
+            int frameX = 4;
+            int frameY = 23;
 
             var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
 
             // Scale it to reasonable size
-            float scale = 0.2f;
+            float scale = 0.4f;
 
             spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
                             0f, Microsoft.Xna.Framework.Vector2.Zero, scale,
