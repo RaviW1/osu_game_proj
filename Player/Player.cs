@@ -14,6 +14,9 @@ public class Player
     public Rectangle sourceRectangle;
     public SpriteEffects facing = SpriteEffects.None;
 
+
+    
+
     private IPlayerState currentState;
 
     public Color DrawColor = Color.White;
@@ -24,7 +27,16 @@ public class Player
     private const float InvincibilityDuration = 1.0f;
     private const float GravityForce = 1200f;
 
-    public bool IsInvincible => invincibilityTimer > 0f;
+    // Dash
+    public float DashTimer = 0f;
+    public float DashCooldown = 0f;
+    public bool HasAirDash = false;
+    public bool IsDashing = false;
+    public const float DashDuration = 0.18f;
+    public const float DashSpeed = 800f;
+    public const float DashCooldownDuration = 3f;
+
+    public bool IsInvincible => invincibilityTimer > 0f || IsDashing;
     public bool SuppressLandingTransition { get; set; } = false;
     public bool IsAttacking { get; set; } = false;
     public bool OnGround { get; set; }
@@ -48,7 +60,7 @@ public class Player
         }
     }
 
-    private Boolean canDash = false;
+    private Boolean canDash = true; // set back to false when charm system is ready
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
 
     private int soul = 0;
@@ -77,26 +89,26 @@ public class Player
         if (invincibilityTimer > 0f)
             invincibilityTimer -= dt;
 
-        // Only apply gravity when airborne
-        // Velocity zeroing is handled by ResolveCollisions, not here
-        if (!OnGround)
+        if (DashCooldown > 0f)
+            DashCooldown -= dt;
+
+        // Recharge air dash on landing
+        if (OnGround)
+            HasAirDash = true;
+
+        // Gravity — suppressed while dashing
+        if (!OnGround && !IsDashing)
         {
             Velocity.Y += GravityForce * dt;
             Position.Y += Velocity.Y * dt;
         }
 
-
         currentState.Update(this, gameTime);
 
-        // play walking sound
         if (currentState is WalkingState)
-        {
             SoundManager.StartWalkingSound();
-        }
         else
-        {
             SoundManager.StopWalkingSound();
-        }
 
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
@@ -152,13 +164,11 @@ public class Player
     public void ChangeState(IPlayerState newState)
     {
         currentState = newState;
-        newState.OnEnter(this);  // was Reset
+        newState.OnEnter(this);
     }
 
     public void ShootFireball()
     {
-        // TODO: break into new class
-        // Shoot in the direction player is facing
         float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
         System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
         float bodyOffsetY = -sourceRectangle.Height / 4f;
@@ -206,11 +216,21 @@ public class Player
     public void Jump() => currentState.Jump(this);
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
+    public void Dash() => currentState.Dash(this);
 
     public void TakeDamage()
     {
         if (IsInvincible) return;
         invincibilityTimer = InvincibilityDuration;
         currentState.TakeDamage(this);
+    }
+
+    // Shared dash guard — called by any state that supports dashing
+    public bool TryDash()
+    {
+        if (!CanDash) return false;
+        if (DashCooldown > 0f) return false;
+        if (IsAirborne && !HasAirDash) return false;
+        return true;
     }
 }

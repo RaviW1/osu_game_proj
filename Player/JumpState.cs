@@ -74,6 +74,11 @@ public class JumpState : IPlayerState
     public void Jump(Player player) { }
     public void Heal(Player player) { }
 
+    public void Dash(Player player)
+    {
+        if (player.TryDash())
+            player.ChangeState(new DashState());
+    }
     public void StopWalking(Player player) { }
     public void Attack(Player player) => player.ChangeState(new AttackState(wasJumping: true));
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
@@ -87,4 +92,6 @@ public class JumpState : IPlayerState
             currentFrame = (currentFrame + 1) % TotalFrames;
         }
     }
+
+
 }

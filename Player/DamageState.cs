@@ -55,6 +55,7 @@ public class DamagedState : IPlayerState
     public void Attack(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
 
+    public void Dash(Player player) { }
     public void StopWalking(Player player) { }
     public void TakeDamage(Player player) { }
     public void Draw(Player player) { }

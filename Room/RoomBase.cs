@@ -14,8 +14,7 @@ public abstract class RoomBase : IRoom
 
     public virtual void Update(GameTime gameTime, Player player)
     {
-        var results = CollisionSystem.Query(player.GetBounds(), Tiles, player.Velocity);
-        player.ResolveCollisions(results);
+
     }
 
     public virtual void Draw(SpriteBatch spriteBatch)

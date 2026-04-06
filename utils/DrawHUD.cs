@@ -7,7 +7,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 public static class HUD
 {
-    public static void DrawHUD(Player player, SpriteBatch _spriteBatch, int viewWidth, SpriteFont font)
+    public static void DrawHUD(Player player, SpriteBatch _spriteBatch, int viewWidth, SpriteFont font, Texture2D geoSprite)
 
     {
 
@@ -30,9 +30,15 @@ public static class HUD
         _spriteBatch.DrawString(font, dashText, new Vector2(viewWidth - dashSize.X - margin, yOffset), Color.White);
         yOffset += dashSize.Y + lineSpacing;
 
-        string geoText = "Geo: " + player.GeoCount;
-        Vector2 geoSize = font.MeasureString(geoText);
-        _spriteBatch.DrawString(font, geoText, new Vector2(viewWidth - geoSize.X - margin, yOffset), Color.Gold);
+        string countText = "" + player.GeoCount;
+        Vector2 countSize = font.MeasureString(countText);
+        int spriteSize = (int)countSize.Y;
+        float totalWidth = spriteSize + 4 + countSize.X;
+        float geoX = viewWidth - totalWidth - margin;
+
+        Rectangle spriteRect = new Rectangle((int)geoX, (int)yOffset, spriteSize, spriteSize);
+        _spriteBatch.Draw(geoSprite, spriteRect, Color.White);
+        _spriteBatch.DrawString(font, countText, new Vector2(geoX + spriteSize + 4, yOffset), Color.Gold);
 
     }
 }
