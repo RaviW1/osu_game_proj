@@ -15,15 +15,10 @@ public static class HUD
         float lineSpacing = 4f;
         float yOffset = margin;
 
-        string maxHpText = "Max HP " + player.MaxPlayerHealth;
-        Vector2 maxHpSize = font.MeasureString(maxHpText);
-        _spriteBatch.DrawString(font, maxHpText, new Vector2(viewWidth - maxHpSize.X - margin, yOffset), Color.White);
-        yOffset += maxHpSize.Y + lineSpacing;
-
-        string hpText = "HP " + player.PlayerHealth;
-        Vector2 hpSize = font.MeasureString(hpText);
-        _spriteBatch.DrawString(font, hpText, new Vector2(viewWidth - hpSize.X - margin, yOffset), Color.White);
-        yOffset += hpSize.Y + lineSpacing;
+        string soulText = "SOUL " + player.Soul + " / " + player.SoulLimit;
+        Vector2 soulSize = font.MeasureString(soulText);
+        _spriteBatch.DrawString(font, soulText, new Vector2(viewWidth - soulSize.X - margin, yOffset), Color.CornflowerBlue);
+        yOffset += soulSize.Y + lineSpacing;
 
         string dashText = player.CanDash ? "Can Dash" : "Can't Dash";
         Vector2 dashSize = font.MeasureString(dashText);
