@@ -21,6 +21,7 @@ Left click on top left of game window to switch to level 1
 Right click on top right of game window to switch to level 2
 m to toggle background music
 0 to show win screen
+Esc to pause
 
 ## Known bugs 
 none
