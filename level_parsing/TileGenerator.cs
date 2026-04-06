@@ -1,8 +1,4 @@
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using System.Xml.Linq;
-using System.Linq;
-using System;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 
@@ -57,7 +53,6 @@ namespace osu_game_proj
         }
         public void Draw(SpriteBatch spriteBatch)
         {
-            //this.createMapBlocks(this.generateTileInfo);
             foreach (TileBlock block in this.tileList)
             {
                 block.Draw(spriteBatch);
