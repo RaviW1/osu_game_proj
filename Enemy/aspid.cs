@@ -127,7 +127,7 @@ public class Aspid : ISprite, IEnemy
 
         if (texture != null)
         {
-            var sourceRect = new Microsoft.Xna.Framework.Rectangle(0, 320, 90, 120);
+            var sourceRect = new Microsoft.Xna.Framework.Rectangle(4, 23, 140, 120);
             var spriteEffect = facingLeft
                 ? Microsoft.Xna.Framework.Graphics.SpriteEffects.None
                 : Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally;
