@@ -37,6 +37,7 @@ public class GameScene : IScene
     private Texture2D _gameOverTexture;
     private Rectangle _restartButtonRect;
     private MouseState _previousMouse;
+    private bool _isPaused;
 
     // Rooms
     private LevelsHandler levels;
@@ -53,6 +54,9 @@ public class GameScene : IScene
         _content = content;
         _game = game;
     }
+    public void TogglePause(){
+        _isPaused = !_isPaused;
+    }
 
     public void Initialize() { }
 
@@ -60,6 +64,7 @@ public class GameScene : IScene
     {
         // Input
         _isWin = false;
+        _isPaused = false;
         _winAlpha = 0f;
         keyboard = new KeyboardController();
         BindKeys keyBindObj = new BindKeys(keyboard);
@@ -113,6 +118,10 @@ public class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
+        if (_isPaused){
+            ProcessInput(gameTime); 
+            return;
+        }
         if (_isGameOver)
         {
             if (_gameOverAlpha < 1f)
@@ -252,6 +261,7 @@ public class GameScene : IScene
 
         // Pass 2 — screen space HUD
         spriteBatch.Begin();
+        if (_isPaused) DrawPauseScreen(spriteBatch);
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
         itemManager.Draw(spriteBatch);
         HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font, levels.geoTexture);
@@ -456,5 +466,21 @@ public class GameScene : IScene
         _quitButtonRect = new Rectangle((vw / 2) + 20, (int)(vh * 0.5f), quitW, quitH);
         spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
         spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
+    }
+    private void DrawPauseScreen(SpriteBatch spriteBatch){
+        int vw = _graphics.Viewport.Width;
+        int vh = _graphics.Viewport.Height;
+
+        spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, vw, vh), Color.Black * 0.5f);
+
+        string title = "Paused";
+        float titleScale = 2.5f;
+        Vector2 titleSize = font.MeasureString(title) * titleScale;
+        spriteBatch.DrawString(font, title, new Vector2((vw - titleSize.X) / 2f, vh * 0.25f),
+            Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+
+        string resumeText = "Press ESC to Resume";
+        Vector2 resumeSize = font.MeasureString(resumeText);
+        spriteBatch.DrawString(font, resumeText, new Vector2((vw - resumeSize.X) / 2f, vh * 0.5f), Color.LightGray);
     }
 }
