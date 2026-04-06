@@ -29,6 +29,9 @@ public class GameScene : IScene
 
     // Game Over
     private bool _isGameOver;
+    private bool _isWin;
+    private float _winAlpha;
+    private Rectangle _quitButtonRect;
     private float _gameOverAlpha;
     private const float FadeSpeed = 0.8f;
     private Texture2D _gameOverTexture;
@@ -56,6 +59,8 @@ public class GameScene : IScene
     public void Load()
     {
         // Input
+        _isWin = false;
+        _winAlpha = 0f;
         keyboard = new KeyboardController();
         BindKeys keyBindObj = new BindKeys(keyboard);
         keyBindObj.bindKeys(this, _game);
@@ -120,6 +125,17 @@ public class GameScene : IScene
                 _isGameOver = false;
                 _gameOverAlpha = 0f;
                 Reset();
+            }
+            _previousMouse = ms;
+            return;
+        }
+        if (_isWin){
+            if (_winAlpha < 1f) _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
+
+            MouseState ms = Mouse.GetState();
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released){
+                if (_restartButtonRect.Contains(ms.Position)) { _isWin = false; _winAlpha = 0f; Reset(); }
+                else if (_quitButtonRect.Contains(ms.Position)) { _game.Exit(); }
             }
             _previousMouse = ms;
             return;
@@ -242,6 +258,8 @@ public class GameScene : IScene
 
         if (_isGameOver)
             DrawGameOver(spriteBatch);
+        if (_isWin)
+            DrawWinScreen(spriteBatch);
 
         spriteBatch.End();
     }
@@ -266,6 +284,10 @@ public class GameScene : IScene
             currentBlockIndex = blocks.Count - 1;
         else if (currentBlockIndex >= blocks.Count)
             currentBlockIndex = 0;
+    }
+    public void TriggerWin(){
+        _isWin = true;
+        _winAlpha = 0f;
     }
 
     public void CycleStage(int direction)
@@ -408,5 +430,31 @@ public class GameScene : IScene
         Texture2D texture = new Texture2D(_graphics, 1, 1);
         texture.SetData(new[] { Color.White });
         return texture;
+    }
+    private void DrawWinScreen(SpriteBatch spriteBatch){
+        int vw = _graphics.Viewport.Width;
+        int vh = _graphics.Viewport.Height;
+
+        spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, vw, vh), Color.Black * 0.75f * _winAlpha);
+
+        string title = "You Win!";
+        float titleScale = 2.5f;
+        Vector2 titleSize = font.MeasureString(title) * titleScale;
+        spriteBatch.DrawString(font, title, new Vector2((vw - titleSize.X) / 2f, vh * 0.25f),
+        Color.Gold * _winAlpha, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+
+        string replayText = "Replay";
+        Vector2 replaySize = font.MeasureString(replayText);
+        int btnW = (int)replaySize.X + 40, btnH = (int)replaySize.Y + 20;
+        _restartButtonRect = new Rectangle((vw / 2) - btnW - 20, (int)(vh * 0.5f), btnW, btnH);
+        spriteBatch.Draw(pixelTexture, _restartButtonRect, Color.DarkGreen * _winAlpha);
+        spriteBatch.DrawString(font, replayText, new Vector2(_restartButtonRect.X + 20, _restartButtonRect.Y + 10), Color.White * _winAlpha);
+
+        string quitText = "Quit";
+        Vector2 quitSize = font.MeasureString(quitText);
+        int quitW = (int)quitSize.X + 40, quitH = (int)quitSize.Y + 20;
+        _quitButtonRect = new Rectangle((vw / 2) + 20, (int)(vh * 0.5f), quitW, quitH);
+        spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
+        spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
     }
 }

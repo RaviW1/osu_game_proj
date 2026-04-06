@@ -66,6 +66,7 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.D1, new AttackCommand());
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
             keyboard.BindHeld(Keys.D3, new HealCommand());
+            keyboard.BindPress(Keys.D0, new WinCommand(scene));
         }
     }
 }
