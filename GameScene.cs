@@ -27,6 +27,14 @@ public class GameScene : IScene
     private SpriteFont font;
     private Texture2D fireballTexture;
 
+    // Game Over
+    private bool _isGameOver;
+    private float _gameOverAlpha;
+    private const float FadeSpeed = 0.8f;
+    private Texture2D _gameOverTexture;
+    private Rectangle _restartButtonRect;
+    private MouseState _previousMouse;
+
     // Rooms
     private LevelsHandler levels;
 
@@ -77,10 +85,16 @@ public class GameScene : IScene
         enemies = CreateEnemies();
         // Items
         fireballTexture = _content.Load<Texture2D>("fireball");
+        LoadItems();
         // Music
         SoundManager.Initialize(_content);
         SoundManager.PlayBGMusic();
 
+
+        // Game Over
+        _gameOverTexture = _content.Load<Texture2D>("Game_Over");
+        _isGameOver = false;
+        _gameOverAlpha = 0f;
 
         // Camera — always last
         _camera = new Camera2D(_graphics);
@@ -90,6 +104,30 @@ public class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
+        if (_isGameOver)
+        {
+            if (_gameOverAlpha < 1f)
+                _gameOverAlpha = MathHelper.Clamp(_gameOverAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
+
+            MouseState ms = Mouse.GetState();
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released
+                && _restartButtonRect.Contains(ms.Position))
+            {
+                _isGameOver = false;
+                _gameOverAlpha = 0f;
+                Reset();
+            }
+            _previousMouse = ms;
+            return;
+        }
+
+        if (player.PlayerHealth <= 0)
+        {
+            _isGameOver = true;
+            _gameOverAlpha = 0f;
+            return;
+        }
+
         Rectangle playerBounds = player.GetBounds();
         ISprite currentEnemy = enemies[currentEnemyIndex];
 
@@ -197,6 +235,9 @@ public class GameScene : IScene
         itemManager.Draw(spriteBatch);
         HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font);
 
+        if (_isGameOver)
+            DrawGameOver(spriteBatch);
+
         spriteBatch.End();
     }
 
@@ -246,6 +287,7 @@ public class GameScene : IScene
         currentEnemyIndex = 0;
         currentBlockIndex = 0;
 
+        levels.ClearGeos();
         _camera.SnapTo(player.Position);
     }
 
@@ -341,6 +383,34 @@ public class GameScene : IScene
             new TextureItem(1, dashTex, p => p.CanDash = true, p => p.CanDash = false),
             new Vector2(100, 10));
     }
+    private void DrawGameOver(SpriteBatch spriteBatch)
+    {
+        int vw = _graphics.Viewport.Width;
+        int vh = _graphics.Viewport.Height;
+        Color tint = Color.White * _gameOverAlpha;
+
+        spriteBatch.Draw(_gameOverTexture, new Rectangle(0, 0, vw, vh), tint);
+
+        string title = "Game Over";
+        float titleScale = 2.5f;
+        Vector2 titleSize = font.MeasureString(title) * titleScale;
+        Vector2 titlePos = new Vector2((vw - titleSize.X) / 2f, vh * 0.3f);
+        spriteBatch.DrawString(font, title, titlePos, Color.White * _gameOverAlpha,
+            0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+
+        string btnText = "Restart";
+        Vector2 btnTextSize = font.MeasureString(btnText);
+        int btnW = (int)btnTextSize.X + 40;
+        int btnH = (int)btnTextSize.Y + 20;
+        _restartButtonRect = new Rectangle((vw - btnW) / 2, (int)(vh * 0.5f), btnW, btnH);
+
+        spriteBatch.Draw(pixelTexture, _restartButtonRect, Color.DarkGray * _gameOverAlpha);
+        Vector2 btnTextPos = new Vector2(
+            _restartButtonRect.X + (_restartButtonRect.Width - btnTextSize.X) / 2f,
+            _restartButtonRect.Y + (_restartButtonRect.Height - btnTextSize.Y) / 2f);
+        spriteBatch.DrawString(font, btnText, btnTextPos, Color.White * _gameOverAlpha);
+    }
+
     //Creates a 1x1 white pixel used as a building block for UI rectangles.
     private Texture2D CreatePixelTexture()
     {
