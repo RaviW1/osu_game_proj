@@ -27,6 +27,10 @@ public class GameScene : IScene
     private SpriteFont font;
     private Texture2D fireballTexture;
 
+    // Soul Meter HUD
+    private Texture2D _soulMeterTexture;
+    private Texture2D _hpMaskTexture;
+
     // Game Over
     private bool _isGameOver;
     private bool _isWin;
@@ -104,6 +108,12 @@ public class GameScene : IScene
         // Music
         SoundManager.Initialize(_content);
         SoundManager.PlayBGMusic();
+
+        // Soul Meter & HP Masks
+        _soulMeterTexture = _content.Load<Texture2D>("soul_meter");
+        StripDarkPixels(_soulMeterTexture, 30);
+        _hpMaskTexture = _content.Load<Texture2D>("masks(hp bar)");
+        StripDarkPixels(_hpMaskTexture, 30);
 
         // Game Over
         _gameOverTexture = _content.Load<Texture2D>("Game_Over");
@@ -259,11 +269,16 @@ public class GameScene : IScene
             enemies[currentEnemyIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
         spriteBatch.End();
 
-        // Pass 2 — screen space HUD
+        // Pass 2 — soul meter & HP masks (non-premultiplied textures)
+        spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+        DrawSoulMeter(spriteBatch);
+        DrawHPBar(spriteBatch);
+        spriteBatch.End();
+
+        // Pass 3 — remaining HUD
         spriteBatch.Begin();
         if (_isPaused) DrawPauseScreen(spriteBatch);
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
-        itemManager.Draw(spriteBatch);
         HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font, levels.geoTexture);
 
         if (_isGameOver)
@@ -433,6 +448,56 @@ public class GameScene : IScene
             _restartButtonRect.X + (_restartButtonRect.Width - btnTextSize.X) / 2f,
             _restartButtonRect.Y + (_restartButtonRect.Height - btnTextSize.Y) / 2f);
         spriteBatch.DrawString(font, btnText, btnTextPos, Color.White * _gameOverAlpha);
+    }
+
+    private void DrawSoulMeter(SpriteBatch spriteBatch)
+    {
+        int cellW = _soulMeterTexture.Width / 2;
+        int cellH = _soulMeterTexture.Height / 3;
+        int yOffset = cellH - 15;
+        int drawW = cellW * 2 / 3;
+        int drawH = cellH * 2 / 3;
+        Rectangle sourceRect = new Rectangle(0, yOffset, cellW, cellH);
+        Rectangle destRect = new Rectangle(10, 10, drawW, drawH);
+        spriteBatch.Draw(_soulMeterTexture, destRect, sourceRect, Color.White);
+    }
+
+    private void DrawHPBar(SpriteBatch spriteBatch)
+    {
+        int framW = _hpMaskTexture.Width / 14;
+        int framH = _hpMaskTexture.Height / 14;
+        int pad = 6;
+
+        Rectangle fullSrc = new Rectangle(pad, pad + 3, framW - pad * 2, framH - pad);
+        Rectangle emptySrc = new Rectangle(pad, framH * 2 + pad + 8, framW - pad * 2, framH - pad);
+
+        int soulDrawW = (_soulMeterTexture.Width / 2) * 2 / 3;
+        int startX = 10 + soulDrawW / 2;
+        int startY = 10 + (_soulMeterTexture.Height / 3) * 2 / 3 * 2 / 3;
+        int drawSize = 30;
+        int spacing = 2;
+
+        for (int i = 0; i < player.MaxPlayerHealth; i++)
+        {
+            Rectangle dest = new Rectangle(startX + i * (drawSize + spacing), startY, drawSize, drawSize);
+            if (i < player.PlayerHealth)
+                spriteBatch.Draw(_hpMaskTexture, dest, fullSrc, Color.White);
+            else
+                spriteBatch.Draw(_hpMaskTexture, dest, emptySrc, Color.White);
+        }
+    }
+
+    private static void StripDarkPixels(Texture2D texture, int threshold)
+    {
+        Color[] pixels = new Color[texture.Width * texture.Height];
+        texture.GetData(pixels);
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            Color c = pixels[i];
+            if (c.R <= threshold && c.G <= threshold && c.B <= threshold)
+                pixels[i] = Color.Transparent;
+        }
+        texture.SetData(pixels);
     }
 
     private Texture2D CreatePixelTexture()
