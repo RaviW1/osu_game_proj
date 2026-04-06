@@ -238,7 +238,7 @@ public class GameScene : IScene
         spriteBatch.Begin();
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
         itemManager.Draw(spriteBatch);
-        HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font);
+        HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font, levels.geoTexture);
 
         if (_isGameOver)
             DrawGameOver(spriteBatch);

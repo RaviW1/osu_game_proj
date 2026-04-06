@@ -9,7 +9,7 @@ namespace osu_game_proj
     {
         private List<TileGenerator> levelGenList;
         private int currentLevelNum;
-        private Texture2D geoTexture;
+        public Texture2D geoTexture;
         private List<List<Geo>> allLevelGeos;
         private List<IRoom> allRoomObjs;
 
