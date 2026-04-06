@@ -105,7 +105,7 @@ public class Boofly : ISprite, IEnemy
             var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
 
             // Scale it to reasonable size
-            float scale = 0.4f;
+            float scale = 0.2f;
 
             spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
                             0f, Microsoft.Xna.Framework.Vector2.Zero, scale,
