@@ -60,7 +60,7 @@ public class Player
         }
     }
 
-    private Boolean canDash = true; // set back to false when charm system is ready
+    private Boolean canDash = false;
     public Boolean CanDash { get { return canDash; } set { canDash = value; } }
 
     private int soul = 0;
