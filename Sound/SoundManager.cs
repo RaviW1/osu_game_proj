@@ -38,9 +38,16 @@ public static class SoundManager
             MediaPlayer.Play(background_music);
         }
     }
-    public static void StopMusic()
+    public static void ToggleMusic()
     {
-        MediaPlayer.Stop();
+        if (MediaPlayer.State == MediaState.Playing)
+        {
+            MediaPlayer.Stop();
+        }
+        else
+        {
+            MediaPlayer.Play(background_music);
+        }
     }
     public static void StartWalkingSound()
     {
