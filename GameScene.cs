@@ -38,6 +38,9 @@ public class GameScene : IScene
     // Rooms
     private LevelsHandler levels;
 
+    // Collision
+    private SpatialGrid _grid;
+
     // Camera
     private Camera2D _camera;
 
@@ -47,10 +50,8 @@ public class GameScene : IScene
         _content = content;
         _game = game;
     }
-    public void Initialize()
-    {
 
-    }
+    public void Initialize() { }
 
     public void Load()
     {
@@ -71,10 +72,14 @@ public class GameScene : IScene
             new CycleStageCommand(-1, this),
             new CycleStageCommand(1, this),
             new CycleStageCommand(-1, this));
+
         levels = new LevelsHandler();
         levels.LoadLevelTiles(_content);
+        _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
+
         pixelTexture = CreatePixelTexture();
         font = _content.Load<SpriteFont>("DefaultFont");
+
         // UI
         abilityBar = CreateAbilityBar();
         // Blocks
@@ -89,7 +94,6 @@ public class GameScene : IScene
         // Music
         SoundManager.Initialize(_content);
         SoundManager.PlayBGMusic();
-
 
         // Game Over
         _gameOverTexture = _content.Load<Texture2D>("Game_Over");
@@ -131,14 +135,16 @@ public class GameScene : IScene
         Rectangle playerBounds = player.GetBounds();
         ISprite currentEnemy = enemies[currentEnemyIndex];
 
-        // 1. Collision first — sets OnGround
-        levels.currentRoom.Update(gameTime, player);
+        // 1. Player collision — sets OnGround
+        levels.currentRoom.Update(gameTime, player); // room-specific logic hook
+        var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
+        player.ResolveCollisions(playerResults);
 
         // 2. Enemy collision
         if (currentEnemy is IEnemy enemyCollision && !enemyCollision.IsDead)
         {
             var enemyVelocity = new Vector2(enemyCollision.GetVelocityX(), enemyCollision.GetVelocityY());
-            var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), levels.currentRoom.Tiles, enemyVelocity);
+            var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), _grid, enemyVelocity);
             enemyCollision.ResolveCollisions(enemyResults);
         }
 
@@ -153,6 +159,7 @@ public class GameScene : IScene
             enemies[currentEnemyIndex].Update(gameTime);
         if (blocks.Count > 0)
             blocks[currentBlockIndex].Update(gameTime);
+
         // 6. Aspid projectiles vs player
         if (currentEnemy is Aspid aspid)
         {
@@ -215,8 +222,6 @@ public class GameScene : IScene
         spriteBatch.Begin(transformMatrix: _camera.GetTransform());
         levels.Draw(spriteBatch);
 
-
-
         if (blocks.Count > 0)
             blocks[currentBlockIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
 
@@ -243,7 +248,6 @@ public class GameScene : IScene
 
     public void Unload() { }
 
-    // Wraps the enemy index with modular arithmetic so it loops around.
     public void CycleEnemy(int direction)
     {
         if (enemies.Count == 0) return;
@@ -254,7 +258,6 @@ public class GameScene : IScene
             currentEnemyIndex = 0;
     }
 
-    // Wraps the block index with modular arithmetic so it loops around.
     public void CycleBlock(int direction)
     {
         if (blocks.Count == 0) return;
@@ -268,14 +271,12 @@ public class GameScene : IScene
     public void CycleStage(int direction)
     {
         levels.CycleStage(direction);
+        _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
 
         _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
     }
 
-    // Resets all game state to its initial configuration. Reuses the same
-    // Create* helpers as LoadContent to avoid duplication.
-    // Bound to the R key via ResetCommand
     public void Reset()
     {
         enemies = CreateEnemies();
@@ -287,16 +288,12 @@ public class GameScene : IScene
         currentEnemyIndex = 0;
         currentBlockIndex = 0;
 
+        _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
+
         levels.ClearGeos();
         _camera.SnapTo(player.Position);
     }
 
-    // =====================================================================
-    //  Private helpers — each builds one logical group of game objects.
-    //  _contentManager caches textures, so duplicate Load<T> calls are cheap.
-    // =====================================================================
-
-    // Polls both controllers and executes every queued command against the player.
     private void ProcessInput(GameTime gameTime)
     {
         foreach (ICommand cmd in keyboard.GetCommands(gameTime))
@@ -312,11 +309,11 @@ public class GameScene : IScene
         Texture2D huskBullyTex = _content.Load<Texture2D>("Enemy Sprites\\husk_bully");
 
         return new List<ISprite>
-            {
-                new Boofly(booflyTex, new System.Numerics.Vector2(500, 50)),
-                new Aspid(aspidTex, fireballTexture, new System.Numerics.Vector2(500, 50)),
-                new HuskBully(huskBullyTex, new System.Numerics.Vector2(100, 360))
-            };
+        {
+            new Boofly(booflyTex, new System.Numerics.Vector2(500, 50)),
+            new Aspid(aspidTex, fireballTexture, new System.Numerics.Vector2(500, 50)),
+            new HuskBully(huskBullyTex, new System.Numerics.Vector2(100, 360))
+        };
     }
 
     private List<ISprite> CreateBlocks()
@@ -325,52 +322,46 @@ public class GameScene : IScene
         Texture2D fungalSpikeTex = _content.Load<Texture2D>("fungd_spikes_01");
 
         return new List<ISprite>
-            {
-                new MapBlock(spikeTex, new System.Numerics.Vector2(50, 50)),
-                new MapBlock(fungalSpikeTex, new System.Numerics.Vector2(50, 50))
-            };
+        {
+            new MapBlock(spikeTex, new System.Numerics.Vector2(50, 50)),
+            new MapBlock(fungalSpikeTex, new System.Numerics.Vector2(50, 50))
+        };
     }
 
     private Player CreatePlayer()
     {
         var textures = new Dictionary<string, Texture2D>
-            {
-                { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
-                { "Jumping", _content.Load<Texture2D>("knight_jumping") },
-                { "Attacking", _content.Load<Texture2D>("knight_attack") },
-                { "Attack", _content.Load<Texture2D>("hollow_knight_attack") }
-            };
+        {
+            { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
+            { "Jumping", _content.Load<Texture2D>("knight_jumping") },
+            { "Attacking", _content.Load<Texture2D>("knight_attack") },
+            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") }
+        };
         return new Player(textures, fireballTexture, new Vector2(350, 370));
     }
 
-
-    // Builds the bottom-of-screen ability bar. Each ability needs both an icon
-    // texture and a source rectangle that crops the correct region from its sprite sheet.
     private AbilityBar CreateAbilityBar()
     {
         Texture2D playerTex = _content.Load<Texture2D>("hollow_knight_walking");
         fireballTexture = _content.Load<Texture2D>("fireball");
 
         var icons = new Dictionary<string, Texture2D>
-            {
-                { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
-                { "Fireball", fireballTexture },
-                { "Heal", playerTex }
-            };
+        {
+            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
+            { "Fireball", fireballTexture },
+            { "Heal", playerTex }
+        };
 
         var sourceRects = new Dictionary<string, Rectangle?>
-            {
-                { "Attack", new Rectangle(896, 0, 128, 128) },
-                { "Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2) },
-                { "Heal", new Rectangle(0, 0, playerTex.Width / 8, playerTex.Height) }
-            };
+        {
+            { "Attack", new Rectangle(896, 0, 128, 128) },
+            { "Fireball", new Rectangle(0, 0, fireballTexture.Width / 2, fireballTexture.Height / 2) },
+            { "Heal", new Rectangle(0, 0, playerTex.Width / 8, playerTex.Height) }
+        };
 
         return new AbilityBar(pixelTexture, icons, sourceRects, Vector2.Zero);
     }
 
-
-    // Registers equippable items. Each TextureItem takes an onEquip and onUnequip
-    // callback so item effects are self-contained.
     private void LoadItems()
     {
         Texture2D heartTex = _content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
@@ -383,6 +374,7 @@ public class GameScene : IScene
             new TextureItem(1, dashTex, p => p.CanDash = true, p => p.CanDash = false),
             new Vector2(100, 10));
     }
+
     private void DrawGameOver(SpriteBatch spriteBatch)
     {
         int vw = _graphics.Viewport.Width;
@@ -411,7 +403,6 @@ public class GameScene : IScene
         spriteBatch.DrawString(font, btnText, btnTextPos, Color.White * _gameOverAlpha);
     }
 
-    //Creates a 1x1 white pixel used as a building block for UI rectangles.
     private Texture2D CreatePixelTexture()
     {
         Texture2D texture = new Texture2D(_graphics, 1, 1);

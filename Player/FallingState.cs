@@ -51,6 +51,11 @@ public class FallingState : IPlayerState
             frameWidth, player.CurrentTexture.Height);
     }
 
+    public void Dash(Player player)
+    {
+        if (player.TryDash())
+            player.ChangeState(new DashState());
+    }
     public void Attack(Player player) => player.ChangeState(new AttackState(wasJumping: true));
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Jump(Player player) { }

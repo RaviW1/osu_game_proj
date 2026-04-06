@@ -51,6 +51,8 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.Space, jumpPressedCmd);
             keyboard.BindHeld(Keys.Space, jumpHeldCmd);
 
+            keyboard.BindPress(Keys.LeftShift, new DashCommand());
+
             keyboard.BindPress(Keys.Q, new QuitCommand(game));
             keyboard.BindPress(Keys.R, new ResetCommand(scene));
 

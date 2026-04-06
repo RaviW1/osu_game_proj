@@ -1,8 +1,7 @@
 using Microsoft.Xna.Framework;
-
 public interface IPlayerState
 {
-    void OnEnter(Player player);  // was Reset
+    void OnEnter(Player player);
     void Update(Player player, GameTime gameTime);
     void Draw(Player player);
     void Walk(Player player, int direction);
@@ -12,4 +11,5 @@ public interface IPlayerState
     void TakeDamage(Player player);
     void Heal(Player player);
     void JumpHeld(Player player, float deltaTime);
+    void Dash(Player player);
 }

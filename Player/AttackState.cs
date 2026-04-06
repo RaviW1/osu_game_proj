@@ -7,7 +7,6 @@ public class AttackState : IPlayerState
     private const float AttackDuration = 0.3f;
     private const float SecondsPerFrame = 0.1f;
     private const int TotalFrames = 6;
-
     private float attackTimer = 0f;
     private bool wasJumping = false;
     private int currentFrame = 0;
@@ -23,9 +22,6 @@ public class AttackState : IPlayerState
         player.CurrentTexture = player.Textures["Attack"];
         player.sourceRectangle = new Rectangle(896, 0, 128, 128);
         player.IsAttacking = true;
-
-        // Always clear suppression on enter — attack should never inherit
-        // stale landing suppression from a previous state
         if (!wasJumping)
             player.SuppressLandingTransition = false;
     }
@@ -33,21 +29,15 @@ public class AttackState : IPlayerState
     public void Update(Player player, GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         attackTimer += dt;
         timeSinceLastFrame += dt;
-
         AdvanceFrame();
-
 
         if (attackTimer >= AttackDuration)
         {
             player.IsAttacking = false;
-
             if (wasJumping)
             {
-                // Always clear suppression before returning to falling
-                // so the player can land normally after an air attack
                 player.SuppressLandingTransition = false;
                 player.ChangeState(new FallingState());
             }
@@ -61,12 +51,10 @@ public class AttackState : IPlayerState
     public void Walk(Player player, int direction)
     {
         if (!wasJumping) return;
-
         if (direction > 0)
             player.facing = SpriteEffects.None;
         else if (direction < 0)
             player.facing = SpriteEffects.FlipHorizontally;
-
         player.Velocity.X = direction * 3f;
         player.Position.X += player.Velocity.X;
     }
@@ -83,8 +71,18 @@ public class AttackState : IPlayerState
     public void TakeDamage(Player player)
     {
         player.IsAttacking = false;
-        player.SuppressLandingTransition = false;  // clean up before leaving
+        player.SuppressLandingTransition = false;
         player.ChangeState(new DamagedState());
+    }
+
+    public void Dash(Player player)
+    {
+        if (player.TryDash())
+        {
+            player.IsAttacking = false;
+            player.SuppressLandingTransition = false;
+            player.ChangeState(new DashState());
+        }
     }
 
     public void Jump(Player player) { }

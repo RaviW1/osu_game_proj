@@ -51,10 +51,18 @@ public class WalkingState : IPlayerState
         commandReceivedThisFrame = true;
         this.direction = direction;
 
-        if (direction > 0)
+        if (direction > 0) //right
+        {
             player.facing = SpriteEffects.None;
-        else if (direction < 0)
+            
+        }
+        else if (direction < 0)//left
+        {
             player.facing = SpriteEffects.FlipHorizontally;
+            
+        }
+
+
     }
 
     public void Draw(Player player)
@@ -85,5 +93,9 @@ public class WalkingState : IPlayerState
 
     public void JumpHeld(Player player, float deltaTime) { }
 
-
+    public void Dash(Player player)
+    {
+        if (player.TryDash())
+            player.ChangeState(new DashState());
+    }
 }
