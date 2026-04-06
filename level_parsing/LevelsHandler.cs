@@ -20,9 +20,10 @@ namespace osu_game_proj
         public void LoadSingleLevel(string level_path, ContentManager Content)
         {
 
+            List<EnemyInformation> generateEnemyInfo = new List<EnemyInformation>();
             List<TileInformation> generateTileInfo = new List<TileInformation>();
             LoadLevelFile levelFileLoader = new LoadLevelFile();
-            levelFileLoader.LoadFile(level_path, generateTileInfo);
+            levelFileLoader.LoadFile(level_path, generateTileInfo, generateEnemyInfo);
 
             TileGenerator tileGenObj = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj.LoadTileTextures(Content);
