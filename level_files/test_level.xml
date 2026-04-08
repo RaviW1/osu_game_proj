@@ -5,4 +5,5 @@
   <Tile id="level_tile" x_pos="0" y_pos="400" x_size="900" y_size="300" collide="0" damage="0"/>
   <Tile id="ground_platform" x_pos="0" y_pos="400" x_size="800" y_size="30" collide="1" damage="0"/>
   <Tile id="top_cave_wall" x_pos="0" y_pos="-20" x_size="800" y_size="100" collide="1" damage="0"/>
+  <Enemy id="boofly" x_pos="400" y_pos="200"/>
 </Level>

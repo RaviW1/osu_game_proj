@@ -64,7 +64,8 @@ public class GameScene : IScene
         _content = content;
         _game = game;
     }
-    public void TogglePause(){
+    public void TogglePause()
+    {
         _isPaused = !_isPaused;
     }
 
@@ -107,7 +108,6 @@ public class GameScene : IScene
         // Player
         player = CreatePlayer();
         // Enemies
-        enemies = CreateEnemies();
         // Items
         fireballTexture = _content.Load<Texture2D>("fireball");
         LoadItems();
@@ -134,14 +134,18 @@ public class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused){
-            ProcessInput(gameTime); 
+        if (_isPaused)
+        {
+            ProcessInput(gameTime);
             return;
         }
-        if (_isTransitioning){
-            if (_transitionPhase == TransitionPhase.FadeOut){
+        if (_isTransitioning)
+        {
+            if (_transitionPhase == TransitionPhase.FadeOut)
+            {
                 _transitionAlpha += TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha >= 1f){
+                if (_transitionAlpha >= 1f)
+                {
                     _transitionAlpha = 1f;
                     levels.CycleStage(_pendingTransitionDirection);
                     _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
@@ -149,9 +153,12 @@ public class GameScene : IScene
                     _camera.SnapTo(player.Position);
                     _transitionPhase = TransitionPhase.FadeIn;
                 }
-            }else {
+            }
+            else
+            {
                 _transitionAlpha -= TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha <= 0f){
+                if (_transitionAlpha <= 0f)
+                {
                     _transitionAlpha = 0f;
                     _isTransitioning = false;
                 }
@@ -174,11 +181,13 @@ public class GameScene : IScene
             _previousMouse = ms;
             return;
         }
-        if (_isWin){
+        if (_isWin)
+        {
             if (_winAlpha < 1f) _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
 
             MouseState ms = Mouse.GetState();
-            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released){
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
+            {
                 if (_restartButtonRect.Contains(ms.Position)) { _isWin = false; _winAlpha = 0f; Reset(); }
                 else if (_quitButtonRect.Contains(ms.Position)) { _game.Exit(); }
             }
@@ -194,20 +203,12 @@ public class GameScene : IScene
         }
 
         Rectangle playerBounds = player.GetBounds();
-        ISprite currentEnemy = enemies[currentEnemyIndex];
 
         // 1. Player collision — sets OnGround
         levels.currentRoom.Update(gameTime, player); // room-specific logic hook
         var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
         player.ResolveCollisions(playerResults);
 
-        // 2. Enemy collision
-        if (currentEnemy is IEnemy enemyCollision && !enemyCollision.IsDead)
-        {
-            var enemyVelocity = new Vector2(enemyCollision.GetVelocityX(), enemyCollision.GetVelocityY());
-            var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), _grid, enemyVelocity);
-            enemyCollision.ResolveCollisions(enemyResults);
-        }
 
         // 3. Input next — sets commandReceivedThisFrame before player.Update reads it
         ProcessInput(gameTime);
@@ -215,48 +216,8 @@ public class GameScene : IScene
         // 4. Player update — states now see correct OnGround AND correct input
         player.Update(gameTime);
 
-        // 5. Enemy update
-        if (enemies.Count > 0)
-            enemies[currentEnemyIndex].Update(gameTime);
-        if (blocks.Count > 0)
-            blocks[currentBlockIndex].Update(gameTime);
-
-        // 6. Aspid projectiles vs player
-        if (currentEnemy is Aspid aspid)
-        {
-            for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
-            {
-                if (aspid.Projectiles[i].GetBounds().Intersects(playerBounds))
-                {
-                    if (!player.IsInvincible)
-                    {
-                        player.PlayerHealth--;
-                        player.TakeDamage();
-                    }
-                    aspid.Projectiles.RemoveAt(i);
-                }
-            }
-        }
-
-        // 7. Player projectiles vs enemy
-        if (currentEnemy is IEnemy targetEnemy && !targetEnemy.IsDead)
-        {
-            for (int i = player.Projectiles.Count - 1; i >= 0; i--)
-            {
-                if (player.Projectiles[i].GetBounds().Intersects(targetEnemy.GetBounds()))
-                {
-                    targetEnemy.TakeDamage();
-                    player.Projectiles.RemoveAt(i);
-                }
-            }
-        }
-
-        // 8. Melee vs enemy
-        if (player.IsAttacking && currentEnemy is IEnemy meleeTarget && !meleeTarget.IsDead)
-        {
-            if (player.GetMeleeHitbox().Intersects(meleeTarget.GetBounds()))
-                meleeTarget.TakeDamage();
-        }
+        // Update current enemies in level
+        levels.Update(gameTime, player, _grid);
 
         // 9. Geo collection
         for (int i = levels.currentGeos.Count - 1; i >= 0; i--)
@@ -291,8 +252,8 @@ public class GameScene : IScene
 
         player.Draw(spriteBatch, gameTime);
 
-        if (enemies.Count > 0)
-            enemies[currentEnemyIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
+
+        levels.DrawEnemies(spriteBatch);
         spriteBatch.End();
 
         // Pass 2 — soul meter & HP masks (non-premultiplied textures)
@@ -311,7 +272,7 @@ public class GameScene : IScene
             DrawGameOver(spriteBatch);
         if (_isWin)
             DrawWinScreen(spriteBatch);
-        
+
         if (_isTransitioning) spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.Black * _transitionAlpha);
 
         spriteBatch.End();
@@ -319,15 +280,6 @@ public class GameScene : IScene
 
     public void Unload() { }
 
-    public void CycleEnemy(int direction)
-    {
-        if (enemies.Count == 0) return;
-        currentEnemyIndex += direction;
-        if (currentEnemyIndex < 0)
-            currentEnemyIndex = enemies.Count - 1;
-        else if (currentEnemyIndex >= enemies.Count)
-            currentEnemyIndex = 0;
-    }
 
     public void CycleBlock(int direction)
     {
@@ -338,7 +290,8 @@ public class GameScene : IScene
         else if (currentBlockIndex >= blocks.Count)
             currentBlockIndex = 0;
     }
-    public void TriggerWin(){
+    public void TriggerWin()
+    {
         _isWin = true;
         _winAlpha = 0f;
     }
@@ -354,13 +307,12 @@ public class GameScene : IScene
 
     public void Reset()
     {
-        enemies = CreateEnemies();
         player = CreatePlayer();
 
         itemManager = new ItemManager(0.4f);
         LoadItems();
 
-        currentEnemyIndex = 0;
+        levels.currentEnemyGen.ResetEnemies();
         currentBlockIndex = 0;
 
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
@@ -377,19 +329,6 @@ public class GameScene : IScene
             cmd.Execute(player, gameTime);
     }
 
-    private List<ISprite> CreateEnemies()
-    {
-        Texture2D booflyTex = _content.Load<Texture2D>("Enemy Sprites\\boofly");
-        Texture2D aspidTex = _content.Load<Texture2D>("Enemy Sprites\\aspid_hunter");
-        Texture2D huskBullyTex = _content.Load<Texture2D>("Enemy Sprites\\husk_bully");
-
-        return new List<ISprite>
-        {
-            new Boofly(booflyTex, new System.Numerics.Vector2(500, 50)),
-            new Aspid(aspidTex, fireballTexture, new System.Numerics.Vector2(500, 50)),
-            new HuskBully(huskBullyTex, new System.Numerics.Vector2(100, 360))
-        };
-    }
 
     private List<ISprite> CreateBlocks()
     {
@@ -534,7 +473,8 @@ public class GameScene : IScene
         texture.SetData(new[] { Color.White });
         return texture;
     }
-    private void DrawWinScreen(SpriteBatch spriteBatch){
+    private void DrawWinScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
@@ -560,7 +500,8 @@ public class GameScene : IScene
         spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
         spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
     }
-    private void DrawPauseScreen(SpriteBatch spriteBatch){
+    private void DrawPauseScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
