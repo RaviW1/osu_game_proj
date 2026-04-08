@@ -16,6 +16,8 @@ namespace osu_game_proj
             this.generateEnemyInfo = generateEnemyInfo;
         }
 
+        // TODO: implement enemy reset
+
         // Load necessary tile textures into scope
         // Really just a helper function to declutter load_content in the Game1 class
         public void LoadEnemyTextures(ContentManager Content)
@@ -26,6 +28,10 @@ namespace osu_game_proj
             enemyTextures.Add("husk_bully", Content.Load<Texture2D>("Enemy Sprites\\husk_bully"));
 
             fireballTexture = Content.Load<Texture2D>("fireball");
+            createEnemyObjects(generateEnemyInfo);
+        }
+        public void ResetEnemies()
+        {
             createEnemyObjects(generateEnemyInfo);
         }
         // create enemy objects from the information in the xml file
@@ -123,5 +129,6 @@ namespace osu_game_proj
                 }
             }
         }
+
     }
 }

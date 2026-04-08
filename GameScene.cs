@@ -312,7 +312,7 @@ public class GameScene : IScene
         itemManager = new ItemManager(0.4f);
         LoadItems();
 
-        currentEnemyIndex = 0;
+        levels.currentEnemyGen.ResetEnemies();
         currentBlockIndex = 0;
 
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
