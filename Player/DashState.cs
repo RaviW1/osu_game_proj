@@ -14,8 +14,12 @@ public class DashState : IPlayerState
         player.DashCooldown = Player.DashCooldownDuration;
         player.IsDashing = true;
 
-        // SpriteEffects.None = facing right, FlipHorizontally = facing left
-        _dashDirection = (player.facing == SpriteEffects.None) ? 1f : -1f;
+        if (player.IsAirborne)
+            // air: None = right, FlipHorizontally = left
+            _dashDirection = (player.facing == SpriteEffects.None) ? 1f : -1f;
+        else
+            // ground: flipped — sprite sheet default may differ
+            _dashDirection = (player.facing == SpriteEffects.None) ? -1f : 1f;
 
         player.Velocity.Y = 0f;
         player.Velocity.X = _dashDirection * Player.DashSpeed;

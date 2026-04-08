@@ -149,11 +149,13 @@ public class Player
                     break;
 
                 case CollisionDirection.Left:
+                    
                     Position.X += result.Overlap.Width;
                     Velocity.X = 0;
                     break;
 
                 case CollisionDirection.Right:
+                    
                     Position.X -= result.Overlap.Width;
                     Velocity.X = 0;
                     break;
