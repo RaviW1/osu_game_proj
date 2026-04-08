@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using osu_game_proj;
 
 namespace osu_game_proj
 {
@@ -8,6 +10,7 @@ namespace osu_game_proj
     public class LevelsHandler
     {
         private List<TileGenerator> levelGenList;
+        private List<EnemyGenerator> enemyGenList;
         private int currentLevelNum;
         public Texture2D geoTexture;
         private List<List<Geo>> allLevelGeos;
@@ -15,6 +18,7 @@ namespace osu_game_proj
 
         public List<Geo> currentGeos;
         public TileGenerator currentTilesGen;
+        public EnemyGenerator currentEnemyGen;
         public IRoom currentRoom;
 
         public void LoadSingleLevel(string level_path, ContentManager Content)
@@ -27,9 +31,13 @@ namespace osu_game_proj
 
             TileGenerator tileGenObj = new TileGenerator(new List<TileInformation>(generateTileInfo));
             tileGenObj.LoadTileTextures(Content);
+            EnemyGenerator enemyGenObj = new EnemyGenerator(new List<EnemyInformation>(generateEnemyInfo));
+            enemyGenObj.LoadEnemyTextures(Content);
 
             levelGenList.Add(tileGenObj);
+            enemyGenList.Add(enemyGenObj);
             generateTileInfo.Clear();
+            generateEnemyInfo.Clear();
         }
         // TODO: add arg to specify starting level
         public void LoadLevelTiles(ContentManager Content)
@@ -38,6 +46,7 @@ namespace osu_game_proj
 
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
             levelGenList = new List<TileGenerator>();
+            enemyGenList = new List<EnemyGenerator>();
             allLevelGeos = new List<List<Geo>>();
             allRoomObjs = new List<IRoom>();
 
@@ -63,6 +72,7 @@ namespace osu_game_proj
                 allLevelGeos.Add(geo_level);
             }
 
+            currentEnemyGen = enemyGenList[0];
             currentTilesGen = levelGenList[0];
             currentGeos = allLevelGeos[0];
             currentRoom = allRoomObjs[0];
@@ -73,6 +83,14 @@ namespace osu_game_proj
         {
             currentTilesGen.Draw(spriteBatch);
         }
+        public void DrawEnemies(SpriteBatch spriteBatch)
+        {
+            currentEnemyGen.Draw(spriteBatch);
+        }
+        public void Update(GameTime gameTime, Player player, SpatialGrid _grid)
+        {
+            currentEnemyGen.Update(gameTime, player, _grid);
+        }
         public void CycleStage(int direction)
         {
             if (direction == -1)
@@ -81,6 +99,7 @@ namespace osu_game_proj
                 {
                     currentLevelNum--;
                     currentTilesGen = levelGenList[currentLevelNum];
+                    currentEnemyGen = enemyGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
                     currentRoom = allRoomObjs[currentLevelNum];
 
@@ -89,6 +108,7 @@ namespace osu_game_proj
                 {
                     currentLevelNum = 0;
                     currentTilesGen = levelGenList[currentLevelNum];
+                    currentEnemyGen = enemyGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
                     currentRoom = allRoomObjs[currentLevelNum];
                 }
@@ -99,6 +119,7 @@ namespace osu_game_proj
                 {
                     currentLevelNum++;
                     currentTilesGen = levelGenList[currentLevelNum];
+                    currentEnemyGen = enemyGenList[currentLevelNum];
                     currentGeos = allLevelGeos[currentLevelNum];
                     currentRoom = allRoomObjs[currentLevelNum];
                 }

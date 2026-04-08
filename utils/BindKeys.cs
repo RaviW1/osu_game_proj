@@ -16,8 +16,6 @@ namespace osu_game_proj
 
         public void bindKeys(GameScene scene, Game1 game)
         {
-            keyboard.BindPress(Keys.O, new CycleEnemyCommand(-1, scene));
-            keyboard.BindPress(Keys.P, new CycleEnemyCommand(1, scene));
 
             var moveAxisCmd = new MovementAxisCommand(
                 leftKeys: new[] { Keys.A, Keys.Left },
