@@ -27,6 +27,7 @@ namespace osu_game_proj
                 upKeys: new[] { Keys.W, Keys.Up },
                 downKeys: new[] { Keys.S, Keys.Down }
             );
+
             var jumpPressedCmd = new JumpPressedCommand();
             var jumpHeldCmd = new JumpHeldCommand();
 
@@ -48,18 +49,19 @@ namespace osu_game_proj
             keyboard.BindRelease(Keys.S, vertAxisCmd);
             keyboard.BindRelease(Keys.Down, vertAxisCmd);
 
+            // Interact — press only, fires once per key press
+            var interactCmd = new InteractCommand(scene);
+            keyboard.BindPress(Keys.W, interactCmd);
+            keyboard.BindPress(Keys.Up, interactCmd);
+
             keyboard.BindPress(Keys.Space, jumpPressedCmd);
             keyboard.BindHeld(Keys.Space, jumpHeldCmd);
-
             keyboard.BindPress(Keys.LeftShift, new DashCommand());
             keyboard.BindPress(Keys.M, new MuteCommand());
-
             keyboard.BindPress(Keys.Q, new QuitCommand(game));
             keyboard.BindPress(Keys.R, new ResetCommand(scene));
-
             keyboard.BindPress(Keys.T, new CycleBlockCommand(-1, scene));
             keyboard.BindPress(Keys.Y, new CycleBlockCommand(1, scene));
-
             keyboard.BindPress(Keys.Z, new AttackCommand());
             keyboard.BindPress(Keys.N, new AttackCommand());
             keyboard.BindPress(Keys.E, new DamageCommand());

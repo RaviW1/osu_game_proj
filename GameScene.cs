@@ -55,6 +55,10 @@ public class GameScene : IScene
     // Collision
     private SpatialGrid _grid;
 
+    // Interact
+    private List<IInteractable> _interactables = new List<IInteractable>();
+    private const int TalkRange = 64;
+
     // Camera
     private Camera2D _camera;
 
@@ -64,7 +68,9 @@ public class GameScene : IScene
         _content = content;
         _game = game;
     }
-    public void TogglePause(){
+
+    public void TogglePause()
+    {
         _isPaused = !_isPaused;
     }
 
@@ -72,10 +78,10 @@ public class GameScene : IScene
 
     public void Load()
     {
-        // Input
         _isWin = false;
         _isPaused = false;
         _winAlpha = 0f;
+
         keyboard = new KeyboardController();
         BindKeys keyBindObj = new BindKeys(keyboard);
         keyBindObj.bindKeys(this, _game);
@@ -100,28 +106,21 @@ public class GameScene : IScene
         pixelTexture = CreatePixelTexture();
         font = _content.Load<SpriteFont>("DefaultFont");
 
-        // UI
         abilityBar = CreateAbilityBar();
-        // Blocks
         blocks = CreateBlocks();
-        // Player
         player = CreatePlayer();
-        // Enemies
         enemies = CreateEnemies();
-        // Items
         fireballTexture = _content.Load<Texture2D>("fireball");
         LoadItems();
-        // Music
+
         SoundManager.Initialize(_content);
         SoundManager.PlayBGMusic();
 
-        // Soul Meter & HP Masks
         _soulMeterTexture = _content.Load<Texture2D>("soul_meter");
         StripDarkPixels(_soulMeterTexture, 30);
         _hpMaskTexture = _content.Load<Texture2D>("masks(hp bar)");
         StripDarkPixels(_hpMaskTexture, 30);
 
-        // Game Over
         _gameOverTexture = _content.Load<Texture2D>("Game_Over");
         _isGameOver = false;
         _gameOverAlpha = 0f;
@@ -134,14 +133,19 @@ public class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused){
-            ProcessInput(gameTime); 
+        if (_isPaused)
+        {
+            ProcessInput(gameTime);
             return;
         }
-        if (_isTransitioning){
-            if (_transitionPhase == TransitionPhase.FadeOut){
+
+        if (_isTransitioning)
+        {
+            if (_transitionPhase == TransitionPhase.FadeOut)
+            {
                 _transitionAlpha += TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha >= 1f){
+                if (_transitionAlpha >= 1f)
+                {
                     _transitionAlpha = 1f;
                     levels.CycleStage(_pendingTransitionDirection);
                     _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
@@ -149,15 +153,19 @@ public class GameScene : IScene
                     _camera.SnapTo(player.Position);
                     _transitionPhase = TransitionPhase.FadeIn;
                 }
-            }else {
+            }
+            else
+            {
                 _transitionAlpha -= TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha <= 0f){
+                if (_transitionAlpha <= 0f)
+                {
                     _transitionAlpha = 0f;
                     _isTransitioning = false;
                 }
             }
             return;
         }
+
         if (_isGameOver)
         {
             if (_gameOverAlpha < 1f)
@@ -174,11 +182,15 @@ public class GameScene : IScene
             _previousMouse = ms;
             return;
         }
-        if (_isWin){
-            if (_winAlpha < 1f) _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
+
+        if (_isWin)
+        {
+            if (_winAlpha < 1f)
+                _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
 
             MouseState ms = Mouse.GetState();
-            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released){
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
+            {
                 if (_restartButtonRect.Contains(ms.Position)) { _isWin = false; _winAlpha = 0f; Reset(); }
                 else if (_quitButtonRect.Contains(ms.Position)) { _game.Exit(); }
             }
@@ -197,7 +209,7 @@ public class GameScene : IScene
         ISprite currentEnemy = enemies[currentEnemyIndex];
 
         // 1. Player collision — sets OnGround
-        levels.currentRoom.Update(gameTime, player); // room-specific logic hook
+        levels.currentRoom.Update(gameTime, player);
         var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
         player.ResolveCollisions(playerResults);
 
@@ -209,10 +221,10 @@ public class GameScene : IScene
             enemyCollision.ResolveCollisions(enemyResults);
         }
 
-        // 3. Input next — sets commandReceivedThisFrame before player.Update reads it
+        // 3. Input
         ProcessInput(gameTime);
 
-        // 4. Player update — states now see correct OnGround AND correct input
+        // 4. Player update
         player.Update(gameTime);
 
         // 5. Enemy update
@@ -258,6 +270,10 @@ public class GameScene : IScene
                 meleeTarget.TakeDamage();
         }
 
+        // 8b. Melee vs interactables (e.g. chests, breakables)
+        if (player.IsAttacking)
+            InteractSystem.BroadcastHit(player.GetMeleeHitbox(), _interactables, player);
+
         // 9. Geo collection
         for (int i = levels.currentGeos.Count - 1; i >= 0; i--)
         {
@@ -275,6 +291,13 @@ public class GameScene : IScene
         itemManager.Update(gameTime);
 
         _camera.Follow(player.Position);
+    }
+
+    // Called by InteractCommand — guards and broadcasts talk interact
+    public void TriggerInteract()
+    {
+        if (!player.OnGround || player.Velocity.X != 0f) return;
+        InteractSystem.BroadcastTalk(player.Position, TalkRange, _interactables, player);
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -311,8 +334,9 @@ public class GameScene : IScene
             DrawGameOver(spriteBatch);
         if (_isWin)
             DrawWinScreen(spriteBatch);
-        
-        if (_isTransitioning) spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.Black * _transitionAlpha);
+
+        if (_isTransitioning)
+            spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.Black * _transitionAlpha);
 
         spriteBatch.End();
     }
@@ -338,7 +362,9 @@ public class GameScene : IScene
         else if (currentBlockIndex >= blocks.Count)
             currentBlockIndex = 0;
     }
-    public void TriggerWin(){
+
+    public void TriggerWin()
+    {
         _isWin = true;
         _winAlpha = 0f;
     }
@@ -534,7 +560,9 @@ public class GameScene : IScene
         texture.SetData(new[] { Color.White });
         return texture;
     }
-    private void DrawWinScreen(SpriteBatch spriteBatch){
+
+    private void DrawWinScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
@@ -544,7 +572,7 @@ public class GameScene : IScene
         float titleScale = 2.5f;
         Vector2 titleSize = font.MeasureString(title) * titleScale;
         spriteBatch.DrawString(font, title, new Vector2((vw - titleSize.X) / 2f, vh * 0.25f),
-        Color.Gold * _winAlpha, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+            Color.Gold * _winAlpha, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
         string replayText = "Replay";
         Vector2 replaySize = font.MeasureString(replayText);
@@ -560,7 +588,9 @@ public class GameScene : IScene
         spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
         spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
     }
-    private void DrawPauseScreen(SpriteBatch spriteBatch){
+
+    private void DrawPauseScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
