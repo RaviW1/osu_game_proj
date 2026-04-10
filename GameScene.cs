@@ -119,10 +119,10 @@ public partial class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused)          { ProcessInput(gameTime); return; }
-        if (_isTransitioning)   { UpdateTransition(gameTime); return; }
-        if (_isGameOver)        { UpdateGameOver(gameTime); return; }
-        if (_isWin)             { UpdateWin(gameTime); return; }
+        if (_isPaused) { ProcessInput(gameTime); return; }
+        if (_isTransitioning) { UpdateTransition(gameTime); return; }
+        if (_isGameOver) { UpdateGameOver(gameTime); return; }
+        if (_isWin) { UpdateWin(gameTime); return; }
         if (UpdateCharmInventory()) return;
 
         if (player.PlayerHealth <= 0)
@@ -266,8 +266,7 @@ public partial class GameScene : IScene
         // Pass 1 — world space
         spriteBatch.Begin(transformMatrix: _camera.GetTransform());
         levels.Draw(spriteBatch);
-        if (blocks.Count > 0)
-            blocks[currentBlockIndex].Draw(spriteBatch, Vector2.Zero);
+
         foreach (var geo in levels.currentGeos)
             geo.Draw(spriteBatch);
         player.Draw(spriteBatch, gameTime);
@@ -302,16 +301,6 @@ public partial class GameScene : IScene
     public void TogglePause() => _isPaused = !_isPaused;
 
     public void TriggerWin() { _isWin = true; _winAlpha = 0f; }
-
-    public void CycleBlock(int direction)
-    {
-        if (blocks.Count == 0) return;
-        currentBlockIndex += direction;
-        if (currentBlockIndex < 0)
-            currentBlockIndex = blocks.Count - 1;
-        else if (currentBlockIndex >= blocks.Count)
-            currentBlockIndex = 0;
-    }
 
     public void CycleStage(int direction)
     {

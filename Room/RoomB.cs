@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Content;
 
 using osu_game_proj;
-using System.Collections.Generic;
 
 public class RoomB : RoomBase
 {
