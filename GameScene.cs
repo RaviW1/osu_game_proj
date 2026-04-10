@@ -244,9 +244,6 @@ public class GameScene : IScene
         spriteBatch.Begin(transformMatrix: _camera.GetTransform());
         levels.Draw(spriteBatch);
 
-        if (blocks.Count > 0)
-            blocks[currentBlockIndex].Draw(spriteBatch, System.Numerics.Vector2.Zero);
-
         foreach (var geo in levels.currentGeos)
             geo.Draw(spriteBatch);
 
