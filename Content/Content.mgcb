@@ -494,6 +494,18 @@
 /processorParam:TextureFormat=Color
 /build:Level1Ground.png
 
+#begin lookup.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:lookup.png
+
 #begin masks(hp bar).png
 /importer:TextureImporter
 /processor:TextureProcessor

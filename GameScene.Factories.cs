@@ -43,7 +43,9 @@ public partial class GameScene
             { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
             { "Jumping", _content.Load<Texture2D>("knight_jumping") },
             { "Attacking", _content.Load<Texture2D>("knight_attack") },
-            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") }
+            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
+            { "SpriteSheet", _content.Load<Texture2D>("The Knight main sprites - atlas0 #00000357") },
+            { "lookup", _content.Load<Texture2D>("lookup") }
         };
         return new Player(textures, fireballTexture, new Vector2(350, 370));
     }
