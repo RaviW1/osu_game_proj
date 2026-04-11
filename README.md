@@ -15,7 +15,7 @@ z or n to attack
 2 to shoot a projectile
 3 to heal  
 t or y to cycle between displayed blocks  
-u or i to cycle displayed charm  
+I to open Charms Inventory  
 o or p to cycle currently shown enemy  
 Left click on top left of game window to switch to level 1
 Right click on top right of game window to switch to level 2
