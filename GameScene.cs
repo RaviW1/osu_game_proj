@@ -64,7 +64,8 @@ public class GameScene : IScene
         _content = content;
         _game = game;
     }
-    public void TogglePause(){
+    public void TogglePause()
+    {
         _isPaused = !_isPaused;
     }
 
@@ -134,14 +135,18 @@ public class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused){
-            ProcessInput(gameTime); 
+        if (_isPaused)
+        {
+            ProcessInput(gameTime);
             return;
         }
-        if (_isTransitioning){
-            if (_transitionPhase == TransitionPhase.FadeOut){
+        if (_isTransitioning)
+        {
+            if (_transitionPhase == TransitionPhase.FadeOut)
+            {
                 _transitionAlpha += TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha >= 1f){
+                if (_transitionAlpha >= 1f)
+                {
                     _transitionAlpha = 1f;
                     levels.CycleStage(_pendingTransitionDirection);
                     _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
@@ -149,9 +154,12 @@ public class GameScene : IScene
                     _camera.SnapTo(player.Position);
                     _transitionPhase = TransitionPhase.FadeIn;
                 }
-            }else {
+            }
+            else
+            {
                 _transitionAlpha -= TransitionSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if (_transitionAlpha <= 0f){
+                if (_transitionAlpha <= 0f)
+                {
                     _transitionAlpha = 0f;
                     _isTransitioning = false;
                 }
@@ -174,11 +182,13 @@ public class GameScene : IScene
             _previousMouse = ms;
             return;
         }
-        if (_isWin){
+        if (_isWin)
+        {
             if (_winAlpha < 1f) _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
 
             MouseState ms = Mouse.GetState();
-            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released){
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
+            {
                 if (_restartButtonRect.Contains(ms.Position)) { _isWin = false; _winAlpha = 0f; Reset(); }
                 else if (_quitButtonRect.Contains(ms.Position)) { _game.Exit(); }
             }
@@ -311,7 +321,7 @@ public class GameScene : IScene
             DrawGameOver(spriteBatch);
         if (_isWin)
             DrawWinScreen(spriteBatch);
-        
+
         if (_isTransitioning) spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height), Color.Black * _transitionAlpha);
 
         spriteBatch.End();
@@ -338,7 +348,8 @@ public class GameScene : IScene
         else if (currentBlockIndex >= blocks.Count)
             currentBlockIndex = 0;
     }
-    public void TriggerWin(){
+    public void TriggerWin()
+    {
         _isWin = true;
         _winAlpha = 0f;
     }
@@ -410,7 +421,8 @@ public class GameScene : IScene
             { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
             { "Jumping", _content.Load<Texture2D>("knight_jumping") },
             { "Attacking", _content.Load<Texture2D>("knight_attack") },
-            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") }
+            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
+            { "SpriteSheet", _content.Load<Texture2D>("The Knight main sprites - atlas0 #00000357") }
         };
         return new Player(textures, fireballTexture, new Vector2(350, 370));
     }
@@ -534,7 +546,8 @@ public class GameScene : IScene
         texture.SetData(new[] { Color.White });
         return texture;
     }
-    private void DrawWinScreen(SpriteBatch spriteBatch){
+    private void DrawWinScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
@@ -560,7 +573,8 @@ public class GameScene : IScene
         spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
         spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
     }
-    private void DrawPauseScreen(SpriteBatch spriteBatch){
+    private void DrawPauseScreen(SpriteBatch spriteBatch)
+    {
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 

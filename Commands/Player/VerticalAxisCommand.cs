@@ -25,6 +25,10 @@ public sealed class VerticalAxisCommand : ICommand
 
         // Later:
         // player.SetVerticalIntent(AxisY);
+        if (up)
+        {
+            player.LookUp();
+        }
     }
 
     private static bool AnyDown(KeyboardState s, Keys[] keys)

@@ -31,6 +31,7 @@ public class IdleState : IPlayerState
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Heal(Player player) => player.ChangeState(new HealingState());
+    public void LookUp(Player player) => player.ChangeState(new LookUpState());
 
     public void Dash(Player player)
     {
