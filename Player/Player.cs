@@ -179,6 +179,7 @@ public class Player
         //NOTE:  changed from height / 2 
         // if there are future issues with drawing, this may be the culprit
         Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height);
+        Rectangle destRect = new Rectangle((int)Position.X, (int)Position.Y, 30, 40);
         spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f);
 
         foreach (var projectile in Projectiles)

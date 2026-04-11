@@ -7,8 +7,8 @@ public class LookUpState : IPlayerState
         player.SuppressLandingTransition = false;
         player.Velocity.X = 0;
         player.DrawColor = Color.White;
-        player.CurrentTexture = player.Textures["SpriteSheet"];
-        player.sourceRectangle = new Rectangle(1012, 505, 54, 78);
+        player.CurrentTexture = player.Textures["lookup"];
+        player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width, player.CurrentTexture.Height);
     }
 
     public void Update(Player player, GameTime gameTime)
