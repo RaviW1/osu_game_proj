@@ -518,7 +518,6 @@
 /processorParam:TextureFormat=Color
 /build:lookup.png
 
-
 #begin masks(hp bar).png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -735,21 +734,6 @@
 /processorParam:TextureFormat=Color
 /build:The Knight main sprites - atlas0 #00000357.png
 
-<<<<<<< HEAD
-=======
-#begin The Knight main sprites - atlas0 #00000357.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:The Knight main sprites - atlas0 #00000357.png
-
->>>>>>> 151fe67 (expands first room bounds)
 #begin Unbreakable Heart - _0002_charm_glass_heal_full.png
 /importer:TextureImporter
 /processor:TextureProcessor
