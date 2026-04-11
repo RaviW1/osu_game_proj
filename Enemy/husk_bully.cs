@@ -91,7 +91,7 @@ public class HuskBully : ISprite, IEnemy
         }
     }
 
-    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
     {
         var direction = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (texture != null)

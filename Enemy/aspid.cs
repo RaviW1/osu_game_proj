@@ -7,7 +7,7 @@ public class Aspid : ISprite, IEnemy
 {
     private Texture2D texture;
     private Texture2D fireballTexture;
-    private System.Numerics.Vector2 position;
+    private Vector2 position;
     private Vector2 velocity;
     private float hoverTimer = 0f;
     private float shootTimer = 0f;
@@ -21,7 +21,7 @@ public class Aspid : ISprite, IEnemy
     public bool IsDead => isDead;
     public List<Projectile> Projectiles { get; private set; }
 
-    public Aspid(Texture2D texture, Texture2D fireballTexture, System.Numerics.Vector2 startPosition)
+    public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)
     {
         this.texture = texture;
         this.fireballTexture = fireballTexture;
@@ -30,10 +30,9 @@ public class Aspid : ISprite, IEnemy
         this.Projectiles = new List<Projectile>();
     }
 
-    public Microsoft.Xna.Framework.Rectangle GetBounds()
+    public Rectangle GetBounds()
     {
-        return new Microsoft.Xna.Framework.Rectangle(
-            (int)position.X, (int)position.Y, 45, 60);
+        return new Rectangle((int)position.X, (int)position.Y, 45, 60);
     }
 
     public void BounceX()
@@ -114,28 +113,28 @@ public class Aspid : ISprite, IEnemy
 
     private void ShootFireball()
     {
-        System.Numerics.Vector2 fireballVelocity = facingLeft
-            ? new System.Numerics.Vector2(-150, 0)
-            : new System.Numerics.Vector2(150, 0);
+        Vector2 fireballVelocity = facingLeft
+            ? new Vector2(-150, 0)
+            : new Vector2(150, 0);
         Projectiles.Add(new Projectile(fireballTexture, position, fireballVelocity));
     }
 
-    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
     {
         float hoverOffset = (float)Math.Sin(hoverTimer * 5) * 10;
-        var xnaDrawPos = new Microsoft.Xna.Framework.Vector2(position.X, position.Y + hoverOffset);
+        Vector2 drawPos = new Vector2(position.X, position.Y + hoverOffset);
 
         if (texture != null)
         {
-            var sourceRect = new Microsoft.Xna.Framework.Rectangle(4, 23, 140, 120);
+            var sourceRect = new Rectangle(4, 23, 140, 120);
             var spriteEffect = facingLeft
-                ? Microsoft.Xna.Framework.Graphics.SpriteEffects.None
-                : Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
-                0f, Microsoft.Xna.Framework.Vector2.Zero, 0.5f, spriteEffect, 0f);
+                ? SpriteEffects.None
+                : SpriteEffects.FlipHorizontally;
+            spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
+                0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
         }
 
         foreach (var projectile in Projectiles)
-            projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
+            projectile.Draw(spriteBatch, Vector2.Zero);
     }
 }

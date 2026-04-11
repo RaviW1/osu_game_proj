@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public class Boofly : ISprite, IEnemy
 {
     private Texture2D texture;
-    private System.Numerics.Vector2 position;
-    private System.Numerics.Vector2 velocity;
+    private Vector2 position;
+    private Vector2 velocity;
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
@@ -15,18 +15,16 @@ public class Boofly : ISprite, IEnemy
 
     public bool IsDead => isDead;
 
-
-    public Boofly(Texture2D texture, System.Numerics.Vector2 startPosition)
+    public Boofly(Texture2D texture, Vector2 startPosition)
     {
         this.texture = texture;
         this.position = startPosition;
-        this.velocity = new System.Numerics.Vector2(50, 0);
+        this.velocity = new Vector2(50, 0);
     }
 
-    public Microsoft.Xna.Framework.Rectangle GetBounds()
+    public Rectangle GetBounds()
     {
-        return new Microsoft.Xna.Framework.Rectangle(
-            (int)position.X, (int)position.Y, 56, 64);
+        return new Rectangle((int)position.X, (int)position.Y, 56, 64);
     }
 
     public void BounceX() { velocity.X *= -1; }
@@ -37,7 +35,7 @@ public class Boofly : ISprite, IEnemy
     public void TakeDamage()
     {
         isDead = true;
-        velocity = System.Numerics.Vector2.Zero;
+        velocity = Vector2.Zero;
     }
 
     public void ResolveCollisions(List<CollisionResult> results)
@@ -87,29 +85,23 @@ public class Boofly : ISprite, IEnemy
         bobTimer += 0.016f;
     }
 
-    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
     {
         float bobOffset = (float)Math.Sin(bobTimer * 3) * 20;
-        System.Numerics.Vector2 drawPos = new System.Numerics.Vector2(position.X, position.Y + bobOffset);
-
-        var xnaDrawPos = new Microsoft.Xna.Framework.Vector2(drawPos.X, drawPos.Y);
+        Vector2 drawPos = new Vector2(position.X, position.Y + bobOffset);
 
         if (texture != null)
         {
-
             int frameWidth = 309;
             int frameHeight = 335;
             int frameX = 4;
             int frameY = 23;
 
-            var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
-
-            // Scale it to reasonable size
+            var sourceRect = new Rectangle(frameX, frameY, frameWidth, frameHeight);
             float scale = 0.2f;
 
-            spriteBatch.Draw(texture, xnaDrawPos, sourceRect, Microsoft.Xna.Framework.Color.White,
-                            0f, Microsoft.Xna.Framework.Vector2.Zero, scale,
-                            Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
+                            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
     }
 }

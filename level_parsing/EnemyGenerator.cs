@@ -10,6 +10,7 @@ namespace osu_game_proj
         public List<EnemyInformation> generateEnemyInfo;
         public Texture2D fireballTexture;
         private List<IEnemy> enemyList;
+        public List<Vector2> PendingDeathPositions { get; } = new List<Vector2>();
 
         public EnemyGenerator(List<EnemyInformation> generateEnemyInfo)
         {
@@ -72,7 +73,7 @@ namespace osu_game_proj
         {
             foreach (IEnemy enemy in this.enemyList)
             {
-                enemy.Draw(spriteBatch, System.Numerics.Vector2.Zero);
+                enemy.Draw(spriteBatch, Vector2.Zero);
             }
         }
         public void Update(GameTime gameTime, Player player, SpatialGrid _grid)
@@ -116,7 +117,11 @@ namespace osu_game_proj
                     {
                         if (player.Projectiles[i].GetBounds().Intersects(targetEnemy.GetBounds()))
                         {
+                            bool wasAlive = !targetEnemy.IsDead;
                             targetEnemy.TakeDamage();
+                            player.Soul = System.Math.Min(player.Soul + 10, player.SoulLimit);
+                            if (wasAlive && targetEnemy.IsDead)
+                                PendingDeathPositions.Add(new Vector2(targetEnemy.GetBounds().Center.X, targetEnemy.GetBounds().Center.Y));
                             player.Projectiles.RemoveAt(i);
                         }
                     }
@@ -125,7 +130,13 @@ namespace osu_game_proj
                 if (player.IsAttacking && currentEnemy is IEnemy meleeTarget && !meleeTarget.IsDead)
                 {
                     if (player.GetMeleeHitbox().Intersects(meleeTarget.GetBounds()))
+                    {
+                        bool wasAlive = !meleeTarget.IsDead;
                         meleeTarget.TakeDamage();
+                        player.Soul = System.Math.Min(player.Soul + 10, player.SoulLimit);
+                        if (wasAlive && meleeTarget.IsDead)
+                            PendingDeathPositions.Add(new Vector2(meleeTarget.GetBounds().Center.X, meleeTarget.GetBounds().Center.Y));
+                    }
                 }
             }
         }

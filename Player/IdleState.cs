@@ -30,7 +30,11 @@ public class IdleState : IPlayerState
     public void Jump(Player player) => player.ChangeState(new JumpState());
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
-    public void Heal(Player player) => player.ChangeState(new HealingState());
+    public void Heal(Player player)
+    {
+        if (player.Soul >= 30)
+            player.ChangeState(new HealingState());
+    }
 
     public void Dash(Player player)
     {

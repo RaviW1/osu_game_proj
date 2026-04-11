@@ -1,9 +1,7 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using osu_game_proj;
-using System.Numerics;
 using Microsoft.Xna.Framework.Graphics;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 public static class HUD
 {
