@@ -125,6 +125,12 @@ namespace osu_game_proj
                 }
             }
         }
+        public void ResetAllEnemies()
+        {
+            foreach (EnemyGenerator enemyGen in enemyGenList)
+                enemyGen.ResetEnemies();
+        }
+
         public void ClearGeos()
         {
             allLevelGeos.Clear();

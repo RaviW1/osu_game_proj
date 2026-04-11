@@ -8,6 +8,8 @@ public class HealingState : IPlayerState
 
     public void OnEnter(Player player)
     {
+        player.Soul -= 30;
+        player.PlayerHealth++;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }

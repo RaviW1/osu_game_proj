@@ -10,6 +10,7 @@ public class TextureItem : IItem
     private float timer;
 
     public int Id { get; }
+    public Texture2D Texture => texture;
 
     public TextureItem(int id, Texture2D texture, Action<Player> selectAction = null, Action<Player> deselectAction = null)
     {

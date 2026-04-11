@@ -1,21 +1,19 @@
-using System.Numerics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 public class Projectile : ISprite
 {
-    private System.Numerics.Vector2 position;
-    private System.Numerics.Vector2 velocity;
+    private Vector2 position;
+    private Vector2 velocity;
     private Texture2D texture;
     private bool movingRight;
     
-    // Animation fields
     private int currentFrame = 0;
     private int totalFrames = 4;
     private float animationTimer = 0f;
-    private float frameTime = 0.1f; // 0.1 seconds per frame
+    private float frameTime = 0.1f;
     
-    public Projectile(Texture2D texture, System.Numerics.Vector2 startPos, System.Numerics.Vector2 velocity)
+    public Projectile(Texture2D texture, Vector2 startPos, Vector2 velocity)
     {
         this.texture = texture;
         this.position = startPos;
@@ -27,46 +25,42 @@ public class Projectile : ISprite
     {
         position += velocity * 0.016f;
         
-        // Update animation
         animationTimer += 0.016f;
         if (animationTimer >= frameTime)
         {
-            currentFrame = (currentFrame + 1) % totalFrames; // Cycle 0->1->2->3->0
+            currentFrame = (currentFrame + 1) % totalFrames;
             animationTimer = 0f;
         }
     }
     
-    public System.Numerics.Vector2 GetPosition()
+    public Vector2 GetPosition()
     {
         return position;
     }
     
-    public void Draw(SpriteBatch spriteBatch, System.Numerics.Vector2 startCoords)
+    public void Draw(SpriteBatch spriteBatch, Vector2 startCoords)
     {
-        var xnaPos = new Microsoft.Xna.Framework.Vector2(position.X, position.Y);
         if (texture != null)
         {
             int frameWidth = texture.Width / 2;
             int frameHeight = texture.Height / 2;
             
-            // Calculate frame position (2x2 grid)
             int frameX = (currentFrame % 2) * frameWidth;
             int frameY = (currentFrame / 2) * frameHeight;
             
-            var sourceRect = new Microsoft.Xna.Framework.Rectangle(frameX, frameY, frameWidth, frameHeight);
+            var sourceRect = new Rectangle(frameX, frameY, frameWidth, frameHeight);
             
-            // Flip sprite if moving right
             var spriteEffect = movingRight ? 
-                Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : 
-                Microsoft.Xna.Framework.Graphics.SpriteEffects.None;
+                SpriteEffects.FlipHorizontally : 
+                SpriteEffects.None;
             
-            spriteBatch.Draw(texture, xnaPos, sourceRect, Microsoft.Xna.Framework.Color.White, 
-                           0f, Microsoft.Xna.Framework.Vector2.Zero, 0.5f,
-                           spriteEffect, 0f);
+            spriteBatch.Draw(texture, position, sourceRect, Color.White, 
+                           0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
         }
-
     }
-    public Microsoft.Xna.Framework.Rectangle GetBounds(){
-        return new Microsoft.Xna.Framework.Rectangle((int)position.X, (int)position.Y, 20, 20);
+
+    public Rectangle GetBounds()
+    {
+        return new Rectangle((int)position.X, (int)position.Y, 20, 20);
     }
 }

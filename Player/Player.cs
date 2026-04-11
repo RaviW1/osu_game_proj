@@ -42,8 +42,8 @@ public class Player
     public bool OnGround { get; set; }
     public bool IsAirborne { get; set; } = false;
 
-    private int maxPlayerHealth = 7;
-    private int playerHealth = 7;
+    private int maxPlayerHealth = 5;
+    private int playerHealth = 5;
     public int PlayerHealth
     {
         get { return playerHealth; }
