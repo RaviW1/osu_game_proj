@@ -49,6 +49,7 @@ public class DamagedState : IPlayerState
     }
 
     public void Heal(Player player) { }
+    public void LookUp(Player player) { }
     public void ReturnToIdle(Player player) => player.ChangeState(new IdleState());
     public void Walk(Player player, int direction) { }
     public void Jump(Player player) { }

@@ -35,6 +35,7 @@ public class IdleState : IPlayerState
         if (player.Soul >= 30)
             player.ChangeState(new HealingState());
     }
+    public void LookUp(Player player) => player.ChangeState(new LookUpState());
 
     public void Dash(Player player)
     {

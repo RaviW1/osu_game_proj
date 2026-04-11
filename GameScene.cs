@@ -119,10 +119,10 @@ public partial class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused)          { ProcessInput(gameTime); return; }
-        if (_isTransitioning)   { UpdateTransition(gameTime); return; }
-        if (_isGameOver)        { UpdateGameOver(gameTime); return; }
-        if (_isWin)             { UpdateWin(gameTime); return; }
+        if (_isPaused) { ProcessInput(gameTime); return; }
+        if (_isTransitioning) { UpdateTransition(gameTime); return; }
+        if (_isGameOver) { UpdateGameOver(gameTime); return; }
+        if (_isWin) { UpdateWin(gameTime); return; }
         if (UpdateCharmInventory()) return;
 
         if (player.PlayerHealth <= 0)
