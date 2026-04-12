@@ -176,15 +176,12 @@ public class Player
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         currentState.Draw(this);
-        //NOTE:  changed from height / 2 if there are future issues with drawing, this may be the culprit
+        //NOTE:  changed from height / 2 
+        // if there are future issues with drawing, this may be the culprit
         Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height);
         Rectangle destRect = new Rectangle((int)Position.X, (int)Position.Y, 30, 40);
         spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f);
 
-            if (IsAttacking) 
-        {
-            spriteBatch.Draw(SlashTexture, slashPosition, slashSourceRect, Color.White, 0f, slashOrigin, 0.5f, facing, 0f);
-        }
         foreach (var projectile in Projectiles)
             projectile.Draw(spriteBatch, System.Numerics.Vector2.Zero);
     }
