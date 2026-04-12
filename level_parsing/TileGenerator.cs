@@ -30,6 +30,7 @@ namespace osu_game_proj
             tileTextures.Add("ground_platform", Content.Load<Texture2D>("Level1Ground"));
             tileTextures.Add("left_rocks_wall", Content.Load<Texture2D>("background_left_layer1"));
             tileTextures.Add("level1_spikes", Content.Load<Texture2D>("level1_spikes"));
+            tileTextures.Add("background_image", Content.Load<Texture2D>("background"));
 
             createMapBlocks(generateTileInfo);
         }
