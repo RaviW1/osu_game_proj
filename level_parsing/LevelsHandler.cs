@@ -2,11 +2,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using osu_game_proj;
 
 namespace osu_game_proj
 {
-
     public class LevelsHandler
     {
         private List<TileGenerator> levelGenList;

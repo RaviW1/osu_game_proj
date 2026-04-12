@@ -55,9 +55,6 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.Q, new QuitCommand(game));
             keyboard.BindPress(Keys.R, new ResetCommand(scene));
 
-            keyboard.BindPress(Keys.T, new CycleBlockCommand(-1, scene));
-            keyboard.BindPress(Keys.Y, new CycleBlockCommand(1, scene));
-
             keyboard.BindPress(Keys.Z, new AttackCommand());
             keyboard.BindPress(Keys.N, new AttackCommand());
             keyboard.BindPress(Keys.E, new DamageCommand());
