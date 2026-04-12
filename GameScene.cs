@@ -216,7 +216,7 @@ public partial class GameScene : IScene
     {
         Rectangle playerBounds = player.GetBounds();
 
-        levels.currentRoom.Update(gameTime, player);
+        levels.currentRoom.Update(gameTime, player, this);
         var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
         player.ResolveCollisions(playerResults);
 
@@ -304,6 +304,14 @@ public partial class GameScene : IScene
 
     public void CycleStage(int direction)
     {
+        if (direction == 1)
+        {
+            player.Position = levels.currentRoom.GetSpawnPoint("fromLeft");
+        }
+        else if (direction == -1)
+        {
+            player.Position = levels.currentRoom.GetSpawnPoint("fromRight");
+        }
         if (_isTransitioning) return;
         _isTransitioning = true;
         _transitionAlpha = 0f;

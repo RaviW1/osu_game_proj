@@ -7,7 +7,7 @@ public class RoomB : RoomBase
 {
     public RoomB()
     {
-        Bounds = new Rectangle(0, 0, 1000, 900);
+        Bounds = new Rectangle(0, 0, 900, 900);
     }
 
     public override void Load(ContentManager content, TileGenerator tilGen)
@@ -15,6 +15,7 @@ public class RoomB : RoomBase
         Tiles.AddRange(tilGen.TileList);
 
         spawnPoints["default"] = new Vector2(350, 370);
-        spawnPoints["fromLeft"] = new Vector2(100, 370);
+        spawnPoints["fromLeft"] = new Vector2(50, 370);
+        spawnPoints["fromRight"] = new Vector2(850, 370);
     }
 }
