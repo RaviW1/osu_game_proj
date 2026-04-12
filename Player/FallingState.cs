@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using osu_game_proj;
 
 public class FallingState : IPlayerState
 {
@@ -60,6 +59,7 @@ public class FallingState : IPlayerState
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Jump(Player player) { }
     public void Heal(Player player) { }
+    public void LookUp(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
     public void StopWalking(Player player) { }
 

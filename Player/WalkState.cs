@@ -54,12 +54,12 @@ public class WalkingState : IPlayerState
         if (direction > 0) //right
         {
             player.facing = SpriteEffects.None;
-            
+
         }
         else if (direction < 0)//left
         {
             player.facing = SpriteEffects.FlipHorizontally;
-            
+
         }
 
 
@@ -80,6 +80,8 @@ public class WalkingState : IPlayerState
     public void Attack(Player player) => player.ChangeState(new AttackState());
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Heal(Player player) { }
+    // TODO: change so we switch to looking up walk cycle
+    public void LookUp(Player player) { }
 
     private void AdvanceFrame(float dt)
     {

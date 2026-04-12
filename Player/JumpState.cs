@@ -73,6 +73,7 @@ public class JumpState : IPlayerState
 
     public void Jump(Player player) { }
     public void Heal(Player player) { }
+    public void LookUp(Player player) { }
 
     public void Dash(Player player)
     {

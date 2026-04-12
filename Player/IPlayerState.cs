@@ -12,4 +12,5 @@ public interface IPlayerState
     void Heal(Player player);
     void JumpHeld(Player player, float deltaTime);
     void Dash(Player player);
+    void LookUp(Player player);
 }

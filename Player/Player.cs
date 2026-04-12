@@ -14,9 +14,6 @@ public class Player
     public Rectangle sourceRectangle;
     public SpriteEffects facing = SpriteEffects.None;
 
-
-    
-
     private IPlayerState currentState;
 
     public Color DrawColor = Color.White;
@@ -179,7 +176,10 @@ public class Player
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         currentState.Draw(this);
-        Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height / 2f);
+        //NOTE:  changed from height / 2 
+        // if there are future issues with drawing, this may be the culprit
+        Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height);
+        Rectangle destRect = new Rectangle((int)Position.X, (int)Position.Y, 30, 40);
         spriteBatch.Draw(CurrentTexture, Position, sourceRectangle, DrawColor, 0f, origin, 0.5f, facing, 0f);
 
         foreach (var projectile in Projectiles)
@@ -190,7 +190,7 @@ public class Player
     {
         return new Rectangle(
             (int)(Position.X - 15),
-            (int)(Position.Y - 20),
+            (int)(Position.Y - 40),
             30, 40);
     }
 
@@ -217,6 +217,7 @@ public class Player
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
     public void Dash() => currentState.Dash(this);
+    public void LookUp() => currentState.LookUp(this);
 
     public void TakeDamage()
     {

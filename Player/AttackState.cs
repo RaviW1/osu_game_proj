@@ -90,6 +90,8 @@ public class AttackState : IPlayerState
     public void Heal(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
     public void StopWalking(Player player) { }
+    // cant change attack direction will attacking?
+    public void LookUp(Player player) { }
 
     private void AdvanceFrame()
     {

@@ -58,6 +58,7 @@ public class DashState : IPlayerState
     public void Heal(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
     public void Dash(Player player) { }
+    public void LookUp(Player player) { }
 
     private void EndDash(Player player)
     {
