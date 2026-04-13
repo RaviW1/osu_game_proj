@@ -1,6 +1,4 @@
 using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using osu_game_proj;
 using Microsoft.Xna.Framework.Graphics;
 
 public static class HUD

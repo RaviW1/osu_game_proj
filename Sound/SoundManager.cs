@@ -7,7 +7,6 @@ public static class SoundManager
 {
     private static Dictionary<string, SoundEffect> sfx;
     private static SoundEffectInstance walkingLoop;
-
     private static Song background_music;
 
     public static void Initialize(ContentManager content)
@@ -15,7 +14,6 @@ public static class SoundManager
         sfx = new Dictionary<string, SoundEffect>();
         // load sfx
         sfx.Add("Jump", content.Load<SoundEffect>("hero_jump"));
-
         background_music = content.Load<Song>("background_music");
         MediaPlayer.IsRepeating = true;
         MediaPlayer.Volume = .7f;
