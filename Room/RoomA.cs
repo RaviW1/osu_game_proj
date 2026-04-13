@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using osu_game_proj;
-using System.Collections.Generic;
 
 public class RoomA : RoomBase
 {

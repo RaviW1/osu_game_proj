@@ -12,6 +12,13 @@ public abstract class RoomBase : IRoom
     public List<TileBlock> Tiles { get; protected set; } = new List<TileBlock>();
     protected Dictionary<string, Vector2> spawnPoints = new Dictionary<string, Vector2>();
 
+    // Directional neighbors
+    public RoomBase LeftNeighbor { get; set; }
+    public RoomBase RightNeighbor { get; set; }
+    public RoomBase UpNeighbor { get; set; }
+    public RoomBase DownNeighbor { get; set; }
+    public int roomIndex { get; set; }
+
     public virtual void Load(ContentManager content, TileGenerator tilege) { }
 
     public virtual void Update(GameTime gameTime, Player player, GameScene scene)
@@ -19,11 +26,17 @@ public abstract class RoomBase : IRoom
         Rectangle playerBounds = player.GetBounds();
         if (playerBounds.Intersects(LeftExit))
         {
-            scene.CycleStage(-1);
+            if (LeftNeighbor != null)
+            {
+                scene.CycleStage(-1);
+            }
         }
         else if (playerBounds.Intersects(RightExit))
         {
-            scene.CycleStage(1);
+            if (RightNeighbor != null)
+            {
+                scene.CycleStage(1);
+            }
         }
     }
 

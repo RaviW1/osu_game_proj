@@ -52,15 +52,18 @@ namespace osu_game_proj
             // add xml to load here 
             // create a new Room object to handle collisions
             // Load level1
+            // TODO: create one class that holds both room and levelGenerator objects
             this.LoadSingleLevel("level_files/test_level.xml", Content);
             RoomA roomA = new RoomA();
             roomA.Load(Content, levelGenList[0]);
+            roomA.roomIndex = 0;
             allRoomObjs.Add(roomA);
 
             // Load Level 2
             this.LoadSingleLevel("level_files/test_level2.xml", Content);
             RoomB roomB = new RoomB();
             roomB.Load(Content, levelGenList[1]);
+            roomB.roomIndex = 1;
             allRoomObjs.Add(roomB);
 
             foreach (TileGenerator tileGen in levelGenList)
@@ -69,6 +72,9 @@ namespace osu_game_proj
                 Geo.PlaceGeosOnPlatforms(tileGen, geo_level, geoTexture);
                 allLevelGeos.Add(geo_level);
             }
+            // connect level using "neighbors" in their room class
+            roomA.RightNeighbor = roomB;
+            roomB.LeftNeighbor = roomA;
 
             currentEnemyGen = enemyGenList[0];
             currentTilesGen = levelGenList[0];
@@ -91,36 +97,25 @@ namespace osu_game_proj
         }
         public void CycleStage(int direction)
         {
-            if (direction == -1)
-            {
-                if (currentLevelNum != 0)
-                {
-                    currentLevelNum--;
-                    currentTilesGen = levelGenList[currentLevelNum];
-                    currentEnemyGen = enemyGenList[currentLevelNum];
-                    currentGeos = allLevelGeos[currentLevelNum];
-                    currentRoom = allRoomObjs[currentLevelNum];
+            IRoom nextRoom = null;
+            // -1 left, 1 right, 2 up, -2 down
+            if (direction == -1) nextRoom = currentRoom.LeftNeighbor;
+            else if (direction == 1) nextRoom = currentRoom.RightNeighbor;
+            else if (direction == 2) nextRoom = currentRoom.UpNeighbor;
+            else if (direction == -2) nextRoom = currentRoom.DownNeighbor;
 
-                }
-                else
-                {
-                    currentLevelNum = 0;
-                    currentTilesGen = levelGenList[currentLevelNum];
-                    currentEnemyGen = enemyGenList[currentLevelNum];
-                    currentGeos = allLevelGeos[currentLevelNum];
-                    currentRoom = allRoomObjs[currentLevelNum];
-                }
-            }
-            else if (direction == 1)
+            if (nextRoom != null)
             {
-                if (currentLevelNum < levelGenList.Count - 1)
-                {
-                    currentLevelNum++;
-                    currentTilesGen = levelGenList[currentLevelNum];
-                    currentEnemyGen = enemyGenList[currentLevelNum];
-                    currentGeos = allLevelGeos[currentLevelNum];
-                    currentRoom = allRoomObjs[currentLevelNum];
-                }
+                currentRoom = nextRoom;
+
+                // room objects MUST have a room index assigned
+                int newRoomNum = currentRoom.roomIndex;
+                currentLevelNum = newRoomNum;
+                currentTilesGen = levelGenList[currentLevelNum];
+                currentEnemyGen = enemyGenList[currentLevelNum];
+                currentGeos = allLevelGeos[currentLevelNum];
+                currentRoom = allRoomObjs[currentLevelNum];
+
             }
         }
         public void ResetAllEnemies()

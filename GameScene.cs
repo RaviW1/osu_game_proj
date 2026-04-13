@@ -75,7 +75,7 @@ public partial class GameScene : IScene
 
         itemManager = new ItemManager(0.4f);
         mouse = new MouseController(_game,
-            new CycleStageCommand(-1, this),
+            new CycleStageCommand(1, this),
             new CycleStageCommand(1, this),
             new CycleStageCommand(-1, this),
             new CycleStageCommand(1, this),
