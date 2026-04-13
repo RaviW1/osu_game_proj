@@ -23,7 +23,8 @@ m to toggle background music
 Esc to pause
 
 ## Known bugs 
-none
+levels are still unfinished, and if there is no "next level" player
+will fall off the edge of the map infinitely
 
 ## Documention
 Code Reviews and sprint reflection are in the documentation folder
