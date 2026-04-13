@@ -72,3 +72,6 @@ Akari:
 I wrote the reflection this time. But I think we are knowing what each other needs and can
 collaborate with each other with no problem. This is important for a team.
 
+Owen: I agree with the reflection and our team's cooperation has been working way better.
+Rather than everyone doing things together to make sure others did not mess anything up,
+the team develops trust among each other and has the ability to debug their own work. 
