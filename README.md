@@ -5,6 +5,7 @@ We have implemented our version of the game Hollow Knight
 
 ## Control Scheme  
 A/D or left/right arrow keys to move the knight left and right, respectively  
+Move to right/left of screen to move to next level
 Space to jump (tap for a small hop, hold for a higher jump)  
 left shift to dash (still WIP)
 e to activate a damage state  
@@ -16,8 +17,6 @@ z or n to attack
 3 to heal  
 I to open Charms Inventory  
 o or p to cycle currently shown enemy  
-Left click on top left of game window to switch to level 1
-Right click on top right of game window to switch to level 2
 m to toggle background music
 0 to show win screen
 Esc to pause
