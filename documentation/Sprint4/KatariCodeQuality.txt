@@ -1,0 +1,27 @@
+Author: Lohith Katari
+Date: 4/13/2026
+Sprint 4 Code Quality Review
+Author of Code: Brooklyn
+Files Reviewed: IRoom.cs, RoomA.cs, RoomB.cs, RoomBase.cs
+Minutes Taken: 30 minutes
+
+
+Quality Review:
+
+Overall, the code is well-structured and follows good coding practices. 
+The use of interfaces and inheritance is appropriate, and the code is easy to read and understand. 
+However, there are a few areas that could be improved.
+In the IRoom interface, it would be beneficial to include XML documentation comments for each method to provide clear explanations of their purpose and usage.
+In the RoomBase class, the constructor is currently empty. It could be helpful to include some initialization logic.
+Right now the inheritance pattern makes it easy to create new Rooms depending on the layout but more functionality might have to be added to the base class to make it more broad.
+We may have to implement different types of rooms with different transition requirements as some rooms may have to be locked or acessed other ways. 
+Overall, the classes are clear in their function and easy to scale to more rooms. 
+Code is properly reused and abstracted to avoid high repitition and coupling. 
+
+Readability Review:
+
+The code is generally short and not very complex, so readability is good. 
+It is easy to understand the purpose of each class and method because the abstraction is clear and the naming conventions are consistent.
+The only room for improvement in readability would be to add more comments and alter some of the RoomBase fields to be simpler. 
+Currently the fields are initialized in a condensed way and expanding them to make it more clear what each field is for would be helpful.
+Overall, the code is in a very readable state and there are no glaring issues that would make it difficult to read or understand.
