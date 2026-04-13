@@ -73,6 +73,7 @@ namespace osu_game_proj
                 allLevelGeos.Add(geo_level);
             }
             // connect level using "neighbors" in their room class
+            // Potential TODO:: read this in from a file(ex: JSON)
             roomA.RightNeighbor = roomB;
             roomB.LeftNeighbor = roomA;
 
@@ -115,7 +116,6 @@ namespace osu_game_proj
                 currentEnemyGen = enemyGenList[currentLevelNum];
                 currentGeos = allLevelGeos[currentLevelNum];
                 currentRoom = allRoomObjs[currentLevelNum];
-
             }
         }
         public void ResetAllEnemies()
