@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework.Graphics;
+using System.Text.Json;
+using System.IO;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -7,19 +9,18 @@ namespace osu_game_proj
 {
     public class LevelsHandler
     {
-        private List<TileGenerator> levelGenList;
-        private List<EnemyGenerator> enemyGenList;
         private int currentLevelNum;
         public Texture2D geoTexture;
-        private List<List<Geo>> allLevelGeos;
         private List<IRoom> allRoomObjs;
+        private Dictionary<string, LevelNode> levelMap;
 
         public List<Geo> currentGeos;
         public TileGenerator currentTilesGen;
         public EnemyGenerator currentEnemyGen;
         public IRoom currentRoom;
+        public LevelNode currentLevel;
 
-        public void LoadSingleLevel(string level_path, ContentManager Content)
+        public (TileGenerator, EnemyGenerator) LoadSingleLevel(string level_path, ContentManager Content)
         {
 
             List<EnemyInformation> generateEnemyInfo = new List<EnemyInformation>();
@@ -31,57 +32,66 @@ namespace osu_game_proj
             tileGenObj.LoadTileTextures(Content);
             EnemyGenerator enemyGenObj = new EnemyGenerator(new List<EnemyInformation>(generateEnemyInfo));
             enemyGenObj.LoadEnemyTextures(Content);
-
-            levelGenList.Add(tileGenObj);
-            enemyGenList.Add(enemyGenObj);
-            generateTileInfo.Clear();
-            generateEnemyInfo.Clear();
+            return (tileGenObj, enemyGenObj);
         }
         // TODO: add arg to specify starting level
         public void LoadLevelTiles(ContentManager Content)
         {
-            // TODO: Create new method for these code blocks
-
             geoTexture = Content.Load<Texture2D>("Geo - HUD_coin_shop");
-            levelGenList = new List<TileGenerator>();
-            enemyGenList = new List<EnemyGenerator>();
-            allLevelGeos = new List<List<Geo>>();
-            allRoomObjs = new List<IRoom>();
 
-            // To add a new level:
-            // add xml to load here 
-            // create a new Room object to handle collisions
-            // Load level1
-            // TODO: create one class that holds both room and levelGenerator objects
-            this.LoadSingleLevel("level_files/test_level.xml", Content);
-            RoomA roomA = new RoomA();
-            roomA.Load(Content, levelGenList[0]);
-            roomA.roomIndex = 0;
-            allRoomObjs.Add(roomA);
+            levelMap = new Dictionary<string, LevelNode>();
+            LevelNode currentLevel = new LevelNode();
+            LinkLevels(Content);
 
-            // Load Level 2
-            this.LoadSingleLevel("level_files/test_level2.xml", Content);
-            RoomB roomB = new RoomB();
-            roomB.Load(Content, levelGenList[1]);
-            roomB.roomIndex = 1;
-            allRoomObjs.Add(roomB);
-
-            foreach (TileGenerator tileGen in levelGenList)
+        }
+        private void LinkLevels(ContentManager Content)
+        {
+            string json = File.ReadAllText("level_files/level_layout.json");
+            var definitions = JsonSerializer.Deserialize<List<RoomDefinition>>(json);
+            foreach (var def in definitions)
             {
-                List<Geo> geo_level = new List<Geo>();
-                Geo.PlaceGeosOnPlatforms(tileGen, geo_level, geoTexture);
-                allLevelGeos.Add(geo_level);
+                string name = def.Name;
+                string filePath = def.File;
+
+                // Load the actual level data
+                var (tGen, eGen) = this.LoadSingleLevel(filePath, Content);
+
+                LevelNode node = new LevelNode();
+                node.Name = def.Name;
+                node.TileGen = tGen;
+                node.EnemyGen = eGen;
+
+                // create the rooms
+                // TODO: expand when adding new room types
+                node.Room = (def.Type == "RoomA") ? new RoomA() : new RoomB();
+                node.Room.Load(Content, node.TileGen);
+                node.Room.roomName = def.Name;
+
+                // Generate Geos
+                node.Geos = new List<Geo>();
+                Geo.PlaceGeosOnPlatforms(node.TileGen, node.Geos, geoTexture);
+
+                levelMap.Add(def.Name, node);
             }
-            // connect level using "neighbors" in their room class
-            roomA.RightNeighbor = roomB;
-            roomB.LeftNeighbor = roomA;
+            // Stitch the levels together
+            foreach (var def in definitions)
+            {
+                LevelNode current = levelMap[def.Name];
 
-            currentEnemyGen = enemyGenList[0];
-            currentTilesGen = levelGenList[0];
-            currentGeos = allLevelGeos[0];
-            currentRoom = allRoomObjs[0];
-            currentLevelNum = 0;
+                if (def.Left != null) current.Room.LeftNeighbor = levelMap[(string)def.Left].Room;
+                if (def.Right != null) current.Room.RightNeighbor = levelMap[(string)def.Right].Room;
+                if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
+                if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
+                if (def.Down != null) current.Room.DownNeighbor = levelMap[(string)def.Down].Room;
+            }
 
+            // Set Initial Level
+            var firstLevel = levelMap["level1"];
+            currentRoom = firstLevel.Room;
+            currentTilesGen = firstLevel.TileGen;
+            currentGeos = firstLevel.Geos;
+            currentEnemyGen = firstLevel.EnemyGen;
+            currentLevel = firstLevel;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -109,31 +119,31 @@ namespace osu_game_proj
                 currentRoom = nextRoom;
 
                 // room objects MUST have a room index assigned
+                currentLevel = levelMap[currentRoom.roomName];
+                currentTilesGen = currentLevel.TileGen;
+                currentEnemyGen = currentLevel.EnemyGen;
+                currentGeos = currentLevel.Geos;
+
                 int newRoomNum = currentRoom.roomIndex;
                 currentLevelNum = newRoomNum;
-                currentTilesGen = levelGenList[currentLevelNum];
-                currentEnemyGen = enemyGenList[currentLevelNum];
-                currentGeos = allLevelGeos[currentLevelNum];
-                currentRoom = allRoomObjs[currentLevelNum];
-
             }
         }
+        // helper functions for resetting
         public void ResetAllEnemies()
         {
-            foreach (EnemyGenerator enemyGen in enemyGenList)
-                enemyGen.ResetEnemies();
+            foreach (var node in levelMap.Values)
+                node.EnemyGen.ResetEnemies();
         }
 
         public void ClearGeos()
         {
-            allLevelGeos.Clear();
-            foreach (TileGenerator tileGen in levelGenList)
+            foreach (var node in levelMap.Values)
             {
-                List<Geo> geo_level = new List<Geo>();
-                Geo.PlaceGeosOnPlatforms(tileGen, geo_level, geoTexture);
-                allLevelGeos.Add(geo_level);
+                // Clear the specific list for THIS node
+                node.Geos.Clear();
+                Geo.PlaceGeosOnPlatforms(node.TileGen, node.Geos, geoTexture);
             }
-            currentGeos = allLevelGeos[currentLevelNum];
+            currentGeos = currentLevel.Geos;
         }
     }
 }

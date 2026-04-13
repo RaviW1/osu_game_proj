@@ -18,6 +18,7 @@ public abstract class RoomBase : IRoom
     public RoomBase UpNeighbor { get; set; }
     public RoomBase DownNeighbor { get; set; }
     public int roomIndex { get; set; }
+    public string roomName { get; set; }
 
     public virtual void Load(ContentManager content, TileGenerator tilege) { }
 

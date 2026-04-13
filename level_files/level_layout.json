@@ -1,0 +1,12 @@
+[
+{
+  "Name": "level1",
+  "File": "level_files/test_level.xml",
+  "Right": "level2"
+},
+{
+  "Name": "level2",
+  "File": "level_files/test_level2.xml",
+  "Left": "level1"
+}
+]
