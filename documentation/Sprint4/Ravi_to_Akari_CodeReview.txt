@@ -1,7 +1,34 @@
 Author of the code review: Ravi Wijeratne
 Date of Code Review: 4/13/2026
-Sprint Number 3
-Name of files: Game1.cs ProjectilePlayerCollisionHandler.cs PlayerProjectileEnemyCollisionHAndler.cs
-Note: the Game1.cs code here is a specific block in the update method of the Game1 class
-Author of File: Owen Wang
-Time taken: 50 minutes
+Sprint Number 4
+Name of files: GameScene.Factories.cs
+Note: this is a partial class that implements factories to construct objects for
+our main Game Scene
+Author of File: Akari Wu
+Time taken: 30 minutes
+
+Readabilty:
+The class consists of mostly short, small methods that each execute one specific instruction. 
+The methods are all named well, and no methods are heavily nested. 
+This makes it easy to quickly read through a method and understand its
+functionality.
+Each method also shares the same simple structure, making it much more
+cognitively efficient to read.
+However, the dilineation of tasks differs between each method. Some methods take on more functionality before passing
+on to another helper function.
+There are also very few comments to clear up general structure or what
+any of the methods are being used for. A couple comments here or there could 
+make reading the code much less taxing
+
+Maintainability:
+Each method encapsulating such specific functionality does make it easier to make quick changes and find where
+functionality is being implemented. 
+This class also cleans up alot of the bloat in Game1 that we were suffering from and makes adding new elements to the game much easier.
+One big problem I've noticed when maintaining this is the large number of magic numbers and general lack of comments.
+Changing a hardcoded is much more difficult, as it requires someone to check constructors 
+and, in some cases, change values across multiple locations. 
+Additionally, this class does slightly contribute to a larger problem where pieces of functionality are nested deeply
+within function calls, thus making it difficult trace through and make changes.
+
+Hypothetical Changes:
+Adding more throughout comments throughout, folding functionality into already existing classes, and adding constants to reduce magic numbers.
