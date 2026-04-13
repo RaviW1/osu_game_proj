@@ -291,6 +291,12 @@ public partial class GameScene : IScene
             spriteBatch.Draw(pixelTexture,
                 new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
                 Color.Black * _transitionAlpha);
+        Minimap.Draw(spriteBatch, pixelTexture, _graphics,
+             levels.currentRoom.Bounds, levels.currentRoom.Tiles,
+             player.Position,
+             levels.TotalRooms,
+             levels.CurrentRoomIndex);
+
         spriteBatch.End();
     }
 

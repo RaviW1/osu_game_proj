@@ -19,6 +19,17 @@ namespace osu_game_proj
         public EnemyGenerator currentEnemyGen;
         public IRoom currentRoom;
         public LevelNode currentLevel;
+        public int TotalRooms => levelMap.Count;
+        public int CurrentRoomIndex{
+            get{
+                int i = 0;
+                foreach (var key in levelMap.Keys){
+                    if (key == currentRoom.roomName) return i;
+                    i++;
+                }
+                return 0;
+            }
+        }
 
         public (TileGenerator, EnemyGenerator) LoadSingleLevel(string level_path, ContentManager Content)
         {
@@ -92,6 +103,7 @@ namespace osu_game_proj
             currentGeos = firstLevel.Geos;
             currentEnemyGen = firstLevel.EnemyGen;
             currentLevel = firstLevel;
+            currentLevelNum = firstLevel.Room.roomIndex;
         }
         public void Draw(SpriteBatch spriteBatch)
         {
