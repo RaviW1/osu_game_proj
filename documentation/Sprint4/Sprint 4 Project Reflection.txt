@@ -1,0 +1,74 @@
+Sprint 4 Project Reflection
+
+Looking back at the entire project, our team has come a long way from where we started
+in Sprint 2. At the beginning, we struggled with coordination—settling on a game concept,
+dealing with scheduling conflicts, and figuring out how to divide work on a shared
+codebase. We were able to plan features at the start of the sprint 4, and resolve blockers 
+before they became critical. The growth in how we work together as a team is one of the 
+most significant outcomes of this project.
+
+For Sprint 4, our primary goals were implementing the features that would make the game
+feel like a cohesive, playable experience rather than a collection of disconnected systems.
+This included the camera system, room-based level transitions with fade effects, the HUD
+(HP bar and Soul meter), a charm/inventory system, the Game Over and Win screens, a
+pause menu, sound effects and background music, and a JSON-driven level layout that
+links rooms together in a graph structure. We also continued refining the player state
+machine, adding the look-up state, finalizing the attack system, and implementing the
+dash mechanic with proper cooldowns and air-dash support. On the enemy side, we added
+player-enemy collision, enemy-specific level placement, enemy reset logic, and Geo drops
+on enemy death.
+
+One of the biggest technical accomplishments this sprint was the level architecture
+overhaul. We moved from a simple sequential level list to a graph-based room system
+using LevelNode objects linked via a JSON configuration file (level_layout.json). Each
+room is defined with directional neighbors (left, right, up, down), and the LevelsHandler
+stitches them together at load time. This design makes it straightforward to add new rooms
+or rearrange the world layout without changing code—just edit the JSON. The Room
+classes (RoomBase, RoomA, RoomB) handle exit detection and trigger transitions
+automatically when the player reaches the edge of a room.
+
+Another significant achievement was the GameScene refactor. Our main game class had
+become bloated with rendering, input, factory, and UI logic all mixed together. We split
+it into partial classes—GameScene.cs for core update/draw and game state management,
+GameScene.UI.cs for all screen overlays (pause, game over, win, charm inventory), and
+GameScene.Factories.cs for object creation, input processing, and Geo spawning. This
+refactor made the code far more maintainable and made it easier for multiple team members
+to work on different aspects of the game without merge conflicts.
+
+The camera system with smooth lerp-based following and room-bounds clamping, combined
+with the SpatialGrid optimization for collision queries, addressed the concerns
+we identified back in Sprint 3.
+
+In terms of challenges, integrating all the new systems together was the hardest part of
+this sprint. The level transition system in particular required careful coordination between
+the camera, the room handler, the collision grid, and the player's spawn position. Getting
+the fade-out/fade-in transition to feel smooth while correctly swapping all the underlying
+data took multiple iterations. We also ran into issues with the charm/inventory system
+where both charms were incorrectly active on game start, which we fixed mid-sprint.
+
+Reflecting on the project as a whole, each sprint built meaningfully on the last. Sprint 2
+established our foundational framework—player rendering, basic input, enemy and item
+scaffolding. Sprint 3 brought the XML level parser, a working collision system, and a
+greatly improved player controller. Sprint 4 tied everything together with the camera,
+room transitions, HUD, sound, and the inventory system, turning our collection of
+features into something that actually feels like a game inspired by Hollow Knight.
+
+By Sprint 3, we had better communication and used GitHub Issues for tracking. 
+In Sprint 4, team members could work on the camera, UI overlays, enemy placement, 
+and level architecture simultaneously because the code was better organized. Everyone 
+contributed code, and documentation tasks were shared among team members.
+
+The game is currently in a state where a player can move between linked rooms, fight
+enemies (Husk Bully, Boofly, Aspid), collect Geos, equip/unequip charms that modify
+player stats, heal using Soul, dash, shoot projectiles, and experience Game Over and Win
+screens. The known remaining issue is that levels are still unfinished—if a room lacks a
+neighbor in a given direction, the player can walk off the edge. Overall, we are proud of
+what we built, and the project is in a solid place as a functional Hollow Knight-inspired
+game prototype.
+
+Individual Thoughts on the Project
+
+Akari:
+I wrote the reflection this time. But I think we are knowing what each other needs and can
+collaborate with each other with no problem. This is important for a team.
+

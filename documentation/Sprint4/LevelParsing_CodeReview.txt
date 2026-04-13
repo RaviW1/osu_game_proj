@@ -1,0 +1,94 @@
+Code Review: Level Parsing and Level Files
+Date of Code Review: 4/13/2026
+Sprint Number: 4
+Files Reviewed: LevelsHandler.cs, LevelNode.cs, LoadLevelFile.cs, TileGenerator.cs,
+  EnemyGenerator.cs, TileInformation.cs, EnemyInformation.cs, TileBlock.cs, MapBlock.cs, 
+  level_layout.json, test_level.xml, test_level2.xml
+Author of Code: Ravi Wijeratne
+Author of Code Review: Akari Wu
+Time Taken: 45 minutes
+
+Readability:
+
+1. LevelNode.cs is a clean, minimal data class. Each property (Name, Room, TileGen,
+EnemyGen, Geos) is self-explanatory and the class stays focused on holding data
+without adding unnecessary logic.
+
+2. The overall loading pipeline (JSON -> RoomDefinition -> LoadSingleLevel -> XML
+-> TileInformation/EnemyInformation -> TileGenerator/EnemyGenerator -> TileBlock
+list) follows a logical, traceable flow.
+
+3. In LevelsHandler.cs line 43, a local variable "LevelNode currentLevel" shadows the
+class field "currentLevel". This is confusing because the local variable is created
+but never used — the actual work happens inside LinkLevels which sets the field
+directly. This dead code is misleading.
+
+4. In LevelsHandler.cs lines 83-84, the UpNeighbor assignment is duplicated:
+    if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
+    if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
+This is a copy-paste bug. The second line should not exist (or one of them should
+check def.Down, but a Down check already exists on line 85).
+
+5. In EnemyGenerator.cs lines 85 and 96, the pattern-match "currentEnemy is IEnemy
+enemyCollision" is redundant — currentEnemy is already declared as IEnemy in the
+foreach. This adds noise without adding information.
+
+6. In LoadLevelFile.cs, the TileInformation constructor call (line 18) packs seven
+casted attribute reads into a single line, making it very wide and hard to scan.
+This issue was also noted in the Sprint 3 review and has not been addressed.
+
+7. In EnemyInformation.cs, the fields isCollideable and isHarmful are declared but
+never set or used. This is dead code left over from earlier sprint.
+
+
+Maintainability:
+
+1. The JSON level configuration (level_layout.json) is the single biggest
+maintainability improvement since Sprint 3. Adding a new room to the game now
+requires only (a) creating a new XML level file and (b) adding an entry to the
+JSON. No code changes are needed to wire up room neighbors. This directly
+addresses the hypothetical change concern raised in the Sprint 3 level code
+review.
+
+2. The LevelNode class cleanly encapsulates all per-level data (tiles, enemies, geos,
+room) in one object, eliminating the parallel arrays/fields that were used
+previously. Swapping levels in CycleStage is now a clean reassignment of a few
+references from the next LevelNode.
+
+3. The separation between TileGenerator (creates and draws tiles) and
+EnemyGenerator (creates and draws enemies) keeps these two concerns
+independent, so changes to enemy rendering do not affect tile logic and vice versa.
+
+4. The ResetAllEnemies and ClearGeos helper methods in LevelsHandler iterate over
+all nodes in the level map, which means reset logic automatically covers any newly
+added rooms without code changes.
+
+5. EnemyGenerator.Update has grown far beyond its original scope. It now handles
+enemy collision resolution, player-enemy contact damage, aspid projectile
+collision, player projectile collision, melee collision, soul gain, and death
+position tracking. This violates single responsibility — EnemyGenerator should
+generate and manage enemies, not orchestrate all combat. Extracting a
+CombatSystem or InteractionHandler would make each piece independently testable
+and modifiable.
+
+6. In EnemyGenerator.createEnemyObjects, adding a new enemy type
+requires adding a new else-if branch with the correct constructor call. The TODO
+comment on line 55 acknowledges this: "record enemies and classes in a dictionary."
+A factory dictionary (Dictionary<string, Func<Texture2D, Vector2, IEnemy>>) would
+make adding enemies a one-line registration instead of a new branch.
+
+Hypothetical Change — Adding a New Enemy Type to a Room:
+
+To add a new enemy (e.g., "moss_knight") to an existing room, the current implementation
+requires changes in four places:
+(1) Create the MossKnight class implementing IEnemy.
+(2) Add the texture to EnemyGenerator.LoadEnemyTextures with a new hardcoded
+    dictionary entry.
+(3) Add a new else-if branch in EnemyGenerator.createEnemyObjects to instantiate
+    MossKnight.
+(4) Add an <Enemy id="moss_knight" .../> entry to the XML level file.
+
+Steps 2 and 3 could be eliminated by using a registration-based factory pattern, where
+enemy types are registered once and the generator automatically instantiates the correct 
+class based on the XML id. This would reduce the change to just step 1 (write the class) 
+and step 4 (place it in the XML).
