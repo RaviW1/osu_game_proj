@@ -4,9 +4,22 @@ Sprint number: Sprint 4
 Name of the .cs file being reviewed: LevelsHandler.cs
 Author of the .cs file being reviewed: Ravi
 Number of minutes taken to complete the review: 60
-Specific comments on code readability: Readability is solid, method names communicate intent clearly.
+Specific comments on code readability: 
+Readability is solid, method names communicate intent clearly.
 The overall structure is easy to follow but could use help on magic number so readers don’t have to
 consult the comment. Upneighbor seemed to named twice. 
-Specific comments on code maintainability: Linklevel is doing too much and can be helped by splitting into
+The class carries too many public fields (currentGeos, currentTilesGen, currentEnemyGen, currentRoom, currentLevel) 
+that expose internal state directly, which breaks encapsulation and 
+makes it difficult to reason about what outside code is allowed to modify.
+These should ideally be read-only properties or accessed through controlled methods.
+The variable naming is also inconsistent in places.
+tGen and eGen are overly abbreviated in LinkLevels.
+
+
+Specific comments on code maintainability: 
+Linklevel is doing too much and can be helped by splitting into
 multiple helpers. A factory method could be used to help add in more rooms. Definitly needs improvment
 in order to make it more efficient in the future.
+there is a copy-paste bug in the neighbor stitching block where def.Up is checked and assigned twice 
+while def.Down is handled correctly
+meaning the Up neighbor gets set redundantly and any future refactor could easily overlook it. 
