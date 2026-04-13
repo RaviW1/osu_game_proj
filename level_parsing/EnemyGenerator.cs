@@ -76,6 +76,7 @@ namespace osu_game_proj
                 enemy.Draw(spriteBatch, Vector2.Zero);
             }
         }
+
         public void Update(GameTime gameTime, Player player, SpatialGrid _grid)
         {
             foreach (IEnemy currentEnemy in this.enemyList)
@@ -91,9 +92,20 @@ namespace osu_game_proj
                 // 5. Enemy update
                 currentEnemy.Update(gameTime);
 
+                Rectangle playerBounds = player.GetBounds();
+                if (currentEnemy is IEnemy enemy && !enemy.IsDead)
+                {
+                    if (enemy.GetBounds().Intersects(playerBounds))
+                    {
+                        if (!player.IsInvincible)
+                        {
+                            player.PlayerHealth--;
+                            player.TakeDamage();
+                        }
+                    }
+                }
 
                 // 6. Aspid projectiles vs player
-                Rectangle playerBounds = player.GetBounds();
                 if (currentEnemy is Aspid aspid)
                 {
                     for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
