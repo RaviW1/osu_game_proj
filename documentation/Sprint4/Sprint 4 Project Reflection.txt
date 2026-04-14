@@ -77,9 +77,9 @@ Rather than everyone doing things together to make sure others did not mess anyt
 the team develops trust among each other and has the ability to debug their own work. 
 
 Ravi: 
-I think this sprint represented a meaningful step up in our ability to make large design desicions 
+I think this sprint represented a meaningful step up in our ability to make large design decisions 
 and implement large design patterns. Multiple team members felt the imperative to take on 
 big rewrites and refactoring tasks. These all represented somewhat lateral progress, but has 
 allowed us to have a much cleaner code base, making continued development much easier. I think 
-we can continue to work on our improvements in code quality and improve our tournaround time 
+we can continue to work on our improvements in code quality and improve our turnaround time 
 for feature additions.

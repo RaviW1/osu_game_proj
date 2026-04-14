@@ -1,0 +1,44 @@
+Readability Code Review: DashState
+
+Author: Brooklynn Kongdech
+Date: 4/13/26
+Sprint #4
+
+File reviewed: DashState.cs
+Author of file being reviewed: Lohith Katari
+Minutes to complete review: 20 min
+
+
+
+Specific comments on what is readable and what is not:
+
+- Variable names are descriptive, it's pretty clear what everything is supposed to represent
+
+- No comments, but the code is descriptive enough on it's own that it doesn't feel necessary
+
+- There is some commented out code, which could be removed since it's not being used anymore
+
+- Methods are concise, essentially no nesting
+
+- The code is overall very readable and easy to understand
+
+
+Maintainability Code Review: DashState
+
+Author: Brooklynn Kongdech
+Date: 4/13/26
+Sprint #4
+
+File reviewed: DashState.cs
+Author of file being reviewed: Lohith Katari
+Minutes to complete review: 20 min
+
+
+
+Specific comments on code quality:
+
+- Code has high cohesion, high coupling to Player class but that's fine given the purpose owf this class (implementation of a player state)
+
+- In total the class is only 73 lines, so it's easier to make changes
+
+I don't think any changes are necessary for this class, other than the removal of the commented out code, which isn't being used anymore.
