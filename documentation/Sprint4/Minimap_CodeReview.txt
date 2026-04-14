@@ -1,0 +1,35 @@
+Author of the code review: Akari Wu
+Date of Code Review: 4/13/2026
+Sprint Number 4
+Name of files: Minimap.cs
+Author of File: Owen Wang
+Time taken: 10 minutes
+
+Readability:
+The class is concise and self-contained at around 80 lines, making it easy to read in one sitting.
+
+Constants like MapWidth, MapHeight, and RoomIndicatorSize are clearly named and grouped at the top, 
+which immediately communicates the key configuration values.
+
+However, the Draw method does a lot: it renders the border, the background, tiles, the player dot, 
+and the room indicators all in a single function. This makes it harder to quickly locate a specific 
+piece of rendering logic when scanning through.
+
+Some magic numbers remain.
+
+Maintainability:
+Using a static class with named constants is a clean approach that avoids unnecessary instantiation 
+and keeps configuration easy to tweak.
+
+However, the single large Draw method means any change to one visual element risks inadvertently affecting others. 
+Splitting it into smaller private helpers would isolate changes and make the class easier to extend.
+
+The remaining magic numbers should be extracted into named constants so their 
+intent is clear and they can be adjusted from one place.
+
+Overall, the class is in good shape for its current scope but would benefit from minor refactoring 
+if more features are added in the future.
+
+Hypothetical Changes:
+Extract the player dot offset and size into named constants, break Draw into smaller helper methods, 
+and add brief comments explaining each visual section's purpose.
