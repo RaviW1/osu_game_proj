@@ -1,7 +1,7 @@
 Author: Lohith Katari
 Date: 4/13/2026
 Sprint 4 Code Quality Review
-Author of Code: Brooklyn
+Author of Code: Brooklynn
 Files Reviewed: IRoom.cs, RoomA.cs, RoomB.cs, RoomBase.cs
 Minutes Taken: 30 minutes
 
