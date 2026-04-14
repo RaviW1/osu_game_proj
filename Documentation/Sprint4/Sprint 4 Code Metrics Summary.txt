@@ -1,0 +1,12 @@
+Sprint 4 Code Metrics Summary
+
+
+Average maintainability index: 90.89
+
+Average cyclomatic complexity: 3.16
+
+Overall our code metrics are comparable to the previous sprint. There was once again a slight increase in our average maintainability index, and a decrease in cyclomatic complexity, which can likely be attributed to the code refactoring we did. 
+
+There weren't necessarily any outliers in terms of maintainability, although some GameScene methods, EnemyGenerator's Update method, and LevelHandler's LinkLevels method (among other misc. methods) had scores between 40-50. These were the lowest scores in our project, but since many of these methods were part of the new code for this Sprint, they can be refactored and refined during Sprint 5.
+
+In terms of cyclomatic complexity, GameScene had an extremely high value of 87, along with Player, which had a value of 71. While it makes sense for GameScene and Player to have higher cyclomatic complexity than other classes simply due to their function, the fact that they have almost double the complexity of the next highest class may be a point of concern. Aspid also still has a unusually high complexity compared to other enemy classes, so this class may have to be reevaluated again
