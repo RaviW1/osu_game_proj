@@ -11,4 +11,5 @@
   <Tile id="level1_spikes" x_pos="500" y_pos="350" x_size="70" y_size="57" collide="1" damage="1"/>
   <Enemy id="husk_bully" x_pos="100" y_pos="360"/>
   <Enemy id="aspid" x_pos="500" y_pos="150"/>
+	<Enemy id="tiktik" x_pos="450" y_pos="300"/>
 </Level>

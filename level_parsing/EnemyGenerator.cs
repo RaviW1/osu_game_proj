@@ -27,6 +27,7 @@ namespace osu_game_proj
             enemyTextures.Add("boofly", Content.Load<Texture2D>("Enemy Sprites\\boofly"));
             enemyTextures.Add("aspid", Content.Load<Texture2D>("Enemy Sprites\\aspid_hunter"));
             enemyTextures.Add("husk_bully", Content.Load<Texture2D>("Enemy Sprites\\husk_bully"));
+            enemyTextures.Add("tiktik", Content.Load<Texture2D>("Enemy Sprites\\tiktik"));
 
             fireballTexture = Content.Load<Texture2D>("fireball");
             createEnemyObjects(generateEnemyInfo);
@@ -64,6 +65,10 @@ namespace osu_game_proj
                 else if (enemyInfo.enemyType == "husk_bully")
                 {
                     enemy = new HuskBully(enemyTextures["husk_bully"], enemyInfo.destPos);
+                }
+                else if (enemyInfo.enemyType == "tiktik")
+                {
+                    enemy = new Tiktik(enemyTextures["tiktik"], enemyInfo.destPos);
                 }
                 enemyList.Add(enemy);
             }
