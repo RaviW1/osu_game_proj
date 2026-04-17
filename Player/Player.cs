@@ -31,7 +31,7 @@ public class Player
     public bool IsDashing = false;
     public const float DashDuration = 0.18f;
     public const float DashSpeed = 800f;
-    public const float DashCooldownDuration = 3f;
+    public const float DashCooldownDuration = 1f;
 
     public bool IsInvincible => invincibilityTimer > 0f || IsDashing;
     public bool SuppressLandingTransition { get; set; } = false;
