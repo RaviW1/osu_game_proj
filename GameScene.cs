@@ -83,6 +83,7 @@ public partial class GameScene : IScene
 
         levels = new LevelsHandler();
         levels.LoadLevelTiles(_content);
+        WireEnemyCallbacks();
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
 
         pixelTexture = CreatePixelTexture();
@@ -146,6 +147,7 @@ public partial class GameScene : IScene
             {
                 _transitionAlpha = 1f;
                 levels.CycleStage(_pendingTransitionDirection);
+                WireEnemyCallbacks();
                 _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
                 _camera.RoomBounds = levels.currentRoom.Bounds;
                 _camera.SnapTo(player.Position);
@@ -214,6 +216,9 @@ public partial class GameScene : IScene
 
     private void UpdateGameplay(GameTime gameTime)
     {
+        _hitstop.Update();
+        if (_hitstop.IsActive) return;
+
         Rectangle playerBounds = player.GetBounds();
 
         levels.currentRoom.Update(gameTime, player, this);
@@ -311,13 +316,10 @@ public partial class GameScene : IScene
     public void CycleStage(int direction)
     {
         if (direction == 1)
-        {
             player.Position = levels.currentRoom.GetSpawnPoint("fromLeft");
-        }
         else if (direction == -1)
-        {
             player.Position = levels.currentRoom.GetSpawnPoint("fromRight");
-        }
+
         if (_isTransitioning) return;
         _isTransitioning = true;
         _transitionAlpha = 0f;
@@ -334,10 +336,21 @@ public partial class GameScene : IScene
         LoadItems();
 
         levels.ResetAllEnemies();
+        WireEnemyCallbacks();
         currentBlockIndex = 0;
 
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
         levels.ClearGeos();
         _camera.SnapTo(player.Position);
+    }
+
+    // ------------------------------------------------------------------
+    //  Helpers
+    // ------------------------------------------------------------------
+
+    private void WireEnemyCallbacks()
+    {
+        levels.currentEnemyGen.OnPlayerHit = () => TriggerHitEffects(playerWasHit: true);
+        levels.currentEnemyGen.OnEnemyHit = () => TriggerHitEffects(playerWasHit: false);
     }
 }

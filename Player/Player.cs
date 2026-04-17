@@ -41,6 +41,8 @@ public class Player
 
     private int maxPlayerHealth = 5;
     private int playerHealth = 5;
+
+    public Action OnDamaged;
     public int PlayerHealth
     {
         get { return playerHealth; }
@@ -223,6 +225,7 @@ public class Player
     {
         if (IsInvincible) return;
         invincibilityTimer = InvincibilityDuration;
+        OnDamaged?.Invoke();
         currentState.TakeDamage(this);
     }
 

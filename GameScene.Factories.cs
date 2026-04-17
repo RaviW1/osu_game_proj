@@ -39,15 +39,17 @@ public partial class GameScene
     private Player CreatePlayer()
     {
         var textures = new Dictionary<string, Texture2D>
-        {
-            { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
-            { "Jumping", _content.Load<Texture2D>("knight_jumping") },
-            { "Attacking", _content.Load<Texture2D>("knight_attack") },
-            { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
-            { "SpriteSheet", _content.Load<Texture2D>("The Knight main sprites - atlas0 #00000357") },
-            { "lookup", _content.Load<Texture2D>("lookup") }
-        };
-        return new Player(textures, fireballTexture, new Vector2(350, 370));
+    {
+        { "Walking", _content.Load<Texture2D>("hollow_knight_walking") },
+        { "Jumping", _content.Load<Texture2D>("knight_jumping") },
+        { "Attacking", _content.Load<Texture2D>("knight_attack") },
+        { "Attack", _content.Load<Texture2D>("hollow_knight_attack") },
+        { "SpriteSheet", _content.Load<Texture2D>("The Knight main sprites - atlas0 #00000357") },
+        { "lookup", _content.Load<Texture2D>("lookup") }
+    };
+        var p = new Player(textures, fireballTexture, new Vector2(350, 370));
+        p.OnDamaged = () => TriggerHitEffects(playerWasHit: true);
+        return p;  // return p, not a new Player
     }
 
     private List<ISprite> CreateBlocks()
