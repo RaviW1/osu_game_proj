@@ -43,7 +43,7 @@ public class DashState : IPlayerState
             EndDash(player);
     }
 
-    public void Draw(Player player)
+    public void Draw(Player player, SpriteBatch spriteBatch)
     {
         player.DrawColor = Color.CornflowerBlue;
     }

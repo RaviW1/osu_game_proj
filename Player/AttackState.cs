@@ -59,13 +59,24 @@ public class AttackState : IPlayerState
         player.Position.X += player.Velocity.X;
     }
 
-    public void Draw(Player player)
+    public void Draw(Player player, SpriteBatch spriteBatch)
     {
         player.CurrentTexture = player.Textures["Attacking"];
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
         player.sourceRectangle = new Rectangle(
             currentFrame * frameWidth, 0,
             frameWidth, player.CurrentTexture.Height);
+
+        Vector2 slashPos = new Vector2((int)player.Position.X + 10, (int)player.Position.Y);
+
+        Texture2D slashTexture = player.Textures["side_slash"];
+        Rectangle slashSource = new Rectangle(0, 0, slashTexture.Width, slashTexture.Height);
+
+        Rectangle slashSourceRectangle = new Rectangle(
+            frameWidth, 0,
+            frameWidth, player.CurrentTexture.Height);
+        Vector2 slashOrigin = new Vector2(slashSource.Width / 2f, (slashSource.Height / 1.5f));
+        spriteBatch.Draw(slashTexture, slashPos, slashSource, Color.White, 0f, slashOrigin, 0.2f, player.facing, 0f);
     }
 
     public void TakeDamage(Player player)
@@ -83,6 +94,11 @@ public class AttackState : IPlayerState
             player.SuppressLandingTransition = false;
             player.ChangeState(new DashState());
         }
+    }
+
+    public void DrawSlashEffects()
+    {
+
     }
 
     public void Jump(Player player) { }

@@ -62,7 +62,7 @@ public class JumpState : IPlayerState
         player.Position.X += player.Velocity.X;
     }
 
-    public void Draw(Player player)
+    public void Draw(Player player, SpriteBatch spriteBatch)
     {
         player.CurrentTexture = player.Textures["Jumping"];
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
