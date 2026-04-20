@@ -67,6 +67,7 @@ public class AttackState : IPlayerState
             currentFrame * frameWidth, 0,
             frameWidth, player.CurrentTexture.Height);
 
+        // draw slash effect
         Vector2 slashPos = new Vector2((int)player.Position.X + 10, (int)player.Position.Y);
 
         Texture2D slashTexture = player.Textures["side_slash"];
@@ -96,10 +97,6 @@ public class AttackState : IPlayerState
         }
     }
 
-    public void DrawSlashEffects()
-    {
-
-    }
 
     public void Jump(Player player) { }
     public void Attack(Player player) { }
