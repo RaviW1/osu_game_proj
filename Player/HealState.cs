@@ -33,7 +33,7 @@ public class HealingState : IPlayerState
         }
     }
 
-    public void Draw(Player player)
+    public void Draw(Player player, SpriteBatch spriteBatch)
     {
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);

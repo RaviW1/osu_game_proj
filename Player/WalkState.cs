@@ -65,7 +65,7 @@ public class WalkingState : IPlayerState
 
     }
 
-    public void Draw(Player player)
+    public void Draw(Player player, SpriteBatch spriteBatch)
     {
         player.CurrentTexture = player.Textures["Walking"];
         int frameWidth = player.CurrentTexture.Width / TotalFrames;
