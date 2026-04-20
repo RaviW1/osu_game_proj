@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 public class LookUpState : IPlayerState
 {
@@ -38,7 +39,7 @@ public class LookUpState : IPlayerState
             player.ChangeState(new DashState());
     }
 
-    public void Draw(Player player) { }
+    public void Draw(Player player, SpriteBatch spriteBatch) { }
     public void JumpHeld(Player player, float deltaTime) { }
     public void StopWalking(Player player)
     {

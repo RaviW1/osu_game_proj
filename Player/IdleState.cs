@@ -43,7 +43,7 @@ public class IdleState : IPlayerState
             player.ChangeState(new DashState());
     }
 
-    public void Draw(Player player) { }
+    public void Draw(Player player, SpriteBatch spriteBatch) { }
     public void JumpHeld(Player player, float deltaTime) { }
     public void StopWalking(Player player)
     {

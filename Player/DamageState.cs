@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 public class DamagedState : IPlayerState
 {
@@ -59,5 +60,5 @@ public class DamagedState : IPlayerState
     public void Dash(Player player) { }
     public void StopWalking(Player player) { }
     public void TakeDamage(Player player) { }
-    public void Draw(Player player) { }
+    public void Draw(Player player, SpriteBatch spriteBatch) { }
 }
