@@ -54,15 +54,11 @@ public class WalkingState : IPlayerState
         if (direction > 0) //right
         {
             player.facing = SpriteEffects.None;
-
         }
         else if (direction < 0)//left
         {
             player.facing = SpriteEffects.FlipHorizontally;
-
         }
-
-
     }
 
     public void Draw(Player player, SpriteBatch spriteBatch)
