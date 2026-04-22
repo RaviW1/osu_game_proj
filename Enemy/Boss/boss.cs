@@ -30,15 +30,16 @@ public class Boss : ISprite, IEnemy
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        this.velocity = new Vector2(50, 0);
         currentState.Update(this, gameTime);
+        position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
     }
     public void Draw(SpriteBatch spriteBatch, Vector2 startPos)
     {
+        Vector2 origin = new Vector2(sourceRectangle.Width / 2f, sourceRectangle.Height);
         var direction = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         currentState.Draw(this, spriteBatch);
-        spriteBatch.Draw(texture, position, sourceRectangle, Color.White, 0f, Vector2.Zero, 0.5f, direction, 0f);
+        spriteBatch.Draw(texture, position, sourceRectangle, Color.White, 0f, origin, 0.5f, direction, 0f);
     }
     // TODO: finish these, currently placeholders
     public Rectangle GetBounds()
@@ -49,6 +50,11 @@ public class Boss : ISprite, IEnemy
     {
         isDead = true;
         velocity = Vector2.Zero;
+    }
+    public void Run()
+    {
+        var direction = facingLeft ? 1 : -1;
+        currentState.Run(this, direction);
     }
     public void BounceX()
     {
@@ -87,4 +93,10 @@ public class Boss : ISprite, IEnemy
             }
         }
     }
+    public void ChangeState(IBossState newState)
+    {
+        currentState = newState;
+        newState.OnEnter(this);
+    }
+
 }
