@@ -28,7 +28,7 @@ namespace osu_game_proj
             enemyTextures.Add("boofly", Content.Load<Texture2D>("Enemy Sprites\\boofly"));
             enemyTextures.Add("aspid", Content.Load<Texture2D>("Enemy Sprites\\aspid_hunter"));
             enemyTextures.Add("husk_bully", Content.Load<Texture2D>("Enemy Sprites\\husk_bully"));
-            enemyTextures.Add("false_knight", Content.Load<Texture2D>("false_knight"));
+            enemyTextures.Add("false_knight", Content.Load<Texture2D>("Enemy Sprites\\false_knight"));
 
             fireballTexture = Content.Load<Texture2D>("fireball");
             createEnemyObjects(generateEnemyInfo);
@@ -65,7 +65,7 @@ namespace osu_game_proj
                 }
                 else if (enemyInfo.enemyType == "false_knight")
                 {
-                    enemy = new HuskBully(enemyTextures["false_knight"], enemyInfo.destPos);
+                    enemy = new Boss(enemyTextures["false_knight"], enemyInfo.destPos);
                 }
                 enemyList.Add(enemy);
             }
