@@ -23,7 +23,7 @@ public class Boss : ISprite, IEnemy
         this.isDead = false;
         this.currentFrame = 0;
         this.facingLeft = true;
-        currentState = new BossIdleState();
+        currentState = new BossAttackState();
         currentState.OnEnter(this);
     }
 

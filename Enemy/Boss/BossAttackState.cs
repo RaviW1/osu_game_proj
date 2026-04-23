@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 public class BossAttackState : IBossState
 {
     private const float SecondsPerFrame = 0.1f;
-    private const int TotalFrames = 5;
+    private const int TotalFrames = 3;
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
@@ -14,7 +14,7 @@ public class BossAttackState : IBossState
     private readonly double runDuration = 4.0; // Run for 3 seconds
     public void OnEnter(Boss boss)
     {
-        boss.sourceRectangle = new Rectangle(3, 1256, 623, 490);
+        boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
         commandReceivedThisFrame = false;
         timer = 0;
     }
@@ -23,15 +23,15 @@ public class BossAttackState : IBossState
     {
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
-        int frameWidth = 623;
-        int gap = 3;
+        int frameWidth = 704;
+        int gap = 4;
         int startX = 3;
 
         int newX = startX + (currentFrame * (frameWidth + gap));
 
         // Update the boss's source rectangle
         // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
-        boss.sourceRectangle = new Rectangle(newX, 1256, frameWidth, 490);
+        boss.sourceRectangle = new Rectangle(newX, 3771, frameWidth, 593);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
         if (timer >= runDuration)
         {

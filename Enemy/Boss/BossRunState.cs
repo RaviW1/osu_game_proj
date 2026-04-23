@@ -35,7 +35,7 @@ public class BossRunState : IBossState
 <<<<<<< Updated upstream
         if (timer >= runDuration)
         {
-            boss.ChangeState(new BossIdleState());
+            boss.ChangeState(new BossAttackAnticState());
         }
 =======
 >>>>>>> Stashed changes
