@@ -7,6 +7,18 @@
 {
   "Name": "level2",
   "File": "level_files/test_level2.xml",
-  "Left": "level1"
+  "Left": "level1",
+  "Right": "shop"
+},
+{
+  "Name": "shop",
+  "File": "level_files/shop_level.xml",
+  "Left": "level2",
+  "Right": "puzzle"
+},
+{
+  "Name": "puzzle",
+  "File": "level_files/puzzle_level.xml",
+  "Left": "shop"
 }
 ]

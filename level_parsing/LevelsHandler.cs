@@ -20,10 +20,16 @@ namespace osu_game_proj
         public IRoom currentRoom;
         public LevelNode currentLevel;
         public int TotalRooms => levelMap.Count;
-        public int CurrentRoomIndex{
-            get{
+        //NOTE: don't know who added this, but for future reference
+        //I don't believe dictionaries in C# garuantee order
+        //seem to be working properly so I am not going to touch it
+        public int CurrentRoomIndex
+        {
+            get
+            {
                 int i = 0;
-                foreach (var key in levelMap.Keys){
+                foreach (var key in levelMap.Keys)
+                {
                     if (key == currentRoom.roomName) return i;
                     i++;
                 }
@@ -92,7 +98,6 @@ namespace osu_game_proj
                 if (def.Left != null) current.Room.LeftNeighbor = levelMap[(string)def.Left].Room;
                 if (def.Right != null) current.Room.RightNeighbor = levelMap[(string)def.Right].Room;
                 if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
-                if (def.Up != null) current.Room.UpNeighbor = levelMap[(string)def.Up].Room;
                 if (def.Down != null) current.Room.DownNeighbor = levelMap[(string)def.Down].Room;
             }
 
@@ -130,7 +135,6 @@ namespace osu_game_proj
             {
                 currentRoom = nextRoom;
 
-                // room objects MUST have a room index assigned
                 currentLevel = levelMap[currentRoom.roomName];
                 currentTilesGen = currentLevel.TileGen;
                 currentEnemyGen = currentLevel.EnemyGen;
