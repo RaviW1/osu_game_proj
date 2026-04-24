@@ -42,6 +42,8 @@ public partial class GameScene : IScene
     private bool _isWin;
     private bool _charmInventoryOpen;
     private bool _isTransitioning;
+    private bool _isShopOpen;
+    private Rectangle _shopBuyButtonRect;
     private float _gameOverAlpha;
     private float _winAlpha;
     private float _transitionAlpha;
@@ -124,6 +126,7 @@ public partial class GameScene : IScene
         if (_isTransitioning) { UpdateTransition(gameTime); return; }
         if (_isGameOver) { UpdateGameOver(gameTime); return; }
         if (_isWin) { UpdateWin(gameTime); return; }
+        if (UpdateShop()) return;
         if (UpdateCharmInventory()) return;
 
         if (player.PlayerHealth <= 0)
@@ -201,7 +204,7 @@ public partial class GameScene : IScene
     private bool UpdateCharmInventory()
     {
         KeyboardState ks = Keyboard.GetState();
-        if (ks.IsKeyDown(Keys.I) && _prevKeyboard.IsKeyUp(Keys.I))
+        if (ks.IsKeyDown(Keys.I) && _prevKeyboard.IsKeyUp(Keys.I) && !_isShopOpen)
             _charmInventoryOpen = !_charmInventoryOpen;
         _prevKeyboard = ks;
 
@@ -210,6 +213,27 @@ public partial class GameScene : IScene
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
             HandleCharmClick(ms.Position);
+        _previousMouse = ms;
+        return true;
+    }
+
+    private bool UpdateShop()
+    {
+        KeyboardState ks = Keyboard.GetState();
+        bool inShopRoom = levels.currentRoom.roomName == "shop";
+
+        if (!inShopRoom) _isShopOpen = false;
+
+        if (ks.IsKeyDown(Keys.B) && _prevKeyboard.IsKeyUp(Keys.B) && inShopRoom && !_charmInventoryOpen)
+            _isShopOpen = !_isShopOpen;
+
+        if (!_isShopOpen) return false;
+
+        _prevKeyboard = ks;
+
+        MouseState ms = Mouse.GetState();
+        if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
+            HandleShopClick(ms.Position);
         _previousMouse = ms;
         return true;
     }
@@ -292,15 +316,26 @@ public partial class GameScene : IScene
         if (_isGameOver) DrawGameOver(spriteBatch);
         if (_isWin) DrawWinScreen(spriteBatch);
         if (_charmInventoryOpen) DrawCharmInventory(spriteBatch);
+        if (_isShopOpen) DrawShopHUD(spriteBatch);
         if (_isTransitioning)
             spriteBatch.Draw(pixelTexture,
                 new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
                 Color.Black * _transitionAlpha);
-        Minimap.Draw(spriteBatch, pixelTexture, _graphics,
-             levels.currentRoom.Bounds, levels.currentRoom.Tiles,
-             player.Position,
-             levels.TotalRooms,
-             levels.CurrentRoomIndex);
+        if (itemManager.IsEquipped(WaywardCompassIndex))
+            Minimap.Draw(spriteBatch, pixelTexture, _graphics,
+                 levels.currentRoom.Bounds, levels.currentRoom.Tiles,
+                 player.Position,
+                 levels.TotalRooms,
+                 levels.CurrentRoomIndex);
+
+        if (levels.currentRoom.roomName == "shop" && !_isShopOpen && !_charmInventoryOpen
+            && !_isGameOver && !_isPaused)
+        {
+            string shopHint = "Press B to open Shop";
+            Vector2 shopHintSize = font.MeasureString(shopHint);
+            spriteBatch.DrawString(font, shopHint,
+                new Vector2((_graphics.Viewport.Width - shopHintSize.X) / 2f, 20), Color.Gold);
+        }
 
         spriteBatch.End();
     }
@@ -330,17 +365,21 @@ public partial class GameScene : IScene
     public void Reset()
     {
         _charmInventoryOpen = false;
+        _isShopOpen = false;
+
+        levels.ResetToFirstLevel();
+        levels.ResetAllEnemies();
+        levels.ClearGeos();
+
         player = CreatePlayer();
+        WireEnemyCallbacks();
 
         itemManager = new ItemManager(0.4f);
         LoadItems();
-
-        levels.ResetAllEnemies();
-        WireEnemyCallbacks();
         currentBlockIndex = 0;
 
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
-        levels.ClearGeos();
+        _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
     }
 

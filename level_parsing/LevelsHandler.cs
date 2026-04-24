@@ -144,6 +144,17 @@ namespace osu_game_proj
                 currentLevelNum = newRoomNum;
             }
         }
+        public void ResetToFirstLevel()
+        {
+            var firstLevel = levelMap["level1"];
+            currentRoom = firstLevel.Room;
+            currentTilesGen = firstLevel.TileGen;
+            currentEnemyGen = firstLevel.EnemyGen;
+            currentGeos = firstLevel.Geos;
+            currentLevel = firstLevel;
+            currentLevelNum = firstLevel.Room.roomIndex;
+        }
+
         // helper functions for resetting
         public void ResetAllEnemies()
         {
