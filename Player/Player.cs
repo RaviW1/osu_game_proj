@@ -71,6 +71,8 @@ public class Player
     public int geoCount = 0;
     public int GeoCount { get { return geoCount; } set { geoCount = value; } }
 
+    public bool HasWaywardCompass { get; set; }
+
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
         Textures = textures;
