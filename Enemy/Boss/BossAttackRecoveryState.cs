@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 // Right now is just a copy of the attack recovery state
 // Should play one invincible animation entering vulerability
 // then stay vulnerable for a certain amount of time
-public class BossVulnerableState : IBossState
+public class BossAttackRecoveryState : IBossState
 {
     private const float SecondsPerFrame = 0.15f;
     private const int TotalFrames = 5;
@@ -34,6 +34,7 @@ public class BossVulnerableState : IBossState
 
         // Update the boss's source rectangle
         // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
+        boss.sourceRectangle = new Rectangle(newX, 4388, frameWidth, 578);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
         if (timer >= runDuration)
         {

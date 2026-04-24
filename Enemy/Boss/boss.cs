@@ -23,10 +23,9 @@ public class Boss : ISprite, IEnemy
         this.isDead = false;
         this.currentFrame = 0;
         this.facingLeft = true;
-        currentState = new BossAttackState();
+        currentState = new BossAttackRecoveryState();
         currentState.OnEnter(this);
     }
-
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -69,7 +68,6 @@ public class Boss : ISprite, IEnemy
     public float GetVelocityY() => velocity.Y;
     public void ResolveCollisions(List<CollisionResult> results)
     {
-
         foreach (var result in results)
         {
             if (result.IsHarmful)

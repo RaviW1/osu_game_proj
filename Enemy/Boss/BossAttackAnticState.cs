@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 // TODO: finish implementation
 public class BossAttackAnticState : IBossState
 {
-    private const float SecondsPerFrame = 0.1f;
+    private const float SecondsPerFrame = 0.15f;
     private const int TotalFrames = 6;
 
     private int currentFrame = 0;
