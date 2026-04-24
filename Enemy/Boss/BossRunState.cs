@@ -32,10 +32,13 @@ public class BossRunState : IBossState
         // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
         boss.sourceRectangle = new Rectangle(newX, 1256, frameWidth, 490);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
+<<<<<<< Updated upstream
         if (timer >= runDuration)
         {
             boss.ChangeState(new BossIdleState());
         }
+=======
+>>>>>>> Stashed changes
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
