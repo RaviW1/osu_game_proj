@@ -11,14 +11,10 @@ public class BossIdleState : IBossState
     private float timeSinceLastFrame = 0f;
     private bool commandReceivedThisFrame = false;
     private double timer = 0;
-<<<<<<< Updated upstream
-    private readonly double runDuration = 4.0; // Run for 3 seconds
-=======
     private double idleDuration = 2.0; // start by idling for 2 seconds
     private readonly double runDuration = 4.0;
     private Random rng;
 
->>>>>>> Stashed changes
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 25, 624, 390);
