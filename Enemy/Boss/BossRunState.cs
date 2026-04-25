@@ -11,11 +11,29 @@ public class BossRunState : IBossState
     private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
+    private float runSpeed = 400f;
+    private bool hitEnd = false;
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 1256, 623, 490);
         commandReceivedThisFrame = false;
         timer = 0;
+
+        // first check which half of the screen we are on
+
+        int direction;
+        if (boss.position.X < 400)
+        {
+            boss.facingLeft = false;
+            direction = 1;
+        }
+        else
+        {
+            boss.facingLeft = true;
+            direction = -1;
+        }
+        boss.velocity = new Vector2(direction * runSpeed, 0);
+        hitEnd = false;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
@@ -32,13 +50,26 @@ public class BossRunState : IBossState
         // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
         boss.sourceRectangle = new Rectangle(newX, 1256, frameWidth, 490);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
-<<<<<<< Updated upstream
         if (timer >= runDuration)
         {
             boss.ChangeState(new BossAttackAnticState());
         }
-=======
->>>>>>> Stashed changes
+
+        // TODO: extract out into seperate private method
+
+        // logic for changing direction once reaching end of run
+
+        if (boss.position.X < 30)
+        {
+            boss.ChangeState(new BossIdleState());
+        }
+        else if (boss.position.X > 750)
+        {
+            boss.ChangeState(new BossIdleState());
+        }
+
+
+
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
