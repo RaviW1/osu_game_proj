@@ -17,6 +17,7 @@ public class BossIdleState : IBossState
 
     public void OnEnter(Boss boss)
     {
+        boss.velocity = new Vector2(0, 0);
         boss.sourceRectangle = new Rectangle(3, 25, 624, 390);
         commandReceivedThisFrame = false;
         timer = 0;
@@ -52,14 +53,16 @@ public class BossIdleState : IBossState
             }
             else
             {
-                boss.ChangeState(new BossAttackAnticState());
+                //commented for testing
+                //      boss.ChangeState(new BossAttackAnticState());
             }
         }
 
-        if (timer >= runDuration)
-        {
-            boss.ChangeState(new BossRunState());
-        }
+        // For testing(delete later)
+        //        if (timer >= runDuration)
+        //        {
+        //            boss.ChangeState(new BossRunState());
+        //        }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
