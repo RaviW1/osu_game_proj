@@ -246,11 +246,24 @@ public partial class GameScene : IScene
         Rectangle playerBounds = player.GetBounds();
 
         levels.currentRoom.Update(gameTime, player, this);
-        var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
-        player.ResolveCollisions(playerResults);
 
         ProcessInput(gameTime);
         player.Update(gameTime);
+
+        // Apply ALL movement together, then resolve collisions
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        player.ApplyPhysics(dt);
+
+        // Only apply horizontal velocity if not blocked by a wall in that direction
+        if (player.WallContact == 0 ||
+            (player.WallContact == 1 && player.Velocity.X <= 0) ||
+            (player.WallContact == -1 && player.Velocity.X >= 0))
+        {
+            player.Position.X += player.Velocity.X * dt;
+        }
+
+        var playerResults = CollisionSystem.Query(player.GetBounds(), _grid, player.Velocity);
+        player.ResolveCollisions(playerResults);
 
         levels.Update(gameTime, player, _grid);
         SpawnDeathGeos();

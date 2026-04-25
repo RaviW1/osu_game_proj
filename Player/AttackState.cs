@@ -55,8 +55,8 @@ public class AttackState : IPlayerState
             player.facing = SpriteEffects.None;
         else if (direction < 0)
             player.facing = SpriteEffects.FlipHorizontally;
-        player.Velocity.X = direction * 3f;
-        player.Position.X += player.Velocity.X;
+        player.Velocity.X = direction * 180f;
+
     }
 
     public void Draw(Player player, SpriteBatch spriteBatch)

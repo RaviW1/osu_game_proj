@@ -42,6 +42,8 @@ public class Player
     private int maxPlayerHealth = 5;
     private int playerHealth = 5;
 
+    public int WallContact { get; set; } = 0; // -1 = wall on left, 1 = wall on right, 0 = no wall
+
     public Action OnDamaged;
     public int PlayerHealth
     {
@@ -97,12 +99,12 @@ public class Player
         if (OnGround)
             HasAirDash = true;
 
-        // Gravity — suppressed while dashing
-        if (!OnGround && !IsDashing)
-        {
-            Velocity.Y += GravityForce * dt;
-            Position.Y += Velocity.Y * dt;
-        }
+        //// Gravity — suppressed while dashing
+        //if (!OnGround && !IsDashing)
+        //{
+        //    Velocity.Y += GravityForce * dt;
+        //    Position.Y += Velocity.Y * dt;
+        //}
 
         currentState.Update(this, gameTime);
 
@@ -120,9 +122,19 @@ public class Player
         }
     }
 
+    public void ApplyPhysics(float dt)
+    {
+        if (!OnGround && !IsDashing)
+        {
+            Velocity.Y += GravityForce * dt;
+            Position.Y += Velocity.Y * dt;
+        }
+    }
+
     public void ResolveCollisions(List<CollisionResult> results)
     {
         OnGround = false;
+        WallContact = 0;
 
         foreach (var result in results)
         {
@@ -150,13 +162,12 @@ public class Player
                     break;
 
                 case CollisionDirection.Left:
-                    Position.X += result.Overlap.Width;
-                    Velocity.X = 0;
-                    break;
-
                 case CollisionDirection.Right:
-                    Position.X -= result.Overlap.Width;
+                    Position.X += (result.Direction == CollisionDirection.Left)
+                        ? result.Overlap.Width
+                        : -result.Overlap.Width;
                     Velocity.X = 0;
+                    WallContact = (result.Direction == CollisionDirection.Right) ? 1 : -1;
                     break;
             }
         }

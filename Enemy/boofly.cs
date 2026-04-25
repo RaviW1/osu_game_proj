@@ -11,7 +11,10 @@ public class Boofly : ISprite, IEnemy
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
-    private const float floorY = 400f;
+    private const float floorY = 6000f;
+
+    private float patrolLeft;
+    private float patrolRight;
 
     public bool IsDead => isDead;
 
@@ -20,6 +23,9 @@ public class Boofly : ISprite, IEnemy
         this.texture = texture;
         this.position = startPosition;
         this.velocity = new Vector2(50, 0);
+
+        this.patrolLeft = startPosition.X - 200f;
+        this.patrolRight = startPosition.X + 200f;
     }
 
     public Rectangle GetBounds()
@@ -47,9 +53,7 @@ public class Boofly : ISprite, IEnemy
                 TakeDamage();
                 continue;
             }
-
             if (!result.IsCollideable) continue;
-
             switch (result.Direction)
             {
                 case CollisionDirection.Left:
@@ -76,12 +80,11 @@ public class Boofly : ISprite, IEnemy
 
         position.X += velocity.X * 0.016f;
 
-        if (position.X > 700 || position.X < 100)
+        if (position.X > patrolRight || position.X < patrolLeft)
         {
             velocity.X *= -1;
         }
 
-        if (position.X > 700 || position.X < 100) velocity.X *= -1;
         bobTimer += 0.016f;
     }
 
@@ -96,10 +99,8 @@ public class Boofly : ISprite, IEnemy
             int frameHeight = 335;
             int frameX = 4;
             int frameY = 23;
-
             var sourceRect = new Rectangle(frameX, frameY, frameWidth, frameHeight);
             float scale = 0.2f;
-
             spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
                             0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }

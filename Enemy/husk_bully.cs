@@ -16,6 +16,9 @@ public class HuskBully : ISprite, IEnemy
     private TimeSpan delay;
     private TimeSpan elapsedTime;
 
+    private float patrolLeft;
+    private float patrolRight;
+
     public bool IsDead => isDead;
 
     public HuskBully(Texture2D texture, Vector2 startPosition)
@@ -26,6 +29,10 @@ public class HuskBully : ISprite, IEnemy
         this.facingLeft = true;
         this.isDead = false;
         this.currentFrame = 0;
+
+        this.patrolLeft = startPosition.X - 150f;
+        this.patrolRight = startPosition.X + 150f;
+
         for (int i = 0; i < 7; i++)
         {
             this.frames[i] = new Rectangle(4 + 111 * i, 175, 106, 128);
@@ -55,9 +62,7 @@ public class HuskBully : ISprite, IEnemy
                 TakeDamage();
                 continue;
             }
-
             if (!result.IsCollideable) continue;
-
             switch (result.Direction)
             {
                 case CollisionDirection.Left:
@@ -84,7 +89,8 @@ public class HuskBully : ISprite, IEnemy
         }
 
         position.X += velocity.X;
-        if (position.X > 760 || position.X < 0)
+
+        if (position.X > patrolRight || position.X < patrolLeft)
         {
             velocity.X *= -1;
             facingLeft = velocity.X < 0;

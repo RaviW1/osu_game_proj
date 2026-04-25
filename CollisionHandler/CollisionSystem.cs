@@ -43,37 +43,28 @@ public static class CollisionSystem
             return 0;
         });
     }
-
     private static CollisionDirection GetDirection(Rectangle mover, Rectangle tile, Rectangle overlap, Vector2 velocity)
     {
-        float absVX = Math.Abs(velocity.X);
-        float absVY = Math.Abs(velocity.Y);
-
-        // Weight each overlap dimension by the opposing velocity axis.
-        // When moving fast horizontally, effectiveHeight grows large, biasing toward
-        // a horizontal collision result even if the raw overlap is wider than tall.
-        // This prevents corner clips during a dash from being misread as vertical hits.
-        float effectiveWidth = overlap.Width * (absVY + 1f);
-        float effectiveHeight = overlap.Height * (absVX + 1f);
-
-        if (effectiveHeight < effectiveWidth)
+        // Use raw overlap to determine the shallow axis
+        // The smaller overlap dimension is the one we need to resolve
+        if (overlap.Width < overlap.Height)
         {
-            // Vertical collision — top or bottom
+            // Horizontal collision
+            return mover.Center.X < tile.Center.X
+                ? CollisionDirection.Right
+                : CollisionDirection.Left;
+        }
+        else if (overlap.Height < overlap.Width)
+        {
+            // Vertical collision
             return mover.Center.Y < tile.Center.Y
                 ? CollisionDirection.Down
                 : CollisionDirection.Up;
         }
-        else if (effectiveWidth < effectiveHeight)
-        {
-            // Horizontal collision — left or right
-            return velocity.X >= 0
-                ? CollisionDirection.Right
-                : CollisionDirection.Left;
-        }
         else
         {
-            // Perfect tie — dominant velocity axis decides
-            if (absVX > absVY)
+            // Perfect tie — use velocity to break it
+            if (Math.Abs(velocity.X) > Math.Abs(velocity.Y))
                 return mover.Center.X < tile.Center.X
                     ? CollisionDirection.Right
                     : CollisionDirection.Left;

@@ -38,8 +38,8 @@ public class WalkingState : IPlayerState
         }
 
         // Set horizontal velocity instead of directly modifying position
-        player.Velocity.X = direction * WalkSpeed;
-        player.Position.X += player.Velocity.X;
+        player.Velocity.X = direction * 300f; 
+
 
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
     }

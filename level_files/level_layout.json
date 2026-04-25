@@ -1,24 +1,63 @@
 [
-{
-  "Name": "level1",
-  "File": "level_files/test_level.xml",
-  "Right": "level2"
-},
-{
-  "Name": "level2",
-  "File": "level_files/test_level2.xml",
-  "Left": "level1",
-  "Right": "shop"
-},
-{
-  "Name": "shop",
-  "File": "level_files/shop_level.xml",
-  "Left": "level2",
-  "Right": "puzzle"
-},
-{
-  "Name": "puzzle",
-  "File": "level_files/puzzle_level.xml",
-  "Left": "shop"
-}
+    {
+        "Name": "level1",
+        "File": "level_files/entrance.xml",
+        "Type": "RoomA",
+        "Right": "crossroads1"
+    },
+    {
+        "Name": "crossroads1",
+        "File": "level_files/crossroads1.xml",
+        "Type": "RoomA",
+        "Left": "level1",
+        "Right": "exploration"
+    },
+    {
+        "Name": "exploration",
+        "File": "level_files/exploration.xml",
+        "Type": "RoomB",
+        "Left": "crossroads1",
+        "Right": "shop"
+    },
+    {
+        "Name": "shop",
+        "File": "level_files/shop.xml",
+        "Type": "RoomA",
+        "Left": "exploration",
+        "Right": "crossroads2"
+    },
+    {
+        "Name": "crossroads2",
+        "File": "level_files/crossroads2.xml",
+        "Type": "RoomA",
+        "Left": "shop",
+        "Right": "ascent"
+    },
+    {
+        "Name": "ascent",
+        "File": "level_files/ascent.xml",
+        "Type": "RoomB",
+        "Left": "crossroads2",
+        "Right": "shop2"
+    },
+    {
+        "Name": "shop2",
+        "File": "level_files/shop2.xml",
+        "Type": "RoomA",
+        "Left": "ascent",
+        "Right": "puzzle"
+    },
+    {
+        "Name": "puzzle",
+        "File": "level_files/puzzle.xml",
+        "Type": "RoomA",
+        "Left": "shop2",
+        "Right": "boss"
+    },
+    {
+        "Name": "boss",
+        "File": "level_files/boss.xml",
+        "Type": "RoomA",
+        "Left": "puzzle"
+    }
 ]

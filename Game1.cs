@@ -64,7 +64,7 @@ namespace osu_game_proj
         // Everything is drawn in a single SpriteBatch pass.
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(10, 8, 16));
             _currentScene.Draw(_spriteBatch, gameTime);
             base.Draw(gameTime);
         }

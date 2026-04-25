@@ -15,8 +15,13 @@ public class Aspid : ISprite, IEnemy
     private bool facingLeft = true;
     private bool isDead = false;
     private float deathVelocityY = 0f;
-    private const float floorY = 400f;
+    private const float floorY = 6000f;
     private float bounceCooldown = 0f;
+
+    private float patrolLeft;
+    private float patrolRight;
+    private float patrolTop;
+    private float patrolBottom;
 
     public bool IsDead => isDead;
     public List<Projectile> Projectiles { get; private set; }
@@ -28,6 +33,11 @@ public class Aspid : ISprite, IEnemy
         this.position = startPosition;
         this.velocity = new Vector2(-30, 30);
         this.Projectiles = new List<Projectile>();
+
+        this.patrolLeft = startPosition.X - 200f;
+        this.patrolRight = startPosition.X + 200f;
+        this.patrolTop = startPosition.Y - 100f;
+        this.patrolBottom = startPosition.Y + 100f;
     }
 
     public Rectangle GetBounds()
@@ -95,8 +105,15 @@ public class Aspid : ISprite, IEnemy
         position.Y += velocity.Y * 0.016f;
         if (bounceCooldown > 0f) bounceCooldown -= 0.016f;
 
-        if (position.X > 700 || position.X < 100) { velocity.X *= -1; facingLeft = velocity.X < 0; }
-        if (position.Y > 400 || position.Y < 50) velocity.Y *= -1;
+        if (position.X > patrolRight || position.X < patrolLeft)
+        {
+            velocity.X *= -1;
+            facingLeft = velocity.X < 0;
+        }
+        if (position.Y > patrolBottom || position.Y < patrolTop)
+        {
+            velocity.Y *= -1;
+        }
 
         hoverTimer += 0.016f;
         shootTimer += 0.016f;
@@ -106,7 +123,7 @@ public class Aspid : ISprite, IEnemy
         {
             Projectiles[i].Update(gameTime);
             var projPos = Projectiles[i].GetPosition();
-            if (projPos.X < -50 || projPos.X > 850 || projPos.Y < -50 || projPos.Y > 650)
+            if (Math.Abs(projPos.X - position.X) > 800 || Math.Abs(projPos.Y - position.Y) > 600)
                 Projectiles.RemoveAt(i);
         }
     }

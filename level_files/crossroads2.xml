@@ -1,0 +1,34 @@
+<Level name="Crossroads_2">
+  <!-- Background -->
+  <Tile id="level1_background" x_pos="0" y_pos="0" x_size="900" y_size="900" collide="0" damage="0"/>
+
+  <!-- Boundaries -->
+  <Tile id="top_cave_wall" x_pos="0" y_pos="-10" x_size="900" y_size="20" collide="1" damage="0"/>
+
+  <!-- Decorative -->
+  <Tile id="left_rocks_wall" x_pos="-20" y_pos="0" x_size="300" y_size="600" collide="0" damage="0"/>
+  <Tile id="right_cave_wall" x_pos="600" y_pos="0" x_size="300" y_size="500" collide="0" damage="0"/>
+
+  <!-- Ground -->
+  <Tile id="level_tile" x_pos="0" y_pos="500" x_size="900" y_size="400" collide="0" damage="0"/>
+  <Tile id="ground_platform" x_pos="0" y_pos="500" x_size="900" y_size="30" collide="1" damage="0"/>
+
+  <!-- Platforms -->
+  <Tile id="floating_platform" x_pos="100" y_pos="300" x_size="133" y_size="42" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="400" y_pos="250" x_size="133" y_size="42" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="700" y_pos="350" x_size="133" y_size="42" collide="1" damage="0"/>
+
+  <!-- Spikes -->
+  <Tile id="level1_spikes" x_pos="300" y_pos="450" x_size="70" y_size="57" collide="1" damage="1"/>
+
+  <!-- Enemies -->
+  <Enemy id="boofly" x_pos="400" y_pos="200"/>
+  <Enemy id="husk_bully" x_pos="600" y_pos="460"/>
+
+  <!-- Exits and Spawns -->
+  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="230"/>
+  <Exit direction="right" x_pos="880" y_pos="300" width="30" height="230"/>
+  <Spawn id="default" x_pos="450" y_pos="470"/>
+  <Spawn id="fromLeft" x_pos="50" y_pos="470"/>
+  <Spawn id="fromRight" x_pos="850" y_pos="470"/>
+</Level>
