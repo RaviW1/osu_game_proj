@@ -12,16 +12,18 @@ public class BossAttackAnticState : IBossState
     private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
+    private Vector2 offset = new Vector2(15, 10);
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(5, 2945, 580, 400);
+        boss.OffsetPosition(offset);
         commandReceivedThisFrame = false;
         timer = 0;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
     {
-        AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
+        bool animFinished = AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
         int frameWidth = 580;
         int gap = 5;
@@ -44,26 +46,54 @@ public class BossAttackAnticState : IBossState
         }
         // NOTE: Ensure the height (373 vs 395) is consistent with your sprite sheet
         boss.sourceRectangle = new Rectangle(newX, newY, frameWidth, 400);
-        timer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (timer >= runDuration)
+
+
+        if (animFinished)
         {
-            boss.ChangeState(new BossIdleState());
+            // NOTE: undo any shifts
+
+            boss.OffsetPosition(-offset);
+            boss.ChangeState(new BossAttackState());
         }
+
+        // timer += gameTime.ElapsedGameTime.TotalSeconds;
+        // if (timer >= runDuration)
+        // {
+        //     boss.ChangeState(new BossIdleState());
+        // }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
     }
-    private void AdvanceFrame(float dt)
+    private bool AdvanceFrame(float dt)
     {
         timeSinceLastFrame += dt;
         if (timeSinceLastFrame > SecondsPerFrame)
         {
             timeSinceLastFrame = 0f;
-            currentFrame = (currentFrame + 1) % TotalFrames;
+            if (currentFrame == TotalFrames - 1)
+            {
+                return true;
+            }
+            currentFrame++;
         }
+        return false;
     }
-    public void Run(Boss boss, int direction)
+    public Rectangle GetBounds(Boss boss)
     {
+        float scale = 0.5f;
+        int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
+        int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
+        // Tighten the width to 30% of the sprite frame
+        int bodyWidth = (int)(scaledWidth * 0.3f);
+        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
+        int bodyHeight = (int)(scaledHeight * 0.5f);
+
+        // Calculate X and Y based on the bottom-center origin
+        int x = (int)boss.position.X - (bodyWidth / 2);
+        int y = (int)boss.position.Y - bodyHeight;
+
+        return new Rectangle(x, y, bodyWidth, bodyHeight);
     }
 }

@@ -12,11 +12,14 @@ public class BossAttackState : IBossState
     private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
+    private Vector2 offset = new Vector2(-60, 10);
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
         commandReceivedThisFrame = false;
         timer = 0;
+        // TODO: change offset based on facing direction
+        boss.OffsetPosition(offset);
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
@@ -35,6 +38,7 @@ public class BossAttackState : IBossState
         timer += gameTime.ElapsedGameTime.TotalSeconds;
         if (timer >= runDuration)
         {
+            boss.OffsetPosition(-offset);
             boss.ChangeState(new BossIdleState());
         }
     }
@@ -50,8 +54,21 @@ public class BossAttackState : IBossState
             currentFrame = (currentFrame + 1) % TotalFrames;
         }
     }
-    public void Run(Boss boss, int direction)
+    public Rectangle GetBounds(Boss boss)
     {
 
+        float scale = 0.5f;
+        int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
+        int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
+
+        int bodyWidth = (int)(scaledWidth * 0.7f);
+        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
+        int bodyHeight = (int)(scaledHeight * 0.5f);
+
+        // Calculate X and Y based on the bottom-center origin
+        int x = (int)boss.position.X - (bodyWidth / 2);
+        int y = (int)boss.position.Y - bodyHeight;
+
+        return new Rectangle(x, y, bodyWidth, bodyHeight);
     }
 }

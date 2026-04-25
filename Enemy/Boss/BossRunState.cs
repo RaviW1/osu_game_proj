@@ -61,15 +61,14 @@ public class BossRunState : IBossState
 
         if (boss.position.X < 30)
         {
+            boss.facingLeft = false;
             boss.ChangeState(new BossIdleState());
         }
         else if (boss.position.X > 750)
         {
+            boss.facingLeft = true;
             boss.ChangeState(new BossIdleState());
         }
-
-
-
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
@@ -83,8 +82,21 @@ public class BossRunState : IBossState
             currentFrame = (currentFrame + 1) % TotalFrames;
         }
     }
-    public void Run(Boss boss, int direction)
+    public Rectangle GetBounds(Boss boss)
     {
+        float scale = 0.5f;
+        int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
+        int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
+        // Tighten the width to 30% of the sprite frame
+        int bodyWidth = (int)(scaledWidth * 0.3f);
+        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
+        int bodyHeight = (int)(scaledHeight * 0.5f);
+
+        // Calculate X and Y based on the bottom-center origin
+        int x = (int)boss.position.X - (bodyWidth / 2);
+        int y = (int)boss.position.Y - bodyHeight;
+
+        return new Rectangle(x, y, bodyWidth, bodyHeight);
     }
 }

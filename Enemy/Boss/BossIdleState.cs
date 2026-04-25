@@ -49,20 +49,14 @@ public class BossIdleState : IBossState
             float choice = rng.NextSingle();
             if (choice < .4)
             {
-                boss.ChangeState(new BossRunState());
+                boss.ChangeState(new BossAttackAnticState());
             }
             else
             {
-                //commented for testing
-                //      boss.ChangeState(new BossAttackAnticState());
+                boss.ChangeState(new BossRunState());
             }
         }
 
-        // For testing(delete later)
-        //        if (timer >= runDuration)
-        //        {
-        //            boss.ChangeState(new BossRunState());
-        //        }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
@@ -76,8 +70,21 @@ public class BossIdleState : IBossState
             currentFrame = (currentFrame + 1) % TotalFrames;
         }
     }
-    public void Run(Boss boss, int direction)
+    public Rectangle GetBounds(Boss boss)
     {
+        float scale = 0.5f;
+        int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
+        int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
+        // Tighten the width to 30% of the sprite frame
+        int bodyWidth = (int)(scaledWidth * 0.3f);
+        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
+        int bodyHeight = (int)(scaledHeight * 0.5f);
+
+        // Calculate X and Y based on the bottom-center origin
+        int x = (int)boss.position.X - (bodyWidth / 2);
+        int y = (int)boss.position.Y - bodyHeight;
+
+        return new Rectangle(x, y, bodyWidth, bodyHeight);
     }
 }

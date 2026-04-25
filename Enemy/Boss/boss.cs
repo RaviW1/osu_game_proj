@@ -22,8 +22,8 @@ public class Boss : ISprite, IEnemy
         this.position = startPos;
         this.isDead = false;
         this.currentFrame = 0;
-        this.facingLeft = true;
-        currentState = new BossRunState();
+        this.facingLeft = false;
+        currentState = new BossIdleState();
         currentState.OnEnter(this);
     }
     public void Update(GameTime gameTime)
@@ -44,46 +44,12 @@ public class Boss : ISprite, IEnemy
     // had AI generate some quick placeholder code (maybe we can keep)
     public Rectangle GetBounds()
     {
-        // 1. Calculate the scaled size (since you draw at 0.5f)
-        //        float scale = 0.5f;
-        //        int scaledWidth = (int)(sourceRectangle.Width * scale);
-        //        int scaledHeight = (int)(sourceRectangle.Height * scale);
-        //
-        //        // 2. Define how much of that width is actually the "solid" boss
-        //        // Let's say the boss body is only 40% of the total frame width
-        //        int bodyWidth = (int)(scaledWidth * 0.4f);
-        //        int bodyHeight = scaledHeight;
-        //
-        //        // 3. Calculate position based on your Draw origin (bottom-center)
-        //        // Since origin is (Width/2, Height), 'position' is at the bottom-center of the sprite
-        //        int x = (int)position.X - (bodyWidth / 2);
-        //        int y = (int)position.Y - bodyHeight;
-        //
-        //        return new Rectangle(x, y, bodyWidth, bodyHeight);
-        float scale = 0.5f;
-        int scaledWidth = (int)(sourceRectangle.Width * scale);
-        int scaledHeight = (int)(sourceRectangle.Height * scale);
-
-        // Tighten the width to 30% of the sprite frame
-        int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
-        int bodyHeight = (int)(scaledHeight * 0.5f);
-
-        // Calculate X and Y based on the bottom-center origin
-        int x = (int)position.X - (bodyWidth / 2);
-        int y = (int)position.Y - bodyHeight;
-
-        return new Rectangle(x, y, bodyWidth, bodyHeight);
+        return currentState.GetBounds(this);
     }
     public void TakeDamage()
     {
         isDead = true;
         velocity = Vector2.Zero;
-    }
-    public void Run()
-    {
-        var direction = facingLeft ? 1 : -1;
-        currentState.Run(this, direction);
     }
     // I copied these bounce methods from the enemy class but I haven't found a use for them yet
     public void BounceX()
@@ -131,6 +97,14 @@ public class Boss : ISprite, IEnemy
     {
         currentState = newState;
         newState.OnEnter(this);
+    }
+    public void OffsetPosition(Vector2 offset)
+    {
+        Vector2 currentPos = position;
+        currentPos.X = currentPos.X + offset.X;
+        currentPos.Y = currentPos.Y + offset.Y;
+        position = currentPos;
+
     }
 
 }
