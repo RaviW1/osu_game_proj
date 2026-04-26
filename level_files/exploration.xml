@@ -3,86 +3,126 @@
   <Tile id="level1_background" x_pos="0" y_pos="0" x_size="6000" y_size="6000" collide="0" damage="0"/>
 
   <!-- Ceiling -->
-  <Tile id="top_cave_wall" x_pos="0" y_pos="200" x_size="4200" y_size="30" collide="1" damage="0"/>
+  <Tile id="top_cave_wall" x_pos="0" y_pos="200" x_size="4000" y_size="30" collide="1" damage="0"/>
 
   <!-- Side walls -->
   <Tile id="ground_platform" x_pos="-10" y_pos="200" x_size="20" y_size="1400" collide="1" damage="0"/>
-  <Tile id="ground_platform" x_pos="4190" y_pos="200" x_size="20" y_size="1400" collide="1" damage="0"/>
+  <Tile id="ground_platform" x_pos="3990" y_pos="200" x_size="20" y_size="1400" collide="1" damage="0"/>
+
+  <!-- Kill plane -->
+  <Tile id="level1_spikes" x_pos="0" y_pos="1560" x_size="4000" y_size="30" collide="1" damage="1"/>
+
+  <!-- Decorative -->
+  <Tile id="left_rocks_wall" x_pos="-20" y_pos="400" x_size="250" y_size="600" collide="0" damage="0"/>
+  <Tile id="right_cave_wall" x_pos="3760" y_pos="400" x_size="250" y_size="600" collide="0" damage="0"/>
+  <Tile id="right_cave_wall" x_pos="1800" y_pos="300" x_size="180" y_size="400" collide="0" damage="0"/>
 
   <!-- ==================== GROUND FLOOR ==================== -->
-  <Tile id="level_tile" x_pos="0" y_pos="1400" x_size="4200" y_size="300" collide="0" damage="0"/>
-  <Tile id="ground_platform" x_pos="0" y_pos="1400" x_size="600" y_size="30" collide="1" damage="0"/>
+  <!-- Simple open ground - just two spike pits breaking it up -->
+  <Tile id="level_tile" x_pos="0" y_pos="1380" x_size="4000" y_size="300" collide="0" damage="0"/>
 
-  <!-- Spike pit 1 -->
-  <Tile id="level1_spikes" x_pos="600" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="670" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="740" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
+  <!-- Ground left section -->
+  <Tile id="ground_platform" x_pos="0" y_pos="1380" x_size="800" y_size="20" collide="1" damage="0"/>
 
-  <Tile id="ground_platform" x_pos="810" y_pos="1400" x_size="500" y_size="30" collide="1" damage="0"/>
+  <!-- Spike pit 1: 210px, jump or dash -->
+  <Tile id="level1_spikes" x_pos="800" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="870" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="940" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
 
-  <!-- Combat arena floor -->
-  <Tile id="ground_platform" x_pos="1500" y_pos="1400" x_size="800" y_size="30" collide="1" damage="0"/>
+  <!-- Ground middle section -->
+  <Tile id="ground_platform" x_pos="1010" y_pos="1380" x_size="1200" y_size="20" collide="1" damage="0"/>
 
-  <!-- Spike pit 2 -->
-  <Tile id="level1_spikes" x_pos="2300" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="2370" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="2440" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="2510" y_pos="1370" x_size="70" y_size="57" collide="1" damage="1"/>
+  <!-- Spike pit 2: wider, needs dash -->
+  <Tile id="level1_spikes" x_pos="2210" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="2280" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="2350" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="2420" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="level1_spikes" x_pos="2490" y_pos="1350" x_size="70" y_size="57" collide="1" damage="1"/>
 
-  <Tile id="ground_platform" x_pos="2580" y_pos="1400" x_size="700" y_size="30" collide="1" damage="0"/>
-  <Tile id="ground_platform" x_pos="3500" y_pos="1400" x_size="700" y_size="30" collide="1" damage="0"/>
-
-  <!-- ==================== MID PLATFORMS ==================== -->
-  <Tile id="floating_platform" x_pos="550" y_pos="1200" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="780" y_pos="1100" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="1600" y_pos="1200" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="1900" y_pos="1100" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="2100" y_pos="1250" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="2350" y_pos="1200" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="2550" y_pos="1100" x_size="133" y_size="42" collide="1" damage="0"/>
+  <!-- Ground right section -->
+  <Tile id="ground_platform" x_pos="2560" y_pos="1380" x_size="1440" y_size="20" collide="1" damage="0"/>
 
   <!-- ==================== UPPER ROUTE ==================== -->
-  <Tile id="ground_platform" x_pos="0" y_pos="800" x_size="400" y_size="30" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="500" y_pos="700" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="750" y_pos="600" x_size="133" y_size="42" collide="1" damage="0"/>
+  <!-- 
+    Design: a staircase going LEFT to RIGHT.
+    Each platform is 100px HIGHER and 300px to the RIGHT of the previous one.
+    Player jumps forward and slightly up, peaks above the next platform, lands on top.
+    
+    Start: left wall ledge at y=1280 (100px above ground)
+    Each step: +300px X, -100px Y (going up)
+    
+    y=1280  x=0     (attached to left wall)
+    y=1180  x=300
+    y=1080  x=600
+    y=980   x=900
+    y=880   x=1200
+    y=780   x=1500
+    y=680   x=1800
+    y=680   x=2100  (same height, dash gap)
+    y=680   x=2400  (same height, dash gap)
+    y=780   x=2700  (staircase back down)
+    y=880   x=3000
+    y=980   x=3300
+    y=1080  x=3600
+    y=1180  x=3800  (back near ground level, connects down)
+  -->
 
-  <Tile id="ground_platform" x_pos="950" y_pos="650" x_size="600" y_size="30" collide="1" damage="0"/>
-  <Tile id="level1_spikes" x_pos="1050" y_pos="620" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="1200" y_pos="620" x_size="70" y_size="57" collide="1" damage="1"/>
-  <Tile id="level1_spikes" x_pos="1350" y_pos="620" x_size="70" y_size="57" collide="1" damage="1"/>
+  <!-- Step 1: left wall ledge - entry point -->
+  <Tile id="ground_platform" x_pos="0" y_pos="1280" x_size="250" y_size="20" collide="1" damage="0"/>
+  <!-- Step 2: 300px right, 100px up -->
+  <Tile id="floating_platform" x_pos="300" y_pos="1180" x_size="200" y_size="20" collide="1" damage="0"/>
+  <!-- Step 3 -->
+  <Tile id="floating_platform" x_pos="600" y_pos="1080" x_size="200" y_size="20" collide="1" damage="0"/>
+  <!-- Step 4 -->
+  <Tile id="floating_platform" x_pos="900" y_pos="980" x_size="200" y_size="20" collide="1" damage="0"/>
+  <!-- Step 5 -->
+  <Tile id="floating_platform" x_pos="1200" y_pos="880" x_size="200" y_size="20" collide="1" damage="0"/>
+  <!-- Step 6 -->
+  <Tile id="floating_platform" x_pos="1500" y_pos="780" x_size="200" y_size="20" collide="1" damage="0"/>
+  <!-- Step 7 - top of staircase -->
+  <Tile id="floating_platform" x_pos="1800" y_pos="680" x_size="200" y_size="20" collide="1" damage="0"/>
 
-  <Tile id="floating_platform" x_pos="1700" y_pos="600" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="2000" y_pos="550" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="2300" y_pos="500" x_size="133" y_size="42" collide="1" damage="0"/>
+  <!-- Upper plateau: dash gaps at same height -->
+  <!-- Spike platform in the middle of the plateau -->
+  <Tile id="floating_platform" x_pos="2100" y_pos="680" x_size="80" y_size="20" collide="1" damage="0"/>
+  <Tile id="level1_spikes" x_pos="2180" y_pos="650" x_size="70" y_size="57" collide="1" damage="1"/>
+  <Tile id="floating_platform" x_pos="2250" y_pos="680" x_size="80" y_size="20" collide="1" damage="0"/>
 
-  <Tile id="ground_platform" x_pos="2600" y_pos="600" x_size="500" y_size="30" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="3200" y_pos="700" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="3500" y_pos="900" x_size="133" y_size="42" collide="1" damage="0"/>
-  <Tile id="floating_platform" x_pos="3800" y_pos="1100" x_size="133" y_size="42" collide="1" damage="0"/>
+  <!-- Continue plateau -->
+  <Tile id="floating_platform" x_pos="2430" y_pos="680" x_size="200" y_size="20" collide="1" damage="0"/>
 
-  <!-- ==================== DECORATIVE ==================== -->
-  <Tile id="left_rocks_wall" x_pos="-20" y_pos="400" x_size="300" y_size="600" collide="0" damage="0"/>
-  <Tile id="right_cave_wall" x_pos="3900" y_pos="600" x_size="300" y_size="500" collide="0" damage="0"/>
-  <Tile id="left_rocks_wall" x_pos="1400" y_pos="800" x_size="200" y_size="400" collide="0" damage="0"/>
-  <Tile id="right_cave_wall" x_pos="2800" y_pos="300" x_size="200" y_size="400" collide="0" damage="0"/>
+  <!-- Wide reward ledge at top -->
+  <Tile id="ground_platform" x_pos="2730" y_pos="680" x_size="400" y_size="20" collide="1" damage="0"/>
+
+  <!-- Staircase back DOWN to ground (going right) -->
+  <!-- Each step: +200px X, +100px Y (going down) -->
+  <Tile id="floating_platform" x_pos="3230" y_pos="780" x_size="200" y_size="20" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="3430" y_pos="880" x_size="200" y_size="20" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="3630" y_pos="980" x_size="200" y_size="20" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="3780" y_pos="1080" x_size="200" y_size="20" collide="1" damage="0"/>
+  <Tile id="floating_platform" x_pos="3850" y_pos="1180" x_size="150" y_size="20" collide="1" damage="0"/>
+  <!-- Last step connects back to ground -->
+  <Tile id="floating_platform" x_pos="3900" y_pos="1280" x_size="100" y_size="20" collide="1" damage="0"/>
 
   <!-- ==================== ENEMIES ==================== -->
-  <Enemy id="husk_bully" x_pos="900" y_pos="1360"/>
-  <Enemy id="husk_bully" x_pos="1700" y_pos="1360"/>
-  <Enemy id="husk_bully" x_pos="2000" y_pos="1360"/>
-  <Enemy id="husk_bully" x_pos="3000" y_pos="1360"/>
-  <Enemy id="aspid" x_pos="1600" y_pos="1000"/>
-  <Enemy id="aspid" x_pos="2100" y_pos="900"/>
-  <Enemy id="aspid" x_pos="1100" y_pos="450"/>
-  <Enemy id="boofly" x_pos="1800" y_pos="400"/>
-  <Enemy id="boofly" x_pos="2500" y_pos="350"/>
-  <Enemy id="aspid" x_pos="3600" y_pos="1100"/>
-  <Enemy id="husk_bully" x_pos="3800" y_pos="1360"/>
+  <!-- Ground route: husk bullies patrol the open ground -->
+  <Enemy id="husk_bully" x_pos="400" y_pos="1340"/>
+  <Enemy id="husk_bully" x_pos="1200" y_pos="1340"/>
+  <Enemy id="husk_bully" x_pos="1800" y_pos="1340"/>
+  <Enemy id="husk_bully" x_pos="3000" y_pos="1340"/>
+  <Enemy id="husk_bully" x_pos="3600" y_pos="1340"/>
+
+  <!-- Upper route: aspids and booflies guard the staircase and plateau -->
+  <Enemy id="aspid" x_pos="700" y_pos="880"/>
+  <Enemy id="boofly" x_pos="1400" y_pos="600"/>
+  <Enemy id="aspid" x_pos="2000" y_pos="500"/>
+  <Enemy id="boofly" x_pos="2500" y_pos="500"/>
+  <Enemy id="aspid" x_pos="3100" y_pos="700"/>
 
   <!-- ==================== EXITS AND SPAWNS ==================== -->
-  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="1200"/>
-  <Exit direction="right" x_pos="4180" y_pos="300" width="30" height="1200"/>
-  <Spawn id="default" x_pos="100" y_pos="1350"/>
-  <Spawn id="fromLeft" x_pos="100" y_pos="1350"/>
-  <Spawn id="fromRight" x_pos="4100" y_pos="1350"/>
+  <Exit direction="left" x_pos="-20" y_pos="600" width="30" height="800"/>
+  <Exit direction="right" x_pos="3980" y_pos="600" width="30" height="800"/>
+  <Spawn id="default" x_pos="200" y_pos="1340"/>
+  <Spawn id="fromLeft" x_pos="200" y_pos="1340"/>
+  <Spawn id="fromRight" x_pos="3800" y_pos="1340"/>
 </Level>

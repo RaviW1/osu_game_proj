@@ -80,7 +80,7 @@ public class JumpState : IPlayerState
         if (player.TryDash())
             player.ChangeState(new DashState());
     }
-    public void StopWalking(Player player) { }
+    public void StopWalking(Player player) { player.Velocity.X = 0; }
     public void Attack(Player player) => player.ChangeState(new AttackState(wasJumping: true));
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
 

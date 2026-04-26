@@ -105,7 +105,7 @@ public class AttackState : IPlayerState
     public void Attack(Player player) { }
     public void Heal(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
-    public void StopWalking(Player player) { }
+    public void StopWalking(Player player) { player.Velocity.X = 0; }
     // cant change attack direction will attacking?
     public void LookUp(Player player) { }
 

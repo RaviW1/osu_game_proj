@@ -61,7 +61,7 @@ public class FallingState : IPlayerState
     public void Heal(Player player) { }
     public void LookUp(Player player) { }
     public void JumpHeld(Player player, float deltaTime) { }
-    public void StopWalking(Player player) { }
+    public void StopWalking(Player player) { player.Velocity.X = 0; }
 
     private void AdvanceFrame(float dt)
     {

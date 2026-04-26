@@ -153,6 +153,18 @@ public partial class GameScene : IScene
                 WireEnemyCallbacks();
                 _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
                 _camera.RoomBounds = levels.currentRoom.Bounds;
+
+                // Set spawn point from the NEW room
+                if (_pendingTransitionDirection == 1)
+                    player.Position = levels.currentRoom.GetSpawnPoint("fromLeft");
+                else if (_pendingTransitionDirection == -1)
+                    player.Position = levels.currentRoom.GetSpawnPoint("fromRight");
+                else if (_pendingTransitionDirection == 2)
+                    player.Position = levels.currentRoom.GetSpawnPoint("fromDown");
+                else if (_pendingTransitionDirection == -2)
+                    player.Position = levels.currentRoom.GetSpawnPoint("fromUp");
+
+                player.Velocity = Vector2.Zero;
                 _camera.SnapTo(player.Position);
                 _transitionPhase = TransitionPhase.FadeIn;
             }

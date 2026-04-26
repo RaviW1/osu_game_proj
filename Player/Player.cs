@@ -117,7 +117,7 @@ public class Player
         {
             Projectiles[i].Update(gameTime);
             var projPos = Projectiles[i].GetPosition();
-            if (projPos.X < -50 || projPos.X > 850)
+            if (Math.Abs(projPos.X - Position.X) > 600 || Math.Abs(projPos.Y - Position.Y) > 400)
                 Projectiles.RemoveAt(i);
         }
     }
@@ -183,7 +183,7 @@ public class Player
     {
         float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
         System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
-        float bodyOffsetY = -sourceRectangle.Height / 4f;
+        float bodyOffsetY = -sourceRectangle.Height / 2f;
         System.Numerics.Vector2 startPos = new System.Numerics.Vector2(Position.X, Position.Y + bodyOffsetY);
         Projectiles.Add(new Projectile(fireballTexture, startPos, fireballVelocity));
     }

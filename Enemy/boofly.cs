@@ -11,7 +11,6 @@ public class Boofly : ISprite, IEnemy
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
-    private const float floorY = 6000f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -48,7 +47,7 @@ public class Boofly : ISprite, IEnemy
     {
         foreach (var result in results)
         {
-            if (result.IsHarmful)
+            if (!isDead && result.IsHarmful)
             {
                 TakeDamage();
                 continue;
@@ -58,11 +57,20 @@ public class Boofly : ISprite, IEnemy
             {
                 case CollisionDirection.Left:
                 case CollisionDirection.Right:
-                    BounceX();
+                    if (!isDead) BounceX();
+                    else { position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width; }
+                    break;
+                case CollisionDirection.Down:
+                    if (isDead)
+                    {
+                        position.Y -= result.Overlap.Height;
+                        deathVelocityY = 0;
+                        velocity = Vector2.Zero;
+                    }
+                    else BounceY();
                     break;
                 case CollisionDirection.Up:
-                case CollisionDirection.Down:
-                    BounceY();
+                    if (!isDead) BounceY();
                     break;
             }
         }
@@ -72,9 +80,9 @@ public class Boofly : ISprite, IEnemy
     {
         if (isDead)
         {
-            deathVelocityY += 20f;
-            position.Y += deathVelocityY * 0.016f;
-            if (position.Y >= floorY) position.Y = floorY;
+            deathVelocityY += 600f * 0.016f;
+            velocity = new Vector2(0, deathVelocityY);
+            position.Y += velocity.Y * 0.016f;
             return;
         }
 

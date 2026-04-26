@@ -15,7 +15,6 @@ public class Aspid : ISprite, IEnemy
     private bool facingLeft = true;
     private bool isDead = false;
     private float deathVelocityY = 0f;
-    private const float floorY = 6000f;
     private float bounceCooldown = 0f;
 
     private float patrolLeft;
@@ -60,7 +59,7 @@ public class Aspid : ISprite, IEnemy
     public void TakeDamage()
     {
         isDead = true;
-        velocity = Vector2.Zero;
+        velocity = new Vector2(0, 0);
         Projectiles.Clear();
     }
 
@@ -68,7 +67,7 @@ public class Aspid : ISprite, IEnemy
     {
         foreach (var result in results)
         {
-            if (result.IsHarmful)
+            if (!isDead && result.IsHarmful)
             {
                 TakeDamage();
                 continue;
@@ -80,11 +79,20 @@ public class Aspid : ISprite, IEnemy
             {
                 case CollisionDirection.Left:
                 case CollisionDirection.Right:
-                    BounceX();
+                    if (!isDead) BounceX();
+                    else { position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width; }
+                    break;
+                case CollisionDirection.Down:
+                    if (isDead)
+                    {
+                        position.Y -= result.Overlap.Height;
+                        deathVelocityY = 0;
+                        velocity = Vector2.Zero;
+                    }
+                    else BounceY();
                     break;
                 case CollisionDirection.Up:
-                case CollisionDirection.Down:
-                    BounceY();
+                    if (!isDead) BounceY();
                     break;
             }
         }
@@ -94,10 +102,9 @@ public class Aspid : ISprite, IEnemy
     {
         if (isDead)
         {
-            deathVelocityY += 20f;
-            position.Y += deathVelocityY * 0.016f;
-            if (position.Y >= floorY)
-                position.Y = floorY;
+            deathVelocityY += 600f * 0.016f;
+            velocity = new Vector2(0, deathVelocityY);
+            position.Y += velocity.Y * 0.016f;
             return;
         }
 

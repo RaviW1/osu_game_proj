@@ -76,29 +76,27 @@ namespace osu_game_proj
         {
             foreach (IEnemy currentEnemy in this.enemyList)
             {
-                // Enemy collision
-                if (currentEnemy is IEnemy enemyCollision && !enemyCollision.IsDead)
-                {
-                    var enemyVelocity = new Vector2(enemyCollision.GetVelocityX(), enemyCollision.GetVelocityY());
-                    var enemyResults = CollisionSystem.Query(enemyCollision.GetBounds(), _grid, enemyVelocity);
-                    enemyCollision.ResolveCollisions(enemyResults);
-                }
+                // Run collision on ALL enemies - alive AND dead
+                // Dead enemies need collision to find the floor and stop falling
+                var enemyVelocity = new Vector2(currentEnemy.GetVelocityX(), currentEnemy.GetVelocityY());
+                var enemyResults = CollisionSystem.Query(currentEnemy.GetBounds(), _grid, enemyVelocity);
+                currentEnemy.ResolveCollisions(enemyResults);
 
-                // Enemy update
+                // Update movement/animation
                 currentEnemy.Update(gameTime);
+
+                // Skip all combat logic for dead enemies
+                if (currentEnemy.IsDead) continue;
 
                 // Enemy body vs player
                 Rectangle playerBounds = player.GetBounds();
-                if (currentEnemy is IEnemy enemy && !enemy.IsDead)
+                if (currentEnemy.GetBounds().Intersects(playerBounds))
                 {
-                    if (enemy.GetBounds().Intersects(playerBounds))
+                    if (!player.IsInvincible)
                     {
-                        if (!player.IsInvincible)
-                        {
-                            player.PlayerHealth--;
-                            player.TakeDamage();
-                            OnPlayerHit?.Invoke();
-                        }
+                        player.PlayerHealth--;
+                        player.TakeDamage();
+                        OnPlayerHit?.Invoke();
                     }
                 }
 
@@ -121,34 +119,32 @@ namespace osu_game_proj
                 }
 
                 // Player projectiles vs enemy
-                if (currentEnemy is IEnemy targetEnemy && !targetEnemy.IsDead)
+                for (int i = player.Projectiles.Count - 1; i >= 0; i--)
                 {
-                    for (int i = player.Projectiles.Count - 1; i >= 0; i--)
+                    if (player.Projectiles[i].GetBounds().Intersects(currentEnemy.GetBounds()))
                     {
-                        if (player.Projectiles[i].GetBounds().Intersects(targetEnemy.GetBounds()))
-                        {
-                            bool wasAlive = !targetEnemy.IsDead;
-                            targetEnemy.TakeDamage();
-                            OnEnemyHit?.Invoke();
-                            player.Soul = System.Math.Min(player.Soul + 10, player.SoulLimit);
-                            if (wasAlive && targetEnemy.IsDead)
-                                PendingDeathPositions.Add(new Vector2(targetEnemy.GetBounds().Center.X, targetEnemy.GetBounds().Center.Y));
-                            player.Projectiles.RemoveAt(i);
-                        }
+                        bool wasAlive = !currentEnemy.IsDead;
+                        currentEnemy.TakeDamage();
+                        OnEnemyHit?.Invoke();
+                        player.Soul = Math.Min(player.Soul + 10, player.SoulLimit);
+                        if (wasAlive && currentEnemy.IsDead)
+                            PendingDeathPositions.Add(new Vector2(currentEnemy.GetBounds().Center.X, currentEnemy.GetBounds().Center.Y));
+                        player.Projectiles.RemoveAt(i);
+                        break;
                     }
                 }
 
                 // Melee vs enemy
-                if (player.IsAttacking && currentEnemy is IEnemy meleeTarget && !meleeTarget.IsDead)
+                if (player.IsAttacking)
                 {
-                    if (player.GetMeleeHitbox().Intersects(meleeTarget.GetBounds()))
+                    if (player.GetMeleeHitbox().Intersects(currentEnemy.GetBounds()))
                     {
-                        bool wasAlive = !meleeTarget.IsDead;
-                        meleeTarget.TakeDamage();
+                        bool wasAlive = !currentEnemy.IsDead;
+                        currentEnemy.TakeDamage();
                         OnEnemyHit?.Invoke();
-                        player.Soul = System.Math.Min(player.Soul + 10, player.SoulLimit);
-                        if (wasAlive && meleeTarget.IsDead)
-                            PendingDeathPositions.Add(new Vector2(meleeTarget.GetBounds().Center.X, meleeTarget.GetBounds().Center.Y));
+                        player.Soul = Math.Min(player.Soul + 10, player.SoulLimit);
+                        if (wasAlive && currentEnemy.IsDead)
+                            PendingDeathPositions.Add(new Vector2(currentEnemy.GetBounds().Center.X, currentEnemy.GetBounds().Center.Y));
                     }
                 }
             }
