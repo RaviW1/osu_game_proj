@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public interface IEnemy : ISprite
 {
     bool IsDead { get; }
+    bool IsPhased { get; }
     Rectangle GetBounds();
     void TakeDamage();
     void BounceX();

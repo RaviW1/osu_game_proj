@@ -10,6 +10,7 @@ public class HuskBully : ISprite, IEnemy
     private Vector2 velocity;
     private bool facingLeft;
     private bool isDead;
+    private bool isPhased;
     private int currentFrame;
     private Rectangle[] frames = new Rectangle[8];
     private TimeSpan delay;
@@ -19,6 +20,7 @@ public class HuskBully : ISprite, IEnemy
     private float patrolRight;
 
     public bool IsDead => isDead;
+    public bool IsPhased => isPhased;
 
     public HuskBully(Texture2D texture, Vector2 startPosition)
     {
@@ -27,10 +29,11 @@ public class HuskBully : ISprite, IEnemy
         this.velocity = new Vector2(-1, 0);
         this.facingLeft = true;
         this.isDead = false;
+        this.isPhased = false;
         this.currentFrame = 0;
 
-        this.patrolLeft = startPosition.X - 115f;
-        this.patrolRight = startPosition.X + 115f;
+        this.patrolLeft = startPosition.X - 150f;
+        this.patrolRight = startPosition.X + 150f;
 
         for (int i = 0; i < 7; i++)
         {
@@ -46,7 +49,13 @@ public class HuskBully : ISprite, IEnemy
         return new Rectangle((int)position.X, (int)position.Y, 35, 35);
     }
 
-    public void TakeDamage() { isDead = true; velocity = Vector2.Zero; }
+    public void TakeDamage()
+    {
+        if (isPhased) return;
+        isDead = true;
+        velocity = Vector2.Zero;
+    }
+
     public float GetVelocityX() => velocity.X;
     public float GetVelocityY() => velocity.Y;
     public void BounceX() { velocity.X *= -1; facingLeft = !facingLeft; }
@@ -54,11 +63,12 @@ public class HuskBully : ISprite, IEnemy
 
     public void ResolveCollisions(List<CollisionResult> results)
     {
+        bool touchingSpike = false;
         foreach (var result in results)
         {
             if (result.IsHarmful)
             {
-                TakeDamage();
+                touchingSpike = true;
                 continue;
             }
             if (!result.IsCollideable) continue;
@@ -74,6 +84,7 @@ public class HuskBully : ISprite, IEnemy
                     break;
             }
         }
+        isPhased = touchingSpike;
     }
 
     public void Update(GameTime gameTime)
@@ -101,8 +112,9 @@ public class HuskBully : ISprite, IEnemy
         var direction = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (texture != null)
         {
+            Color tint = isPhased ? Color.White * 0.4f : Color.White;
             spriteBatch.Draw(texture, position, frames[currentFrame],
-                Color.White, 0f, Vector2.Zero, 0.35f, direction, 0f);
+                tint, 0f, Vector2.Zero, 0.35f, direction, 0f);
         }
     }
 }

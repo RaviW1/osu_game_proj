@@ -90,8 +90,8 @@ namespace osu_game_proj
                 // Update movement/animation
                 currentEnemy.Update(gameTime);
 
-                // Skip all combat logic for dead enemies
-                if (currentEnemy.IsDead) continue;
+                // Skip all combat logic for dead or phased enemies
+                if (currentEnemy.IsDead || currentEnemy.IsPhased) continue;
 
                 // Enemy body vs player
                 Rectangle playerBounds = player.GetBounds();

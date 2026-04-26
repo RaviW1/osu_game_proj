@@ -23,6 +23,7 @@ public class Aspid : ISprite, IEnemy
     private float patrolBottom;
 
     public bool IsDead => isDead;
+    public bool IsPhased => false;
     public List<Projectile> Projectiles { get; private set; }
 
     public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)

@@ -16,6 +16,7 @@ public class Boofly : ISprite, IEnemy
     private float patrolRight;
 
     public bool IsDead => isDead;
+    public bool IsPhased => false;
 
     public Boofly(Texture2D texture, Vector2 startPosition)
     {
