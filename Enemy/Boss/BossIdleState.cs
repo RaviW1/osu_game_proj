@@ -45,7 +45,9 @@ public class BossIdleState : IBossState
         {
             // TODO: check if we should enter vulnerable state
 
+
             // pick random state
+            // Commented out for testing
             float choice = rng.NextSingle();
             if (choice < .4)
             {
@@ -56,7 +58,6 @@ public class BossIdleState : IBossState
                 boss.ChangeState(new BossRunState());
             }
         }
-
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {

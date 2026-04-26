@@ -16,6 +16,14 @@ public class BossAttackState : IBossState
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
+        if (boss.facingLeft)
+        {
+            offset = new Vector2(-60, 10);
+        }
+        else
+        {
+            offset = new Vector2(60, 10);
+        }
         commandReceivedThisFrame = false;
         timer = 0;
         // TODO: change offset based on facing direction

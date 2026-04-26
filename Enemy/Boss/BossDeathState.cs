@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 public class BossDeathState : IBossState
 {
-    private const float SecondsPerFrame = 0.1f;
-    private const int TotalFrames = 5;
+    private const float SecondsPerFrame = 0.15f;
+    private const int TotalFrames = 8;
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
@@ -13,7 +13,7 @@ public class BossDeathState : IBossState
     private readonly double runDuration = 4.0; // Run for 3 seconds
     public void OnEnter(Boss boss)
     {
-        boss.sourceRectangle = new Rectangle(3, 1256, 623, 490);
+        boss.sourceRectangle = new Rectangle(1691, 11647, 419, 468);
         commandReceivedThisFrame = false;
         timer = 0;
     }
@@ -22,20 +22,36 @@ public class BossDeathState : IBossState
     {
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
-        int frameWidth = 623;
-        int gap = 3;
-        int startX = 3;
 
-        int newX = startX + (currentFrame * (frameWidth + gap));
+        // int frameWidth = 656;
+        // int gap = 3;
+        // int startX = 3;
+        // int newX = startX + (currentFrame * (frameWidth + gap));
+        // if (currentFrame < 3)
+        // {
 
-        // Update the boss's source rectangle
-        // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
-        boss.sourceRectangle = new Rectangle(newX, 1256, frameWidth, 490);
-        timer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (timer >= runDuration)
+        //     frameWidth = 656;
+        //     gap = 3;
+        //     startX = 3;
+        //     newX = startX + (currentFrame * (frameWidth + gap));
+        //     boss.sourceRectangle = new Rectangle(newX, 11040, frameWidth, 584);
+        // }
+        // else
+        // {
+
+        //     frameWidth = 419;
+        //     gap = 3;
+        //     startX = 3;
+        //     newX = startX + (currentFrame * (frameWidth + gap));
+        //     boss.sourceRectangle = new Rectangle(newX, 11645, frameWidth, 470);
+        // }
+
+        if (currentFrame == 8)
         {
-            boss.ChangeState(new BossIdleState());
+            boss.Die();
         }
+
+        timer += gameTime.ElapsedGameTime.TotalSeconds;
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {

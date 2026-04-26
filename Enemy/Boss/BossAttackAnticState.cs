@@ -16,6 +16,15 @@ public class BossAttackAnticState : IBossState
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(5, 2945, 580, 400);
+        if (boss.facingLeft)
+        {
+
+            offset = new Vector2(15, 10);
+        }
+        else
+        {
+            offset = new Vector2(-15, 10);
+        }
         boss.OffsetPosition(offset);
         commandReceivedThisFrame = false;
         timer = 0;
