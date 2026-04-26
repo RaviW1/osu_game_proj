@@ -14,6 +14,7 @@ Z or N or 1 to attack
 2 to shoot a projectile
 3 to heal  
 I to open Charms Inventory  
+B to open shops (only available in shop worlds)
 Esc to pause
 
 ## Known bugs 
