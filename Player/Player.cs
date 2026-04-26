@@ -213,7 +213,7 @@ public class Player
 
     public Rectangle GetMeleeHitbox()
     {
-        int hitboxWidth = 40;
+        int hitboxWidth = 50;
         int hitboxHeight = 30;
         int offsetX = (facing == SpriteEffects.FlipHorizontally) ? -hitboxWidth - 15 : 15;
         return new Rectangle(

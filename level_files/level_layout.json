@@ -58,6 +58,13 @@
         "Name": "boss",
         "File": "level_files/boss.xml",
         "Type": "RoomA",
-        "Left": "puzzle"
+        "Left": "puzzle",
+        "Right": "false_knight"
+    },
+    {
+        "Name": "false_knight",
+        "File": "level_files/false_knight.xml",
+        "Type": "RoomA",
+        "Left": "boss"
     }
 ]
