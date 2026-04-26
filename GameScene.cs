@@ -269,7 +269,12 @@ public partial class GameScene : IScene
 
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
-            HandleCharmClick(ms.Position);
+        {
+            if (_closeButtonRect.Contains(ms.Position))
+                _charmInventoryOpen = false;
+            else
+                HandleCharmClick(ms.Position);
+        }
         _previousMouse = ms;
         return true;
     }
@@ -296,7 +301,12 @@ public partial class GameScene : IScene
 
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
-            HandleShopClick(ms.Position);
+        {
+            if (_closeButtonRect.Contains(ms.Position))
+                _isShopOpen = false;
+            else
+                HandleShopClick(ms.Position);
+        }
         _previousMouse = ms;
         return true;
     }

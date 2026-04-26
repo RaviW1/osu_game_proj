@@ -10,6 +10,8 @@ public partial class GameScene
 
     private float _charmDenyTimer = 0f;
     private const float CharmDenyDuration = 2f;
+    private Rectangle _closeButtonRect;
+    private const int CloseBtnSize = 32;
 
     private void DrawSoulMeter(SpriteBatch spriteBatch)
     {
@@ -209,6 +211,20 @@ public partial class GameScene
         }
     }
 
+    private void DrawCloseButton(SpriteBatch spriteBatch)
+    {
+        _closeButtonRect = new Rectangle(12, 12, CloseBtnSize, CloseBtnSize);
+        bool hover = _closeButtonRect.Contains(Microsoft.Xna.Framework.Input.Mouse.GetState().Position);
+        Color bg = hover ? Color.Lerp(Color.DarkRed, Color.White, 0.2f) : new Color(60, 20, 20);
+        spriteBatch.Draw(pixelTexture, _closeButtonRect, bg);
+        string x = "X";
+        Vector2 xSize = font.MeasureString(x);
+        spriteBatch.DrawString(font, x,
+            new Vector2(_closeButtonRect.X + (_closeButtonRect.Width - xSize.X) / 2f,
+                        _closeButtonRect.Y + (_closeButtonRect.Height - xSize.Y) / 2f),
+            Color.White);
+    }
+
     private void DrawCharmInventory(SpriteBatch spriteBatch)
     {
         itemManager.VisibleCount = GetVisibleCharmCount();
@@ -216,6 +232,7 @@ public partial class GameScene
         int vh = _graphics.Viewport.Height;
 
         spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, vw, vh), Color.Black * 0.6f);
+        DrawCloseButton(spriteBatch);
 
         string title = "Charms Inventory";
         float titleScale = 1.5f;
@@ -267,6 +284,13 @@ public partial class GameScene
         Vector2 equipHintSize = font.MeasureString(equipHint);
         spriteBatch.DrawString(font, equipHint, new Vector2((vw - equipHintSize.X) / 2f, vh * 0.76f), Color.LightGray);
 
+        if (GetVisibleCharmCount() < itemManager.Count)
+        {
+            string slotTip = "Tip: Buying more charms unlocks more active slots";
+            Vector2 slotTipSize = font.MeasureString(slotTip);
+            spriteBatch.DrawString(font, slotTip, new Vector2((vw - slotTipSize.X) / 2f, vh * 0.88f), Color.DarkGoldenrod);
+        }
+
         string hint = "Press I to close";
         Vector2 hintSize = font.MeasureString(hint);
         spriteBatch.DrawString(font, hint, new Vector2((vw - hintSize.X) / 2f, vh * 0.82f), Color.Gray);
@@ -278,6 +302,7 @@ public partial class GameScene
         int vh = _graphics.Viewport.Height;
 
         spriteBatch.Draw(pixelTexture, new Rectangle(0, 0, vw, vh), Color.Black * 0.7f);
+        DrawCloseButton(spriteBatch);
 
         string title = "Shop";
         float titleScale = 2f;

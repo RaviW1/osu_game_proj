@@ -167,8 +167,10 @@ namespace osu_game_proj
                     tagColor);
             }
 
-            // Back button
-            DrawButton(_spriteBatch, ref _backBtn, "Back", vw / 2, (int)(vh * 0.88f), new Color(50, 50, 80));
+            // Back button (upper-left corner)
+            Vector2 backSz = _font.MeasureString("Back");
+            int backW = (int)backSz.X + 60;
+            DrawButton(_spriteBatch, ref _backBtn, "Back", 20 + backW / 2, 30, new Color(50, 50, 80));
         }
 
         private void HandleInput()
