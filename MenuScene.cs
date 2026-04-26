@@ -49,6 +49,7 @@ namespace osu_game_proj
             _alpha        = 0f;
             _fadingOut    = false;
             _fadeOutAlpha = 0f;
+            _prevMouse = Mouse.GetState();
         }
 
         public void Unload()

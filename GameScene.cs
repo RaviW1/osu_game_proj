@@ -54,6 +54,7 @@ public partial class GameScene : IScene
     private TransitionPhase _transitionPhase;
     private Rectangle _restartButtonRect;
     private Rectangle _quitButtonRect;
+    private Rectangle _mainMenuButtonRect;
     private MouseState _previousMouse;
     private KeyboardState _prevKeyboard;
 
@@ -206,8 +207,23 @@ public partial class GameScene : IScene
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
         {
-            if (_restartButtonRect.Contains(ms.Position)) { _isWin = false; _winAlpha = 0f; Reset(); }
-            else if (_quitButtonRect.Contains(ms.Position)) { _game.Exit(); }
+            if (_restartButtonRect.Contains(ms.Position))
+            {
+                _isWin = false;
+                _winAlpha = 0f;
+                Reset();
+            }
+            else if (_mainMenuButtonRect.Contains(ms.Position))
+            {
+                var menu = new MenuScene(_graphics, _content, _game);
+                menu.Initialize();
+                menu.Load();
+                _game.SwitchScene(menu);
+            }
+            else if (_quitButtonRect.Contains(ms.Position))
+            {
+                _game.Exit();
+            }
         }
         _previousMouse = ms;
     }

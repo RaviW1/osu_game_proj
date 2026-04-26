@@ -86,19 +86,47 @@ public partial class GameScene
         spriteBatch.DrawString(font, title, new Vector2((vw - titleSize.X) / 2f, vh * 0.25f),
             Color.Gold * _winAlpha, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
+        int gap = 20;
+
         string replayText = "Replay";
         Vector2 replaySize = font.MeasureString(replayText);
-        int btnW = (int)replaySize.X + 40, btnH = (int)replaySize.Y + 20;
-        _restartButtonRect = new Rectangle((vw / 2) - btnW - 20, (int)(vh * 0.5f), btnW, btnH);
-        spriteBatch.Draw(pixelTexture, _restartButtonRect, Color.DarkGreen * _winAlpha);
-        spriteBatch.DrawString(font, replayText, new Vector2(_restartButtonRect.X + 20, _restartButtonRect.Y + 10), Color.White * _winAlpha);
+        int replayW = (int)replaySize.X + 40, replayH = (int)replaySize.Y + 20;
+
+        string menuText = "Main Menu";
+        Vector2 menuSize = font.MeasureString(menuText);
+        int menuW = (int)menuSize.X + 40, menuH = (int)menuSize.Y + 20;
 
         string quitText = "Quit";
         Vector2 quitSize = font.MeasureString(quitText);
         int quitW = (int)quitSize.X + 40, quitH = (int)quitSize.Y + 20;
-        _quitButtonRect = new Rectangle((vw / 2) + 20, (int)(vh * 0.5f), quitW, quitH);
+
+        int totalW = replayW + gap + menuW + gap + quitW;
+        int startX = (vw - totalW) / 2;
+        int btnY = (int)(vh * 0.5f);
+
+        // Replay
+        _restartButtonRect = new Rectangle(startX, btnY, replayW, replayH);
+        spriteBatch.Draw(pixelTexture, _restartButtonRect, Color.DarkGreen * _winAlpha);
+        spriteBatch.DrawString(font, replayText,
+            new Vector2(_restartButtonRect.X + (_restartButtonRect.Width - replaySize.X) / 2f,
+                        _restartButtonRect.Y + (_restartButtonRect.Height - replaySize.Y) / 2f),
+            Color.White * _winAlpha);
+
+        // Main Menu
+        _mainMenuButtonRect = new Rectangle(startX + replayW + gap, btnY, menuW, menuH);
+        spriteBatch.Draw(pixelTexture, _mainMenuButtonRect, Color.DarkBlue * _winAlpha);
+        spriteBatch.DrawString(font, menuText,
+            new Vector2(_mainMenuButtonRect.X + (_mainMenuButtonRect.Width - menuSize.X) / 2f,
+                        _mainMenuButtonRect.Y + (_mainMenuButtonRect.Height - menuSize.Y) / 2f),
+            Color.White * _winAlpha);
+
+        // Quit
+        _quitButtonRect = new Rectangle(startX + replayW + gap + menuW + gap, btnY, quitW, quitH);
         spriteBatch.Draw(pixelTexture, _quitButtonRect, Color.DarkRed * _winAlpha);
-        spriteBatch.DrawString(font, quitText, new Vector2(_quitButtonRect.X + 20, _quitButtonRect.Y + 10), Color.White * _winAlpha);
+        spriteBatch.DrawString(font, quitText,
+            new Vector2(_quitButtonRect.X + (_quitButtonRect.Width - quitSize.X) / 2f,
+                        _quitButtonRect.Y + (_quitButtonRect.Height - quitSize.Y) / 2f),
+            Color.White * _winAlpha);
     }
 
     private void DrawPauseScreen(SpriteBatch spriteBatch)
