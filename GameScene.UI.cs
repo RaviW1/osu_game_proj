@@ -8,6 +8,9 @@ public partial class GameScene
     private const int CharmSpacing = 20;
     private const int WaywardCompassIndex = 2;
 
+    private float _charmDenyTimer = 0f;
+    private const float CharmDenyDuration = 2f;
+
     private void DrawSoulMeter(SpriteBatch spriteBatch)
     {
         int cellW = _soulMeterTexture.Width / 2;
@@ -187,12 +190,20 @@ public partial class GameScene
 
     private void HandleCharmClick(Point mousePos)
     {
+        itemManager.VisibleCount = GetVisibleCharmCount();
         for (int i = 0; i < itemManager.Count; i++)
         {
             if (!IsCharmVisible(i)) continue;
             if (GetCharmRect(i).Contains(mousePos))
             {
-                itemManager.ToggleItem(i, player);
+                if (!itemManager.IsEquipped(i) && itemManager.EquippedCount >= itemManager.MaxEquipped)
+                {
+                    _charmDenyTimer = CharmDenyDuration;
+                }
+                else
+                {
+                    itemManager.ToggleItem(i, player);
+                }
                 break;
             }
         }
@@ -200,6 +211,7 @@ public partial class GameScene
 
     private void DrawCharmInventory(SpriteBatch spriteBatch)
     {
+        itemManager.VisibleCount = GetVisibleCharmCount();
         int vw = _graphics.Viewport.Width;
         int vh = _graphics.Viewport.Height;
 
@@ -235,7 +247,23 @@ public partial class GameScene
             spriteBatch.Draw(tex, drawPos, null, tint, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
 
-        string equipHint = "Click to equip / unequip";
+        string slotInfo = $"Charm slots: {itemManager.EquippedCount} / {itemManager.MaxEquipped}";
+        Vector2 slotInfoSize = font.MeasureString(slotInfo);
+        Color slotColor = itemManager.EquippedCount >= itemManager.MaxEquipped ? Color.IndianRed : Color.LimeGreen;
+        spriteBatch.DrawString(font, slotInfo, new Vector2((vw - slotInfoSize.X) / 2f, vh * 0.68f), slotColor);
+
+        if (_charmDenyTimer > 0f)
+        {
+            float alpha = MathHelper.Clamp(_charmDenyTimer / 0.5f, 0f, 1f);
+            string warn = "No slots available! Unequip a charm first.";
+            Vector2 warnSize = font.MeasureString(warn);
+            spriteBatch.DrawString(font, warn,
+                new Vector2((vw - warnSize.X) / 2f, vh * 0.58f), Color.Red * alpha);
+        }
+
+        string equipHint = itemManager.EquippedCount >= itemManager.MaxEquipped
+            ? "Unequip a charm first to equip another"
+            : "Click to equip / unequip";
         Vector2 equipHintSize = font.MeasureString(equipHint);
         spriteBatch.DrawString(font, equipHint, new Vector2((vw - equipHintSize.X) / 2f, vh * 0.76f), Color.LightGray);
 
@@ -319,5 +347,6 @@ public partial class GameScene
 
         player.GeoCount -= 10;
         player.HasWaywardCompass = true;
+        itemManager.VisibleCount = GetVisibleCharmCount();
     }
 }

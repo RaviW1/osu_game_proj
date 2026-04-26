@@ -30,8 +30,8 @@ public class HuskBully : ISprite, IEnemy
         this.isDead = false;
         this.currentFrame = 0;
 
-        this.patrolLeft = startPosition.X - 150f;
-        this.patrolRight = startPosition.X + 150f;
+        this.patrolLeft = startPosition.X - 115f;
+        this.patrolRight = startPosition.X + 115f;
 
         for (int i = 0; i < 7; i++)
         {

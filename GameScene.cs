@@ -98,6 +98,8 @@ public partial class GameScene : IScene
         player = CreatePlayer();
         fireballTexture = _content.Load<Texture2D>("fireball");
         LoadItems();
+        itemManager.VisibleCount = GetVisibleCharmCount();
+        itemManager.EquipItem(0, player);
 
         SoundManager.Initialize(_content);
         SoundManager.PlayBGMusic();
@@ -256,7 +258,14 @@ public partial class GameScene : IScene
             _charmInventoryOpen = !_charmInventoryOpen;
         _prevKeyboard = ks;
 
-        if (!_charmInventoryOpen) return false;
+        if (!_charmInventoryOpen)
+        {
+            _charmDenyTimer = 0f;
+            return false;
+        }
+
+        if (_charmDenyTimer > 0f)
+            _charmDenyTimer -= 1f / 60f;
 
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
@@ -265,10 +274,16 @@ public partial class GameScene : IScene
         return true;
     }
 
+    private bool IsShopRoom()
+    {
+        string name = levels.currentRoom.roomName;
+        return name == "shop" || name == "shop2";
+    }
+
     private bool UpdateShop()
     {
         KeyboardState ks = Keyboard.GetState();
-        bool inShopRoom = levels.currentRoom.roomName == "shop";
+        bool inShopRoom = IsShopRoom();
 
         if (!inShopRoom) _isShopOpen = false;
 
@@ -391,13 +406,22 @@ public partial class GameScene : IScene
                  levels.TotalRooms,
                  levels.CurrentRoomIndex);
 
-        if (levels.currentRoom.roomName == "shop" && !_isShopOpen && !_charmInventoryOpen
+        if (IsShopRoom() && !_isShopOpen && !_charmInventoryOpen
             && !_isGameOver && !_isPaused)
         {
-            string shopHint = "Press B to open Shop";
+            string shopHint = "Press B to open Shop (only available in shop rooms)";
             Vector2 shopHintSize = font.MeasureString(shopHint);
             spriteBatch.DrawString(font, shopHint,
                 new Vector2((_graphics.Viewport.Width - shopHintSize.X) / 2f, 20), Color.Gold);
+        }
+
+        if (levels.currentRoom.roomName == "level1" && !_charmInventoryOpen
+            && !_isGameOver && !_isPaused && !_isShopOpen)
+        {
+            string invHint = "Press I to open Inventory (available in all rooms)";
+            Vector2 invHintSize = font.MeasureString(invHint);
+            spriteBatch.DrawString(font, invHint,
+                new Vector2((_graphics.Viewport.Width - invHintSize.X) / 2f, 20), Color.Gold);
         }
 
         spriteBatch.End();
@@ -446,6 +470,8 @@ public partial class GameScene : IScene
 
         itemManager = new ItemManager(0.4f);
         LoadItems();
+        itemManager.VisibleCount = GetVisibleCharmCount();
+        itemManager.EquipItem(0, player);
         currentBlockIndex = 0;
 
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);

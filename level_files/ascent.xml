@@ -112,34 +112,34 @@
   <Enemy id="aspid" x_pos="600" y_pos="4550"/>
   <Enemy id="boofly" x_pos="600" y_pos="4250"/>
   <Enemy id="aspid" x_pos="600" y_pos="3950"/>
-  <!-- Husk bullies on safe ledges -->
-  <Enemy id="husk_bully" x_pos="230" y_pos="4660"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="4360"/>
+  <!-- Husk bullies on safe ledges (centered on 300px platforms) -->
+  <Enemy id="husk_bully" x_pos="370" y_pos="4665"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="4365"/>
 
   <!-- Section 3: spike section - enemies make it harder to navigate carefully -->
   <Enemy id="aspid" x_pos="600" y_pos="3650"/>
   <Enemy id="boofly" x_pos="600" y_pos="3350"/>
   <Enemy id="aspid" x_pos="600" y_pos="3050"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="3760"/>
-  <Enemy id="husk_bully" x_pos="230" y_pos="3460"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="3160"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="3765"/>
+  <Enemy id="husk_bully" x_pos="370" y_pos="3465"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="3165"/>
 
   <!-- Section 4: heavy - lots of everything -->
   <Enemy id="aspid" x_pos="600" y_pos="2850"/>
-  <Enemy id="husk_bully" x_pos="230" y_pos="2960"/>
+  <Enemy id="husk_bully" x_pos="370" y_pos="2865"/>
   <Enemy id="aspid" x_pos="600" y_pos="2650"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="2760"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="2765"/>
   <Enemy id="boofly" x_pos="600" y_pos="2450"/>
-  <Enemy id="husk_bully" x_pos="230" y_pos="2560"/>
+  <Enemy id="husk_bully" x_pos="370" y_pos="2465"/>
   <Enemy id="aspid" x_pos="600" y_pos="2250"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="2360"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="2365"/>
 
   <!-- Section 5: final push -->
   <Enemy id="aspid" x_pos="600" y_pos="2050"/>
-  <Enemy id="husk_bully" x_pos="230" y_pos="2160"/>
+  <Enemy id="husk_bully" x_pos="370" y_pos="2065"/>
   <Enemy id="boofly" x_pos="600" y_pos="1850"/>
   <Enemy id="aspid" x_pos="600" y_pos="1650"/>
-  <Enemy id="husk_bully" x_pos="730" y_pos="1760"/>
+  <Enemy id="husk_bully" x_pos="870" y_pos="1765"/>
 
   <!-- ==================== EXITS AND SPAWNS ==================== -->
   <Exit direction="left" x_pos="190" y_pos="5200" width="30" height="230"/>
