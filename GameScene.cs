@@ -43,6 +43,7 @@ public partial class GameScene : IScene
     private bool _charmInventoryOpen;
     private bool _isTransitioning;
     private bool _isShopOpen;
+    private bool _tookHit = false;
     private Rectangle _shopBuyButtonRect;
     private float _gameOverAlpha;
     private float _winAlpha;
@@ -113,6 +114,7 @@ public partial class GameScene : IScene
         _camera = new Camera2D(_graphics);
         _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
+        _tookHit = false;
     }
 
     public void Unload() { }
@@ -335,6 +337,8 @@ public partial class GameScene : IScene
             {
                 geo.Collect();
                 player.GeoCount++;
+                if (player.GeoCount >= 150)
+                    AchievementManager.Unlock(AchievementManager.Monopoly);
             }
         }
 
@@ -405,7 +409,14 @@ public partial class GameScene : IScene
 
     public void TogglePause() => _isPaused = !_isPaused;
 
-    public void TriggerWin() { _isWin = true; _winAlpha = 0f; }
+    public void TriggerWin()
+    {
+        _isWin = true;
+        _winAlpha = 0f;
+        AchievementManager.Unlock(AchievementManager.Winner);
+        if (!_tookHit)
+            AchievementManager.Unlock(AchievementManager.Robinhood);
+    }
 
     public void CycleStage(int direction)
     {
@@ -440,6 +451,7 @@ public partial class GameScene : IScene
         _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
         _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
+        _tookHit = false;
     }
 
     // ------------------------------------------------------------------

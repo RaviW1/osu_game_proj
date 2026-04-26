@@ -8,6 +8,7 @@
         {
             _hitstop.Trigger(4);
             _camera.Shake(6f, 14);
+            _tookHit = true;
         }
         else
         {
