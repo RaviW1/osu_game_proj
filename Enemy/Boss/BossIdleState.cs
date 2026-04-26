@@ -80,7 +80,7 @@ public class BossIdleState : IBossState
         // Tighten the width to 30% of the sprite frame
         int bodyWidth = (int)(scaledWidth * 0.3f);
         // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
-        int bodyHeight = (int)(scaledHeight * 0.5f);
+        int bodyHeight = (int)(scaledHeight * 0.6f);
 
         // Calculate X and Y based on the bottom-center origin
         int x = (int)boss.position.X - (bodyWidth / 2);
