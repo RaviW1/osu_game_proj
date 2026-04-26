@@ -11,7 +11,7 @@ public class Boss : ISprite, IEnemy
     private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
-    private int bossHealth = 5; // Set your desired hit count
+    private int bossHealth = 10;
     private float invincibilityTimer = 0f;
     private const float InvincibilityDuration = 0.5f; // Half a second of safety
     private int maxBossHealth = 5;
@@ -47,7 +47,6 @@ public class Boss : ISprite, IEnemy
         {
             invincibilityTimer -= dt;
         }
-        // first check if dead and change to death state
 
         position += velocity * dt;
         currentState.Update(this, gameTime);
@@ -65,7 +64,6 @@ public class Boss : ISprite, IEnemy
     }
     // TODO: finish these, currently placeholders
     // TODO: maybe get bounds depends on the state
-    // had AI generate some quick placeholder code (maybe we can keep)
     public Rectangle GetBounds()
     {
         // return empty hitbox when "invincible"
