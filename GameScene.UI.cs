@@ -144,7 +144,18 @@ public partial class GameScene
 
         string resumeText = "Press ESC to Resume";
         Vector2 resumeSize = font.MeasureString(resumeText);
-        spriteBatch.DrawString(font, resumeText, new Vector2((vw - resumeSize.X) / 2f, vh * 0.5f), Color.LightGray);
+        spriteBatch.DrawString(font, resumeText,
+            new Vector2((vw - resumeSize.X) / 2f, vh * 0.5f), Color.LightGray);
+
+        string menuText = "Main Menu";
+        Vector2 menuSize = font.MeasureString(menuText);
+        int menuW = (int)menuSize.X + 40, menuH = (int)menuSize.Y + 20;
+        _mainMenuButtonRect = new Rectangle((vw - menuW) / 2, (int)(vh * 0.62f), menuW, menuH);
+        spriteBatch.Draw(pixelTexture, _mainMenuButtonRect, Color.DarkBlue);
+        spriteBatch.DrawString(font, menuText,
+            new Vector2(_mainMenuButtonRect.X + (_mainMenuButtonRect.Width - menuSize.X) / 2f,
+                        _mainMenuButtonRect.Y + (_mainMenuButtonRect.Height - menuSize.Y) / 2f),
+            Color.White);
     }
 
     private bool IsCharmVisible(int index)

@@ -123,7 +123,25 @@ public partial class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
-        if (_isPaused) { ProcessInput(gameTime); return; }
+        if (_isPaused)
+        {
+            ProcessInput(gameTime);
+
+            MouseState ms = Mouse.GetState();
+            if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
+            {
+                if (_mainMenuButtonRect.Contains(ms.Position))
+                {
+                    var menu = new MenuScene(_graphics, _content, _game);
+                    menu.Initialize();
+                    menu.Load();
+                    _game.SwitchScene(menu);
+                }
+            }
+            _previousMouse = ms;
+            return;
+        }
+
         if (_isTransitioning) { UpdateTransition(gameTime); return; }
         if (_isGameOver) { UpdateGameOver(gameTime); return; }
         if (_isWin) { UpdateWin(gameTime); return; }
