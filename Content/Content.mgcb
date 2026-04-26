@@ -41,7 +41,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Dashmaster_0011_charm_generic_03.png
+/build:Charms/Dashmaster_0011_charm_generic_03.png
 
 #begin DefaultFont.spritefont
 /importer:FontDescriptionImporter
@@ -60,7 +60,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Dreamshield_charm_grimm_markoth_shield.png
+/build:Charms/Dreamshield_charm_grimm_markoth_shield.png
 
 #begin Enemy Sprites/aspid_hatchling.png
 /importer:TextureImporter
@@ -720,7 +720,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Unbreakable Heart - _0002_charm_glass_heal_full.png
+/build:Charms/Unbreakable Heart - _0002_charm_glass_heal_full.png
 
 #begin WaywardCompass.png
 /importer:TextureImporter
@@ -732,5 +732,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:WaywardCompass.png
+/build:Charms/WaywardCompass.png
 

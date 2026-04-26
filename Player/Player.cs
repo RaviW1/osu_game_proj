@@ -24,6 +24,10 @@ public class Player
     private const float InvincibilityDuration = 1.0f;
     private const float GravityForce = 1200f;
 
+    private float _fireballCooldown = 0f;
+    private const float FireballCooldownDuration = 0.5f;
+    private const int FireballSoulCost = 10;
+
     // Dash
     public float DashTimer = 0f;
     public float DashCooldown = 0f;
@@ -98,6 +102,9 @@ public class Player
         // Recharge air dash on landing
         if (OnGround)
             HasAirDash = true;
+
+        if (_fireballCooldown > 0f)
+            _fireballCooldown -= dt;
 
         //// Gravity — suppressed while dashing
         //if (!OnGround && !IsDashing)
@@ -181,6 +188,13 @@ public class Player
 
     public void ShootFireball()
     {
+        // Check soul and cooldown
+        if (Soul < FireballSoulCost) return;
+        if (_fireballCooldown > 0f) return;
+
+        Soul -= FireballSoulCost;
+        _fireballCooldown = FireballCooldownDuration;
+
         float direction = (facing == SpriteEffects.FlipHorizontally) ? -1 : 1;
         System.Numerics.Vector2 fireballVelocity = new System.Numerics.Vector2(direction * 200, 0);
         float bodyOffsetY = -sourceRectangle.Height / 2f;
