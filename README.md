@@ -8,15 +8,14 @@ A/D or left/right arrow keys to move the knight left and right, respectively
 Move to right/left of screen to move to next level
 Space to jump (tap for a small hop, hold for a higher jump)  
 left shift to dash (still WIP)
-q to quit  
-r to reset  
-z or n to attack  
-1 to attack
+Q to quit  
+R to reset  
+Z or N or 1 to attack  
 2 to shoot a projectile
 3 to heal  
 I to open Charms Inventory (Available in every room)
 B to open shop (only in shop worlds)
-m to toggle background music
+M to toggle background music
 Esc to pause
 
 ## Known bugs 
