@@ -30,7 +30,7 @@ namespace osu_game_proj
         // it depends on the ItemManager instance.
         protected override void Initialize()
         {
-            _currentScene = new GameScene(GraphicsDevice, Content, this);
+            _currentScene = new MenuScene(GraphicsDevice, Content, this);
             _currentScene.Initialize();
             base.Initialize();
         }
@@ -53,7 +53,7 @@ namespace osu_game_proj
 
         protected override void Update(GameTime gameTime)
         {
-            
+
 
             _currentScene.Update(gameTime);
             base.Update(gameTime);
@@ -69,6 +69,12 @@ namespace osu_game_proj
             base.Draw(gameTime);
         }
 
+        // Switches Scenes, needed for scene changes.
+        public void SwitchScene(IScene next)
+        {
+            _currentScene.Unload();
+            _currentScene = next;
+        }
 
         // Resets all game state to its initial configuration. Reuses the same
         // Create* helpers as LoadContent to avoid duplication.
