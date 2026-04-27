@@ -13,7 +13,7 @@ public class Boss : ISprite, IEnemy
     public bool facingLeft { get; set; }
     private int bossHealth = 10;
     private float invincibilityTimer = 0f;
-    private const float InvincibilityDuration = 0.5f; // Half a second of safety
+    private const float InvincibilityDuration = 1f; // Half a second of safety
     private int maxBossHealth = 5;
 
     private bool hasTakenDamageThisFrame = false;
