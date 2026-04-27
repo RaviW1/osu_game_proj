@@ -472,6 +472,8 @@ public partial class GameScene : IScene
         if (levels.currentRoom.roomName != "secret") return false;
         if (player.Soul >= 10) return false;
         if (_isSecretBossSequence || _isBossWinSequence) return false;
+        // A fireball still in flight could land the killing blow, so wait it out.
+        if (player.Projectiles.Count > 0) return false;
 
         bool baldurAlive = false;
         bool otherAlive = false;
