@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using osu_game_proj;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class GameScene : IScene
 {
@@ -58,6 +59,9 @@ public partial class GameScene : IScene
     private Rectangle _mainMenuButtonRect;
     private MouseState _previousMouse;
     private KeyboardState _prevKeyboard;
+    private bool _puzzleSolved = false;
+    private List<PushBox> _pushBoxes = new List<PushBox>();
+    private Vector2[] _savedPushBoxPositions = null;
 
     public GameScene(GraphicsDevice graphics, ContentManager content, Game1 game)
     {
@@ -70,7 +74,10 @@ public partial class GameScene : IScene
 
     public void Load()
     {
+        _puzzleSolved = false;
         _isWin = false;
+        _savedPushBoxPositions = null;
+        _pushBoxes.Clear();
         _isPaused = false;
         _winAlpha = 0f;
 
@@ -115,6 +122,9 @@ public partial class GameScene : IScene
         _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
         _tookHit = false;
+        _pushBoxes.Clear();
+        if (levels.currentRoom.roomName == "shop2")
+            SpawnPushBoxes();
     }
 
     public void Unload() { }
@@ -170,12 +180,20 @@ public partial class GameScene : IScene
             if (_transitionAlpha >= 1f)
             {
                 _transitionAlpha = 1f;
+
+                // Save BEFORE clearing, BEFORE room changes
+                if (_pushBoxes.Count > 0)
+                    _savedPushBoxPositions = _pushBoxes.Select(b => b.Position).ToArray();
+
+                _pushBoxes.Clear();
+
                 levels.CycleStage(_pendingTransitionDirection);
+                if (levels.currentRoom.roomName == "secret")
+                    AchievementManager.Unlock(AchievementManager.WhatsThis);
                 WireEnemyCallbacks();
                 _grid = new SpatialGrid(64, levels.currentRoom.Tiles);
                 _camera.RoomBounds = levels.currentRoom.Bounds;
 
-                // Set spawn point from the NEW room
                 if (_pendingTransitionDirection == 1)
                     player.Position = levels.currentRoom.GetSpawnPoint("fromLeft");
                 else if (_pendingTransitionDirection == -1)
@@ -187,6 +205,15 @@ public partial class GameScene : IScene
 
                 player.Velocity = Vector2.Zero;
                 _camera.SnapTo(player.Position);
+
+                if (levels.currentRoom.roomName == "shop2")
+                {
+                    SpawnPushBoxes();
+                    if (_savedPushBoxPositions != null)
+                        for (int i = 0; i < _pushBoxes.Count; i++)
+                            _pushBoxes[i].Position = _savedPushBoxPositions[i];
+                }
+
                 _transitionPhase = TransitionPhase.FadeIn;
             }
         }
@@ -346,6 +373,7 @@ public partial class GameScene : IScene
             blocks[currentBlockIndex].Update(gameTime);
 
         itemManager.Update(gameTime);
+        UpdatePushBoxes(gameTime);
         _camera.Follow(player.Position);
     }
 
@@ -362,6 +390,8 @@ public partial class GameScene : IScene
         foreach (var geo in levels.currentGeos)
             geo.Draw(spriteBatch);
         player.Draw(spriteBatch, gameTime);
+        foreach (var box in _pushBoxes)
+            box.Draw(spriteBatch);
         levels.DrawEnemies(spriteBatch);
         spriteBatch.End();
 
@@ -434,6 +464,9 @@ public partial class GameScene : IScene
 
     public void Reset()
     {
+        _puzzleSolved = false;
+        _savedPushBoxPositions = null;
+        _pushBoxes.Clear();
         _charmInventoryOpen = false;
         _isShopOpen = false;
 

@@ -15,6 +15,17 @@ public partial class GameScene
         foreach (ICommand cmd in mouse.GetCommands(gameTime))
             cmd.Execute(player, gameTime);
     }
+    private void CheckPuzzleSolved()
+    {
+        if (_puzzleSolved) return;
+        if (_pushBoxes.Count < 3) return;
+        bool allRight = _pushBoxes.TrueForAll(b => b.Position.X >= 840);
+        if (allRight)
+        {
+            _puzzleSolved = true;
+            CycleStage(-2);
+        }
+    }
 
     private void SpawnDeathGeos()
     {
@@ -119,5 +130,138 @@ public partial class GameScene
                 pixels[i] = Color.Transparent;
         }
         texture.SetData(pixels);
+    }
+    private void SpawnPushBoxes()
+    {
+        // On left platform (centered)
+        _pushBoxes.Add(new PushBox(pixelTexture, new Vector2(296, 340)));
+        // On right platform (centered)
+        _pushBoxes.Add(new PushBox(pixelTexture, new Vector2(566, 340)));
+        // On ground
+        _pushBoxes.Add(new PushBox(pixelTexture, new Vector2(420, 455)));
+    }
+    private void UpdatePushBoxes(GameTime gameTime)
+    {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        foreach (var box in _pushBoxes)
+        {
+            box.Update(gameTime);
+
+            foreach (var tile in levels.currentRoom.Tiles)
+            {
+                if (!tile.isCollideable) continue;
+                Rectangle overlap = Rectangle.Intersect(box.GetBounds(), tile.bounds);
+                if (overlap.IsEmpty) continue;
+
+                if (overlap.Width < overlap.Height)
+                {
+
+                    box.Position.X += box.GetBounds().Center.X < tile.bounds.Center.X
+                        ? -overlap.Width : overlap.Width;
+                    box.Velocity.X = 0;
+                }
+                else
+                {
+
+                    box.Position.Y += box.GetBounds().Center.Y < tile.bounds.Center.Y
+                        ? -overlap.Height : overlap.Height;
+                    box.Velocity.Y = 0;
+                }
+            }
+
+
+            //  box against other boxes
+            for (int i = 0; i < _pushBoxes.Count; i++)
+            {
+                for (int j = i + 1; j < _pushBoxes.Count; j++)
+                {
+                    Rectangle overlap = Rectangle.Intersect(_pushBoxes[i].GetBounds(), _pushBoxes[j].GetBounds());
+                    if (overlap.IsEmpty) continue;
+
+                    if (overlap.Width <= overlap.Height)
+                    {
+                        float push = overlap.Width / 2f;
+                        if (_pushBoxes[i].GetBounds().Center.X < _pushBoxes[j].GetBounds().Center.X)
+                        { _pushBoxes[i].Position.X -= push; _pushBoxes[j].Position.X += push; }
+                        else
+                        { _pushBoxes[i].Position.X += push; _pushBoxes[j].Position.X -= push; }
+                    }
+                    else
+                    {
+                        if (_pushBoxes[i].GetBounds().Center.Y < _pushBoxes[j].GetBounds().Center.Y)
+                        { _pushBoxes[i].Position.Y -= overlap.Height; _pushBoxes[j].Velocity.Y = 0; }
+                        else
+                        { _pushBoxes[j].Position.Y -= overlap.Height; _pushBoxes[i].Velocity.Y = 0; }
+                    }
+                    _pushBoxes[i].Velocity.X = 0;
+                    _pushBoxes[j].Velocity.X = 0;
+                }
+            }
+
+            // Player pushes box
+            Rectangle playerBounds = player.GetBounds();
+            Rectangle boxBounds = box.GetBounds();
+            if (playerBounds.Intersects(boxBounds))
+            {
+                Rectangle overlap = Rectangle.Intersect(playerBounds, boxBounds);
+                if (overlap.Width < overlap.Height)
+                {
+                    // Player is pushing horizontally
+                    if (playerBounds.Center.X < boxBounds.Center.X)
+                    {
+                        box.Position.X += overlap.Width;
+                        box.Velocity.X = 0;
+                    }
+                    else
+                    {
+                        box.Position.X -= overlap.Width;
+                        box.Velocity.X = 0;
+                    }
+                }
+                else
+                {
+                    // Player lands on top of box
+                    if (playerBounds.Center.Y < boxBounds.Center.Y)
+                        player.Position.Y -= overlap.Height;
+                }
+            }
+        }
+        // Second pass — carry stacked boxes after all movement is resolved
+        float[] deltas = new float[_pushBoxes.Count];
+        for (int i = 0; i < _pushBoxes.Count; i++)
+            deltas[i] = _pushBoxes[i].Position.X - _pushBoxes[i].LastPosition.X;
+
+        for (int pass = 0; pass < _pushBoxes.Count; pass++)
+        {
+            for (int i = 0; i < _pushBoxes.Count; i++)
+            {
+                for (int j = 0; j < _pushBoxes.Count; j++)
+                {
+                    if (i == j) continue;
+                    Rectangle top = _pushBoxes[j].GetBounds();
+                    Rectangle bottom = _pushBoxes[i].GetBounds();
+
+                    bool sittingOnTop = Math.Abs(top.Bottom - bottom.Top) < 6
+                                        && top.Right > bottom.Left + 2
+                                        && top.Left < bottom.Right - 2;
+
+                    if (sittingOnTop)
+                    {
+                        _pushBoxes[j].Position.Y = bottom.Top - PushBox.Size;
+                        _pushBoxes[j].Velocity.Y = 0;
+
+                        if (Math.Abs(deltas[i]) > 0.01f)
+                        {
+                            _pushBoxes[j].Position.X += deltas[i];
+                            deltas[j] = deltas[i];
+                            deltas[i] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        CheckPuzzleSolved();
+
     }
 }

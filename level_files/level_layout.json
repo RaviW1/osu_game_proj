@@ -45,7 +45,8 @@
         "File": "level_files/shop2.xml",
         "Type": "RoomA",
         "Left": "ascent",
-        "Right": "puzzle"
+        "Right": "puzzle",
+        "Down": "secret"
     },
     {
         "Name": "puzzle",
@@ -66,5 +67,11 @@
         "File": "level_files/false_knight.xml",
         "Type": "RoomA",
         "Left": "boss"
+    },
+    {
+        "Name": "secret",
+        "File": "level_files/secret.xml",
+        "Type": "RoomA",
+        "Left": "shop2"
     }
 ]
