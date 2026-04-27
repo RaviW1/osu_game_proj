@@ -59,8 +59,6 @@ public class Boss : ISprite, IEnemy
         currentState.Draw(this, spriteBatch);
         spriteBatch.Draw(texture, position, sourceRectangle, Color.White, 0f, origin, 0.4f, direction, 0f);
     }
-    // TODO: finish these, currently placeholders
-    // TODO: maybe get bounds depends on the state
     public Rectangle GetBounds()
     {
         // return empty hitbox when "invincible"
@@ -78,14 +76,8 @@ public class Boss : ISprite, IEnemy
         if (bossHealth <= 0) Die();
 
     }
-    // I copied these bounce methods from the enemy class but I haven't found an extra use for them yet
     public void BounceX()
     {
-        // Vector2 currentVelocity = velocity;
-        // currentVelocity.X *= -1;
-        // velocity = currentVelocity;
-        // facingLeft = (velocity.X < 0);
-        //facingLeft = !facingLeft;
         if (facingLeft && velocity.X < 0)
         {
             velocity = new Vector2(-velocity.X, velocity.Y);

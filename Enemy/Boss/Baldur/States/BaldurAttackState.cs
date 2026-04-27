@@ -39,11 +39,9 @@ public class BaldurAttackState : IBaldurState
         }
 
         // Logic for changing into new state
-
         if (Player.Instance != null)
         {
             Vector2 target = Player.Instance.Position;
-            // Do attack logic
             Vector2 playerPos = Player.Instance.Position;
             float distance = Vector2.DistanceSquared(boss.position, playerPos);
             if (distance <= (attackRange * attackRange))

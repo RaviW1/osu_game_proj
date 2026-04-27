@@ -13,7 +13,7 @@ public class BaldurBoss : ISprite, IEnemy
     public bool facingLeft { get; set; }
     private int bossHealth = 2;
     private float invincibilityTimer = 0f;
-    private const float InvincibilityDuration = 0.5f; // Half a second of safety
+    private const float InvincibilityDuration = 0.5f;
     private int maxBossHealth = 2;
 
 
@@ -70,8 +70,6 @@ public class BaldurBoss : ISprite, IEnemy
             projectile.Draw(spriteBatch, Vector2.Zero);
         }
     }
-    // TODO: finish these, currently placeholders
-    // TODO: maybe get bounds depends on the state
     public Rectangle GetBounds()
     {
         // return empty hitbox when "invincible"
@@ -89,14 +87,8 @@ public class BaldurBoss : ISprite, IEnemy
         if (bossHealth <= 0) Die();
 
     }
-    // I copied these bounce methods from the enemy class but I haven't found an extra use for them yet
     public void BounceX()
     {
-        // Vector2 currentVelocity = velocity;
-        // currentVelocity.X *= -1;
-        // velocity = currentVelocity;
-        // facingLeft = (velocity.X < 0);
-        //facingLeft = !facingLeft;
         if (facingLeft && velocity.X < 0)
         {
             velocity = new Vector2(-velocity.X, velocity.Y);

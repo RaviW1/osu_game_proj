@@ -2,7 +2,6 @@ using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-// TODO: finish implementation
 public class BossAttackAnticState : IBossState
 {
     private const float SecondsPerFrame = 0.15f;
@@ -41,14 +40,11 @@ public class BossAttackAnticState : IBossState
         int newY;
         if (currentFrame < 5)
         {
-            // Frames 0-4 are on the original row
             newX = startX + (currentFrame * (frameWidth + gap));
             newY = 2944;
         }
         else
         {
-            // Frame 5 (the 6th frame) is on the new row
-            // Based on your screenshot, it looks like it starts at X=2 or 3
             newX = startX;
             newY = 3347;
         }
@@ -94,12 +90,9 @@ public class BossAttackAnticState : IBossState
         int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
         int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
-        // Tighten the width to 30% of the sprite frame
         int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
         int bodyHeight = (int)(scaledHeight * 0.5f);
 
-        // Calculate X and Y based on the bottom-center origin
         int x = (int)boss.position.X - (bodyWidth / 2);
         int y = (int)boss.position.Y - bodyHeight;
 

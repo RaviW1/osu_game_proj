@@ -1,31 +1,53 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-public class BossDeathState : IBossState
+public class BossIdleState : IBossState
 {
-    private const float SecondsPerFrame = 0.15f;
-    private const int TotalFrames = 8;
+    private const float SecondsPerFrame = 0.1f;
+    private const int TotalFrames = 5;
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
     private double timer = 0;
+    private double idleDuration = 2.0;
+    private Random rng;
+
     public void OnEnter(Boss boss)
     {
-        boss.sourceRectangle = new Rectangle(1691, 11647, 419, 468);
+        boss.velocity = new Vector2(0, 0);
+        boss.sourceRectangle = new Rectangle(3, 25, 624, 390);
         timer = 0;
+        rng = new Random();
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
     {
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
+        int frameWidth = 621;
+        int gap = 3;
+        int startX = 3;
 
-        if (currentFrame == 8)
-        {
-            boss.Die();
-        }
+        int newX = startX + (currentFrame * (frameWidth + gap));
 
+        boss.sourceRectangle = new Rectangle(newX, 25, frameWidth, 390);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
+
+        // Logic for changing into new attack state
+        if (timer >= idleDuration)
+        {
+            // pick random state
+            float choice = rng.NextSingle();
+            if (choice < .4)
+            {
+                boss.ChangeState(new BossAttackAnticState());
+            }
+            else
+            {
+                boss.ChangeState(new BossRunState());
+            }
+        }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {
@@ -45,12 +67,9 @@ public class BossDeathState : IBossState
         int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
         int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
-        // Tighten the width to 30% of the sprite frame
         int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
-        int bodyHeight = (int)(scaledHeight * 0.5f);
+        int bodyHeight = (int)(scaledHeight * 0.6f);
 
-        // Calculate X and Y based on the bottom-center origin
         int x = (int)boss.position.X - (bodyWidth / 2);
         int y = (int)boss.position.Y - bodyHeight;
 

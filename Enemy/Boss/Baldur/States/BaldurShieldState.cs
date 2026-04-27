@@ -80,7 +80,6 @@ public class BaldurShieldState : IBaldurState
         }
         return false;
     }
-    // TODO: GetBounds returns an empty bounds
     public Rectangle GetBounds(BaldurBoss boss)
     {
         return Rectangle.Empty;
