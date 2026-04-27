@@ -5,7 +5,7 @@ Name of Files: MenuScene.cs/AcheivementManager.cs
 Note: AchievementManager is a much smaller class that is used by
 MenuScene to handle tracking/collecting acheivements
 As such I am reviewing it alongside the new menu class
-Author of File: Owen Wu
+Author of File: Owen Wang
 Time Taken: 30 minutes
 
 
