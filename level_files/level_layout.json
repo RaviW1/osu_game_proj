@@ -65,7 +65,7 @@
     {
         "Name": "false_knight",
         "File": "level_files/false_knight.xml",
-        "Type": "RoomA",
+        "Type": "RoomC",
         "Left": "boss"
     },
     {

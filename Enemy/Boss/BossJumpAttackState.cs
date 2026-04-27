@@ -12,26 +12,28 @@ public class BossJumpAttackState : IBossState
     private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0;
-    private Vector2 offset = new Vector2(-60, 10);
+    private const float Gravity = 1200f;
+    private const float JumpImpulse = -700f;
+    private float horizontalSpeed = 200f;
+    private float groundLevel;
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
-        if (boss.facingLeft)
-        {
-            offset = new Vector2(-60, 10);
-        }
-        else
-        {
-            offset = new Vector2(60, 10);
-        }
         commandReceivedThisFrame = false;
         timer = 0;
-        // TODO: change offset based on facing direction
-        boss.OffsetPosition(offset);
+
+        groundLevel = boss.position.Y;
+
+        // Calculate horizontal direction based on player or screen
+        int dir = (Player.Instance.Position.X < boss.position.X) ? -1 : 1;
+        boss.facingLeft = (dir == -1);
+
+        boss.velocity = new Vector2(dir * horizontalSpeed, JumpImpulse);
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
     {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
         int frameWidth = 704;
@@ -46,7 +48,20 @@ public class BossJumpAttackState : IBossState
         timer += gameTime.ElapsedGameTime.TotalSeconds;
         if (timer >= runDuration)
         {
-            boss.OffsetPosition(-offset);
+            boss.ChangeState(new BossIdleState());
+        }
+
+        Vector2 currentVel = boss.velocity;
+        currentVel.Y += Gravity * dt;
+        boss.velocity = currentVel;
+
+        if (boss.position.Y >= groundLevel && boss.velocity.Y > 0)
+        {
+            // Snap to ground and stop moving
+            boss.SetPos(new Vector2(boss.position.X, groundLevel));
+            boss.velocity = Vector2.Zero;
+
+            // Transition to next state
             boss.ChangeState(new BossIdleState());
         }
     }
