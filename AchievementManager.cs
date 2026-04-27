@@ -14,7 +14,7 @@ public static class AchievementManager
         }
     }
 
-    public static readonly Achievement Monopoly  = new Achievement("Monopoly",    "Collect 150 Geo");
+    public static readonly Achievement Monopoly  = new Achievement("Monopoly",    "Collect 100 Geo");
     public static readonly Achievement Winner    = new Achievement("Winner",      "Beat the game");
     public static readonly Achievement WhatsThis = new Achievement("What's this", "???");
     public static readonly Achievement Robinhood = new Achievement("Robinhood",   "Beat the game without taking a hit");

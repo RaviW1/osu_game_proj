@@ -46,6 +46,7 @@ public partial class GameScene : IScene
     private bool _isShopOpen;
     private bool _tookHit = false;
     private Rectangle _shopBuyButtonRect;
+    private Rectangle _shopHealButtonRect;
     private float _gameOverAlpha;
     private float _winAlpha;
     private float _transitionAlpha;
@@ -158,7 +159,7 @@ public partial class GameScene : IScene
         if (_isGameOver) { UpdateGameOver(gameTime); return; }
         if (_isWin) { UpdateWin(gameTime); return; }
         if (UpdateShop()) return;
-        if (UpdateCharmInventory()) return;
+        if (UpdateCharmInventory(gameTime)) return;
 
         if (player.PlayerHealth <= 0)
         {
@@ -276,7 +277,7 @@ public partial class GameScene : IScene
     }
 
     /// <returns>true if the charm inventory consumed this frame (caller should return early)</returns>
-    private bool UpdateCharmInventory()
+    private bool UpdateCharmInventory(GameTime gameTime)
     {
         KeyboardState ks = Keyboard.GetState();
         if (ks.IsKeyDown(Keys.I) && _prevKeyboard.IsKeyUp(Keys.I) && !_isShopOpen)
@@ -284,6 +285,9 @@ public partial class GameScene : IScene
         _prevKeyboard = ks;
 
         if (!_charmInventoryOpen) return false;
+
+        if (_charmDenyTimer > 0f)
+            _charmDenyTimer = System.Math.Max(0f, _charmDenyTimer - (float)gameTime.ElapsedGameTime.TotalSeconds);
 
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
@@ -295,7 +299,8 @@ public partial class GameScene : IScene
     private bool UpdateShop()
     {
         KeyboardState ks = Keyboard.GetState();
-        bool inShopRoom = levels.currentRoom.roomName == "shop";
+        bool inShopRoom = levels.currentRoom.roomName == "shop"
+                       || levels.currentRoom.roomName == "shop2";
 
         if (!inShopRoom) _isShopOpen = false;
 
@@ -364,7 +369,7 @@ public partial class GameScene : IScene
             {
                 geo.Collect();
                 player.GeoCount++;
-                if (player.GeoCount >= 150)
+                if (player.GeoCount >= 100)
                     AchievementManager.Unlock(AchievementManager.Monopoly);
             }
         }
@@ -421,13 +426,23 @@ public partial class GameScene : IScene
                  levels.TotalRooms,
                  levels.CurrentRoomIndex);
 
-        if (levels.currentRoom.roomName == "shop" && !_isShopOpen && !_charmInventoryOpen
+        if ((levels.currentRoom.roomName == "shop" || levels.currentRoom.roomName == "shop2")
+            && !_isShopOpen && !_charmInventoryOpen
             && !_isGameOver && !_isPaused)
         {
             string shopHint = "Press B to open Shop";
             Vector2 shopHintSize = font.MeasureString(shopHint);
             spriteBatch.DrawString(font, shopHint,
                 new Vector2((_graphics.Viewport.Width - shopHintSize.X) / 2f, 20), Color.Gold);
+        }
+
+        if (levels.currentRoom.roomName == "level1" && !_isShopOpen && !_charmInventoryOpen
+            && !_isGameOver && !_isPaused)
+        {
+            string invHint = "Press I to open Inventory";
+            Vector2 invHintSize = font.MeasureString(invHint);
+            spriteBatch.DrawString(font, invHint,
+                new Vector2((_graphics.Viewport.Width - invHintSize.X) / 2f, 20), Color.Gold);
         }
 
         spriteBatch.End();

@@ -192,6 +192,13 @@ public partial class GameScene
 
     private void HandleCharmClick(Point mousePos)
     {
+        if (_closeButtonRect.Contains(mousePos))
+        {
+            _charmInventoryOpen = false;
+            _charmDenyTimer = 0f;
+            return;
+        }
+
         itemManager.VisibleCount = GetVisibleCharmCount();
         for (int i = 0; i < itemManager.Count; i++)
         {
@@ -358,14 +365,53 @@ public partial class GameScene
             spriteBatch.DrawString(font, btnText, textPos, textColor);
         }
 
+        // Heal purchase: 30 Geo for +2 HP, infinitely repeatable
+        string healLabel = "Heal +2 HP";
+        Vector2 healLabelSize = font.MeasureString(healLabel);
+        spriteBatch.DrawString(font, healLabel,
+            new Vector2((vw - healLabelSize.X) / 2f, vh * 0.78f), Color.White);
+
+        string healBtnText = "Buy - 30 Geo";
+        Vector2 healBtnSize = font.MeasureString(healBtnText);
+        int healBtnW = (int)healBtnSize.X + 20;
+        int healBtnH = (int)healBtnSize.Y + 10;
+        _shopHealButtonRect = new Rectangle((vw - healBtnW) / 2, (int)(vh * 0.84f), healBtnW, healBtnH);
+
+        bool atFullHP = player.PlayerHealth >= player.MaxPlayerHealth;
+        bool canAffordHeal = player.GeoCount >= 30 && !atFullHP;
+        Color healBg = canAffordHeal ? Color.DarkGreen : Color.DarkGray;
+        spriteBatch.Draw(pixelTexture, _shopHealButtonRect, healBg);
+
+        Color healTextColor = canAffordHeal ? Color.White : Color.Gray;
+        Vector2 healTextPos = new Vector2(
+            _shopHealButtonRect.X + (_shopHealButtonRect.Width - healBtnSize.X) / 2f,
+            _shopHealButtonRect.Y + (_shopHealButtonRect.Height - healBtnSize.Y) / 2f);
+        spriteBatch.DrawString(font, healBtnText, healTextPos, healTextColor);
+
         string closeHint = "Press B to close";
         Vector2 closeSize = font.MeasureString(closeHint);
         spriteBatch.DrawString(font, closeHint,
-            new Vector2((vw - closeSize.X) / 2f, vh * 0.82f), Color.Gray);
+            new Vector2((vw - closeSize.X) / 2f, vh * 0.92f), Color.Gray);
     }
 
     private void HandleShopClick(Point mousePos)
     {
+        if (_closeButtonRect.Contains(mousePos))
+        {
+            _isShopOpen = false;
+            return;
+        }
+
+        if (_shopHealButtonRect.Contains(mousePos))
+        {
+            if (player.GeoCount >= 30 && player.PlayerHealth < player.MaxPlayerHealth)
+            {
+                player.GeoCount -= 30;
+                player.PlayerHealth += 2;
+            }
+            return;
+        }
+
         if (player.HasWaywardCompass) return;
         if (player.GeoCount < 10) return;
         if (!_shopBuyButtonRect.Contains(mousePos)) return;

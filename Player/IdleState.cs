@@ -32,7 +32,7 @@ public class IdleState : IPlayerState
     public void TakeDamage(Player player) => player.ChangeState(new DamagedState());
     public void Heal(Player player)
     {
-        if (player.Soul >= 30)
+        if (player.Soul >= 30 && player.PlayerHealth < player.MaxPlayerHealth)
             player.ChangeState(new HealingState());
     }
     public void LookUp(Player player) => player.ChangeState(new LookUpState());

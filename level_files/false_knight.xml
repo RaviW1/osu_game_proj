@@ -13,10 +13,10 @@
   <Tile id="level_tile" x_pos="0" y_pos="550" x_size="900" y_size="350" collide="0" damage="0"/>
   <Tile id="ground_platform" x_pos="0" y_pos="550" x_size="900" y_size="30" collide="1" damage="0"/>
 
-  <Enemy id="false_knight" x_pos="350" y_pos="550"/>
+  <Enemy id="false_knight" x_pos="750" y_pos="550"/>
 
   <!-- Exit back -->
   <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="280"/>
-  <Spawn id="default" x_pos="450" y_pos="520"/>
-  <Spawn id="fromLeft" x_pos="450" y_pos="520"/>
+  <Spawn id="default" x_pos="100" y_pos="520"/>
+  <Spawn id="fromLeft" x_pos="100" y_pos="520"/>
 </Level>

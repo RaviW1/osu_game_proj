@@ -110,6 +110,9 @@ public partial class GameScene
             new TextureItem(1, dashTex, p => p.CanDash = true, p => p.CanDash = false));
         itemManager.AddItem(
             new TextureItem(2, compassTex));
+
+        // Unbreakable Heart is equipped by default at game start
+        itemManager.EquipItem(0, player);
     }
 
     private Texture2D CreatePixelTexture()
