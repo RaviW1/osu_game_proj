@@ -155,6 +155,20 @@ public partial class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
+        try
+        {
+            UpdateInternal(gameTime);
+        }
+        finally
+        {
+            // Keep mouse edge detection accurate even when ProcessInput was
+            // skipped this frame (paused, transitioning, shop/inventory open, ...).
+            mouse.EndOfFrameSync();
+        }
+    }
+
+    private void UpdateInternal(GameTime gameTime)
+    {
         if (_isPaused)
         {
             ProcessInput(gameTime);

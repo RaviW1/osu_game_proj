@@ -1,0 +1,28 @@
+Author of Code Review: Akari Wu
+Date of Code Review: 4/27/2026
+Sprint Number 5
+Name of Files: PushBox.cs, GameScene.Factories.cs (SpawnPushBoxes / UpdatePushBoxes / CheckPuzzleSolved)
+Note: PushBox.cs is the entity but the puzzle logic lives in
+GameScene.Factories.cs, so I am reviewing them together.
+Author of File: Brooklyn
+Time Taken: 25 minutes
+
+
+Readability:
+PushBox.cs itself is short and the Update flow is obvious at a glance.
+Variable names are descriptive and the comments inside UpdatePushBoxes help orient the reader.
+UpdatePushBoxes is 120+ lines with three nested passes in one method, which would read better split into helpers.
+Several magic numbershave no named constants and obscure intent.
+
+
+Maintainability:
+PushBox is well-scoped and does not over-reach, which keeps the entity itself easy to maintain.
+Position/Velocity/LastPosition are public fields and the scene mutates them directly, so invariants cannot be enforced;
+PushBox does not implement ISprite, so the existing collision system can't be reused and a parallel implementation lives in the scene.
+The puzzle-solved check hard-codes both box count and goal X, making it hard to add a second puzzle without copying code.
+The transition save/restore relies on SpawnPushBoxes call order via Vector2[]; reordering spawns would silently desync saved state.
+
+Suggestions in priority order:
+1. Extract UpdatePushBoxes into smaller phase-named helpers.
+3. Make Position/Velocity/LastPosition non-public.
+4. Move the puzzle layout (spawns + goal region) into shop2.xml so new puzzles are data, not code.

@@ -65,8 +65,14 @@ public class MouseController : IController
             if (quit != null) activeCommands.Add(quit);
         }
 
-        previousState = current;
         return activeCommands;
+    }
+
+    /// Call once per frame at the end of the update tick to keep edge detection
+    /// correct even on frames where GetCommands isn't polled (e.g. shop/inventory).
+    public void EndOfFrameSync()
+    {
+        previousState = Mouse.GetState();
     }
 }
 
