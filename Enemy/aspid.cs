@@ -16,6 +16,10 @@ public class Aspid : ISprite, IEnemy
     private bool isDead = false;
     private float deathVelocityY = 0f;
     private float bounceCooldown = 0f;
+    private float deathTimer = 0f;
+    private const float DeathFlashStart = 3f;
+    private const float DeathFlashDuration = 0.6f;
+    private const float DeathRemovalDelay = 3.6f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -24,6 +28,7 @@ public class Aspid : ISprite, IEnemy
 
     public bool IsDead => isDead;
     public bool IsPhased => false;
+    public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
     public List<Projectile> Projectiles { get; private set; }
 
     public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)
@@ -103,6 +108,7 @@ public class Aspid : ISprite, IEnemy
     {
         if (isDead)
         {
+            deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             deathVelocityY += 600f * 0.016f;
             velocity = new Vector2(0, deathVelocityY);
             position.Y += velocity.Y * 0.016f;
@@ -154,11 +160,21 @@ public class Aspid : ISprite, IEnemy
             var spriteEffect = facingLeft
                 ? SpriteEffects.None
                 : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
+            Color tint = GetDeathTint(Color.White);
+            spriteBatch.Draw(texture, drawPos, sourceRect, tint,
                 0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
         }
 
         foreach (var projectile in Projectiles)
             projectile.Draw(spriteBatch, Vector2.Zero);
+    }
+
+    private Color GetDeathTint(Color baseTint)
+    {
+        if (!isDead) return baseTint;
+        float t = deathTimer - DeathFlashStart;
+        if (t < 0f || t >= DeathFlashDuration) return baseTint;
+        bool on = ((int)(t * 10)) % 2 == 0;
+        return on ? baseTint : baseTint * 0.2f;
     }
 }

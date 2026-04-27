@@ -38,6 +38,7 @@ public partial class GameScene : IScene
     // UI state
     private bool _isPaused;
     private bool _isGameOver;
+    private bool _isTrapped;
     private bool _isWin;
     private bool _charmInventoryOpen;
     private bool _isTransitioning;
@@ -51,6 +52,20 @@ public partial class GameScene : IScene
     private int _pendingTransitionDirection;
     private const float FadeSpeed = 0.8f;
     private const float TransitionSpeed = 2.0f;
+
+    // Boss-defeat win sequence (shake -> fade to white -> win screen)
+    private bool _isBossWinSequence;
+    private float _bossWinTimer;
+    private float _bossWhiteAlpha;
+    private const float BossShakeDuration = 1.5f;
+    private const float BossFadeInDuration = 1.0f;
+    private const float BossHoldDuration = 0.5f;
+    private const float BossSequenceTotal = BossShakeDuration + BossFadeInDuration + BossHoldDuration;
+
+    // Secret-boss (Elder Baldur) defeat sequence (shake -> warp up to shop2)
+    private bool _isSecretBossSequence;
+    private float _secretBossTimer;
+    private const float SecretBossShakeDuration = 2.0f;
     private enum TransitionPhase { FadeOut, FadeIn }
     private TransitionPhase _transitionPhase;
     private Rectangle _restartButtonRect;
@@ -79,6 +94,11 @@ public partial class GameScene : IScene
         _pushBoxes.Clear();
         _isPaused = false;
         _winAlpha = 0f;
+        _isBossWinSequence = false;
+        _bossWinTimer = 0f;
+        _bossWhiteAlpha = 0f;
+        _isSecretBossSequence = false;
+        _secretBossTimer = 0f;
 
         keyboard = new KeyboardController();
         new BindKeys(keyboard).bindKeys(this, _game);
@@ -115,6 +135,7 @@ public partial class GameScene : IScene
 
         _gameOverTexture = _content.Load<Texture2D>("Game_Over");
         _isGameOver = false;
+        _isTrapped = false;
         _gameOverAlpha = 0f;
 
         _camera = new Camera2D(_graphics);
@@ -155,6 +176,8 @@ public partial class GameScene : IScene
 
         if (_isTransitioning) { UpdateTransition(gameTime); return; }
         if (_isGameOver) { UpdateGameOver(gameTime); return; }
+        if (_isBossWinSequence) { UpdateBossWinSequence(gameTime); return; }
+        if (_isSecretBossSequence) { UpdateSecretBossSequence(gameTime); return; }
         if (_isWin) { UpdateWin(gameTime); return; }
         if (UpdateShop()) return;
         if (UpdateCharmInventory(gameTime)) return;
@@ -198,7 +221,7 @@ public partial class GameScene : IScene
                 else if (_pendingTransitionDirection == -1)
                     player.Position = levels.currentRoom.GetSpawnPoint("fromRight");
                 else if (_pendingTransitionDirection == 2)
-                    player.Position = levels.currentRoom.GetSpawnPoint("fromDown");
+                    player.Position = levels.currentRoom.GetSpawnPoint("fromUnder");
                 else if (_pendingTransitionDirection == -2)
                     player.Position = levels.currentRoom.GetSpawnPoint("fromUp");
 
@@ -238,17 +261,72 @@ public partial class GameScene : IScene
             && _restartButtonRect.Contains(ms.Position))
         {
             _isGameOver = false;
+            _isTrapped = false;
             _gameOverAlpha = 0f;
             Reset();
         }
         _previousMouse = ms;
     }
 
+    private void UpdateBossWinSequence(GameTime gameTime)
+    {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _bossWinTimer += dt;
+
+        if (_bossWinTimer < BossShakeDuration + BossFadeInDuration)
+        {
+            // Phase 1+2: keep shaking the whole time, including through the white fade-in
+            _camera.Shake(8f, 6);
+
+            if (_bossWinTimer >= BossShakeDuration)
+            {
+                float t = (_bossWinTimer - BossShakeDuration) / BossFadeInDuration;
+                _bossWhiteAlpha = MathHelper.Clamp(t, 0f, 1f);
+            }
+        }
+        else if (_bossWinTimer < BossSequenceTotal)
+        {
+            // Phase 3: hold full white briefly
+            _bossWhiteAlpha = 1f;
+        }
+        else
+        {
+            _bossWhiteAlpha = 1f;
+            _isBossWinSequence = false;
+            TriggerWin();
+        }
+
+        // Keep the world simulating so death animation, gravity and geos still play
+        UpdateGameplay(gameTime);
+    }
+
+    private void UpdateSecretBossSequence(GameTime gameTime)
+    {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _secretBossTimer += dt;
+
+        _camera.Shake(8f, 6);
+
+        if (_secretBossTimer >= SecretBossShakeDuration)
+        {
+            _isSecretBossSequence = false;
+            _secretBossTimer = 0f;
+            // direction == 2 walks UpNeighbor (secret -> shop2) and the
+            // transition will spawn the player at shop2's "fromUnder" point.
+            CycleStage(2);
+            return;
+        }
+
+        UpdateGameplay(gameTime);
+    }
+
     private void UpdateWin(GameTime gameTime)
     {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         if (_winAlpha < 1f)
-            _winAlpha = MathHelper.Clamp(
-                _winAlpha + FadeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds, 0f, 1f);
+            _winAlpha = MathHelper.Clamp(_winAlpha + FadeSpeed * dt, 0f, 1f);
+        if (_bossWhiteAlpha > 0f)
+            _bossWhiteAlpha = MathHelper.Clamp(_bossWhiteAlpha - FadeSpeed * dt, 0f, 1f);
 
         MouseState ms = Mouse.GetState();
         if (ms.LeftButton == ButtonState.Pressed && _previousMouse.LeftButton == ButtonState.Released)
@@ -378,6 +456,37 @@ public partial class GameScene : IScene
         itemManager.Update(gameTime);
         UpdatePushBoxes(gameTime);
         _camera.Follow(player.Position);
+
+        if (!_isTrapped && IsTrappedAgainstSecretBoss())
+        {
+            _isTrapped = true;
+            _isGameOver = true;
+            _gameOverAlpha = 0f;
+        }
+    }
+
+    // Player is locked out of progress if Elder Baldur is the only living enemy
+    // in the secret room and they don't have enough soul to fireball it.
+    private bool IsTrappedAgainstSecretBoss()
+    {
+        if (levels.currentRoom.roomName != "secret") return false;
+        if (player.Soul >= 10) return false;
+        if (_isSecretBossSequence || _isBossWinSequence) return false;
+
+        bool baldurAlive = false;
+        bool otherAlive = false;
+        foreach (var e in levels.currentEnemyGen.Enemies)
+        {
+            if (e is BaldurBoss b)
+            {
+                if (!b.IsDead) baldurAlive = true;
+            }
+            else if (!e.IsDead)
+            {
+                otherAlive = true;
+            }
+        }
+        return baldurAlive && !otherAlive;
     }
 
     // ------------------------------------------------------------------
@@ -410,6 +519,10 @@ public partial class GameScene : IScene
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
         HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font, levels.geoTexture);
         if (_isGameOver) DrawGameOver(spriteBatch);
+        if (_bossWhiteAlpha > 0f)
+            spriteBatch.Draw(pixelTexture,
+                new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
+                Color.White * _bossWhiteAlpha);
         if (_isWin) DrawWinScreen(spriteBatch);
         if (_charmInventoryOpen) DrawCharmInventory(spriteBatch);
         if (_isShopOpen) DrawShopHUD(spriteBatch);
@@ -482,6 +595,12 @@ public partial class GameScene : IScene
         _pushBoxes.Clear();
         _charmInventoryOpen = false;
         _isShopOpen = false;
+        _isBossWinSequence = false;
+        _bossWinTimer = 0f;
+        _bossWhiteAlpha = 0f;
+        _isSecretBossSequence = false;
+        _secretBossTimer = 0f;
+        _isTrapped = false;
 
         levels.ResetToFirstLevel();
         levels.ResetAllEnemies();
@@ -508,6 +627,22 @@ public partial class GameScene : IScene
     {
         levels.currentEnemyGen.OnPlayerHit = () => TriggerHitEffects(playerWasHit: true);
         levels.currentEnemyGen.OnEnemyHit = () => TriggerHitEffects(playerWasHit: false);
-        levels.currentEnemyGen.OnBossDeath = () => TriggerWin();
+        levels.currentEnemyGen.OnBossDeath = () => BeginBossWinSequence();
+        levels.currentEnemyGen.OnSecretBossDeath = () => BeginSecretBossSequence();
+    }
+
+    public void BeginBossWinSequence()
+    {
+        if (_isBossWinSequence || _isWin) return;
+        _isBossWinSequence = true;
+        _bossWinTimer = 0f;
+        _bossWhiteAlpha = 0f;
+    }
+
+    public void BeginSecretBossSequence()
+    {
+        if (_isSecretBossSequence || _isTransitioning) return;
+        _isSecretBossSequence = true;
+        _secretBossTimer = 0f;
     }
 }

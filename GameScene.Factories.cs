@@ -59,7 +59,8 @@ public partial class GameScene
             { "lookup", _content.Load<Texture2D>("lookup") },
             { "side_slash", _content.Load<Texture2D>("slash_effect_sideways") }
         };
-        var p = new Player(textures, fireballTexture, new Vector2(350, 370));
+        Vector2 spawn = levels.currentRoom.GetSpawnPoint("fromLeft");
+        var p = new Player(textures, fireballTexture, spawn);
         p.OnDamaged = () => TriggerHitEffects(playerWasHit: true);
         return p;  // return p, not a new Player
     }

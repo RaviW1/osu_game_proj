@@ -21,6 +21,7 @@ public class BaldurBoss : ISprite, IEnemy
 
     public bool IsDead => isDead;
     public bool IsPhased => false;
+    public bool ShouldBeRemoved => false;
     public bool IsInvincible => invincibilityTimer > 0f;
     public Rectangle sourceRectangle;
     public Action OnDeath;

@@ -15,12 +15,17 @@ public class HuskBully : ISprite, IEnemy
     private Rectangle[] frames = new Rectangle[8];
     private TimeSpan delay;
     private TimeSpan elapsedTime;
+    private float deathTimer = 0f;
+    private const float DeathFlashStart = 3f;
+    private const float DeathFlashDuration = 0.6f;
+    private const float DeathRemovalDelay = 3.6f;
 
     private float patrolLeft;
     private float patrolRight;
 
     public bool IsDead => isDead;
     public bool IsPhased => isPhased;
+    public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
 
     public HuskBully(Texture2D texture, Vector2 startPosition)
     {
@@ -89,7 +94,12 @@ public class HuskBully : ISprite, IEnemy
 
     public void Update(GameTime gameTime)
     {
-        if (isDead) { currentFrame = 7; return; }
+        if (isDead)
+        {
+            currentFrame = 7;
+            deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            return;
+        }
 
         elapsedTime += gameTime.ElapsedGameTime;
         if (elapsedTime >= delay)
@@ -112,9 +122,19 @@ public class HuskBully : ISprite, IEnemy
         var direction = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         if (texture != null)
         {
-            Color tint = isPhased ? Color.White * 0.4f : Color.White;
+            Color baseTint = isPhased ? Color.White * 0.4f : Color.White;
+            Color tint = GetDeathTint(baseTint);
             spriteBatch.Draw(texture, position, frames[currentFrame],
                 tint, 0f, Vector2.Zero, 0.35f, direction, 0f);
         }
+    }
+
+    private Color GetDeathTint(Color baseTint)
+    {
+        if (!isDead) return baseTint;
+        float t = deathTimer - DeathFlashStart;
+        if (t < 0f || t >= DeathFlashDuration) return baseTint;
+        bool on = ((int)(t * 10)) % 2 == 0;
+        return on ? baseTint : baseTint * 0.2f;
     }
 }

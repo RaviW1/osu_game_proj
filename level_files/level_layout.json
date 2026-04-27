@@ -72,6 +72,7 @@
         "Name": "secret",
         "File": "level_files/secret.xml",
         "Type": "RoomA",
-        "Left": "shop2"
+        "Left": "shop2",
+        "Up": "shop2"
     }
 ]
