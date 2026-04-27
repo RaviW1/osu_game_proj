@@ -250,6 +250,10 @@ public class Player
     public void Jump() => currentState.Jump(this);
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
+    public void InterruptHeal()
+    {
+        if (currentState is HealingState hs) hs.Interrupt(this);
+    }
     public void Dash() => currentState.Dash(this);
     public void LookUp() => currentState.LookUp(this);
 
