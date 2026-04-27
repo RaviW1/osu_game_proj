@@ -9,7 +9,6 @@ public class BossAttackState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
     private Vector2 offset = new Vector2(-60, 10);
@@ -24,7 +23,6 @@ public class BossAttackState : IBossState
         {
             offset = new Vector2(60, 10);
         }
-        commandReceivedThisFrame = false;
         timer = 0;
         // TODO: change offset based on facing direction
         boss.OffsetPosition(offset);

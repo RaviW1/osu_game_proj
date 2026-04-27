@@ -8,15 +8,12 @@ public class Boss : ISprite, IEnemy
     private Texture2D texture;
     public Vector2 position { get; private set; }
     private bool isDead;
-    private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
     private int bossHealth = 10;
     private float invincibilityTimer = 0f;
     private const float InvincibilityDuration = 1f; // Half a second of safety
     private int maxBossHealth = 5;
-
-    private bool hasTakenDamageThisFrame = false;
 
     private IBossState currentState;
 
@@ -36,7 +33,6 @@ public class Boss : ISprite, IEnemy
         this.texture = texture;
         this.position = startPos;
         this.isDead = false;
-        this.currentFrame = 0;
         this.facingLeft = false;
         currentState = new BossIdleState();
         currentState.OnEnter(this);
@@ -44,7 +40,6 @@ public class Boss : ISprite, IEnemy
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        hasTakenDamageThisFrame = false;
         if (invincibilityTimer > 0)
         {
             invincibilityTimer -= dt;

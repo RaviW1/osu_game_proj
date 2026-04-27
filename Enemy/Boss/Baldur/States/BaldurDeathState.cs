@@ -8,12 +8,10 @@ public class BaldurDeathState : IBaldurState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     public void OnEnter(BaldurBoss boss)
     {
         boss.sourceRectangle = new Rectangle(451, 3074, 442, 315);
-        commandReceivedThisFrame = false;
         boss.Projectiles.Clear();
         timer = 0;
     }

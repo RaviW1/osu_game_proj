@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-// TODO: finish implementation
 public class BossJumpAttackState : IBossState
 {
     private const float SecondsPerFrame = 0.15f;
@@ -9,7 +8,6 @@ public class BossJumpAttackState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0;
     private const float Gravity = 1200f;
@@ -19,7 +17,6 @@ public class BossJumpAttackState : IBossState
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
-        commandReceivedThisFrame = false;
         timer = 0;
 
         groundLevel = boss.position.Y;
@@ -61,7 +58,6 @@ public class BossJumpAttackState : IBossState
             boss.SetPos(new Vector2(boss.position.X, groundLevel));
             boss.velocity = Vector2.Zero;
 
-            // Transition to next state
             boss.ChangeState(new BossIdleState());
         }
     }

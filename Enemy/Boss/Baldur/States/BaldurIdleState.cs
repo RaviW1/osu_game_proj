@@ -9,17 +9,14 @@ public class BaldurIdleState : IBaldurState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private double idleDuration = 2.0; // start by idling for 2 seconds
-    private readonly double runDuration = 4.0;
     private Random rng;
 
     public void OnEnter(BaldurBoss boss)
     {
         boss.velocity = new Vector2(0, 0);
         boss.sourceRectangle = new Rectangle(3, 22, 284, 255);
-        commandReceivedThisFrame = false;
         timer = 0;
         boss.Projectiles.Clear();
         rng = new Random();

@@ -10,9 +10,6 @@ public class BossAttackAnticState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
-    private double timer = 0;
-    private readonly double runDuration = 4.0; // Run for 3 seconds
     private Vector2 offset = new Vector2(15, 10);
     private Random rng;
 
@@ -29,8 +26,6 @@ public class BossAttackAnticState : IBossState
             offset = new Vector2(-15, 10);
         }
         boss.OffsetPosition(offset);
-        commandReceivedThisFrame = false;
-        timer = 0;
         rng = new Random();
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
@@ -57,13 +52,11 @@ public class BossAttackAnticState : IBossState
             newX = startX;
             newY = 3347;
         }
-        // NOTE: Ensure the height (373 vs 395) is consistent with your sprite sheet
         boss.sourceRectangle = new Rectangle(newX, newY, frameWidth, 400);
 
 
         if (animFinished)
         {
-            // NOTE: undo any shifts
 
             boss.OffsetPosition(-offset);
             float choice = rng.NextSingle();
@@ -77,11 +70,6 @@ public class BossAttackAnticState : IBossState
             }
         }
 
-        // timer += gameTime.ElapsedGameTime.TotalSeconds;
-        // if (timer >= runDuration)
-        // {
-        //     boss.ChangeState(new BossIdleState());
-        // }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
     {

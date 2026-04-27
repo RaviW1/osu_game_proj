@@ -12,14 +12,12 @@ public class BossAttackRecoveryState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
     private int frameWidth = 655;
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(6, 4388, frameWidth, 578);
-        commandReceivedThisFrame = false;
         timer = 0;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)

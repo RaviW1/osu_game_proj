@@ -8,13 +8,10 @@ public class BossDeathState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private readonly double runDuration = 4.0; // Run for 3 seconds
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(1691, 11647, 419, 468);
-        commandReceivedThisFrame = false;
         timer = 0;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)

@@ -8,15 +8,12 @@ public class BossRunState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
     private float runSpeed = 400f;
-    private bool hitEnd = false;
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(3, 1256, 623, 490);
-        commandReceivedThisFrame = false;
         timer = 0;
 
         // first check which half of the screen we are on
@@ -33,7 +30,6 @@ public class BossRunState : IBossState
             direction = -1;
         }
         boss.velocity = new Vector2(direction * runSpeed, 0);
-        hitEnd = false;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)

@@ -9,7 +9,6 @@ public class BaldurBoss : ISprite, IEnemy
     public Vector2 position { get; private set; }
     public Texture2D fireballTexture { get; private set; }
     private bool isDead;
-    private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
     private int bossHealth = 2;
@@ -17,7 +16,6 @@ public class BaldurBoss : ISprite, IEnemy
     private const float InvincibilityDuration = 0.5f; // Half a second of safety
     private int maxBossHealth = 2;
 
-    private bool hasTakenDamageThisFrame = false;
 
     private IBaldurState currentState;
 
@@ -38,7 +36,6 @@ public class BaldurBoss : ISprite, IEnemy
         this.texture = texture;
         this.position = startPos;
         this.isDead = false;
-        this.currentFrame = 0;
         this.facingLeft = false;
         this.fireballTexture = firballText;
         this.Projectiles = new List<Projectile>();
@@ -49,7 +46,6 @@ public class BaldurBoss : ISprite, IEnemy
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        hasTakenDamageThisFrame = false;
         if (invincibilityTimer > 0)
         {
             invincibilityTimer -= dt;
