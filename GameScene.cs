@@ -145,6 +145,9 @@ public partial class GameScene : IScene
         _pushBoxes.Clear();
         if (levels.currentRoom.roomName == "shop2")
             SpawnPushBoxes();
+
+        LoadFogEffect();  
+        UpdateFog();      
     }
 
     public void Unload() { }
@@ -203,7 +206,6 @@ public partial class GameScene : IScene
             {
                 _transitionAlpha = 1f;
 
-                // Save BEFORE clearing, BEFORE room changes
                 if (_pushBoxes.Count > 0)
                     _savedPushBoxPositions = _pushBoxes.Select(b => b.Position).ToArray();
 
@@ -236,6 +238,8 @@ public partial class GameScene : IScene
                             _pushBoxes[i].Position = _savedPushBoxPositions[i];
                 }
 
+
+
                 _transitionPhase = TransitionPhase.FadeIn;
             }
         }
@@ -248,6 +252,7 @@ public partial class GameScene : IScene
                 _isTransitioning = false;
             }
         }
+        UpdateFog();
     }
 
     private void UpdateGameOver(GameTime gameTime)
@@ -275,7 +280,6 @@ public partial class GameScene : IScene
 
         if (_bossWinTimer < BossShakeDuration + BossFadeInDuration)
         {
-            // Phase 1+2: keep shaking the whole time, including through the white fade-in
             _camera.Shake(8f, 6);
 
             if (_bossWinTimer >= BossShakeDuration)
@@ -286,7 +290,6 @@ public partial class GameScene : IScene
         }
         else if (_bossWinTimer < BossSequenceTotal)
         {
-            // Phase 3: hold full white briefly
             _bossWhiteAlpha = 1f;
         }
         else
@@ -296,7 +299,6 @@ public partial class GameScene : IScene
             TriggerWin();
         }
 
-        // Keep the world simulating so death animation, gravity and geos still play
         UpdateGameplay(gameTime);
     }
 
@@ -311,8 +313,6 @@ public partial class GameScene : IScene
         {
             _isSecretBossSequence = false;
             _secretBossTimer = 0f;
-            // direction == 2 walks UpNeighbor (secret -> shop2) and the
-            // transition will spawn the player at shop2's "fromUnder" point.
             CycleStage(2);
             return;
         }
@@ -352,7 +352,6 @@ public partial class GameScene : IScene
         _previousMouse = ms;
     }
 
-    /// <returns>true if the charm inventory consumed this frame (caller should return early)</returns>
     private bool UpdateCharmInventory(GameTime gameTime)
     {
         KeyboardState ks = Keyboard.GetState();
@@ -406,11 +405,9 @@ public partial class GameScene : IScene
         ProcessInput(gameTime);
         player.Update(gameTime);
 
-        // Apply ALL movement together, then resolve collisions
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         player.ApplyPhysics(dt);
 
-        // Only apply horizontal velocity if not blocked by a wall in that direction
         if (player.WallContact == 0 ||
             (player.WallContact == 1 && player.Velocity.X <= 0) ||
             (player.WallContact == -1 && player.Velocity.X >= 0))
@@ -465,8 +462,6 @@ public partial class GameScene : IScene
         }
     }
 
-    // Player is locked out of progress if Elder Baldur is the only living enemy
-    // in the secret room and they don't have enough soul to fireball it.
     private bool IsTrappedAgainstSecretBoss()
     {
         if (levels.currentRoom.roomName != "secret") return false;
@@ -495,10 +490,20 @@ public partial class GameScene : IScene
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        // Pass 1 — world space
+        DrawWorld(spriteBatch, gameTime);
+        DrawMasks(spriteBatch);
+        DrawHUD(spriteBatch);
+    }
+
+    // ------------------------------------------------------------------ 
+    //  Pass 1: World (tiles, enemies, player, geos)
+    //  If fog is enabled, render to a RenderTarget first then apply shader
+    // ------------------------------------------------------------------
+    private void DrawWorld(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        // Draw world normally
         spriteBatch.Begin(transformMatrix: _camera.GetTransform());
         levels.Draw(spriteBatch);
-
         foreach (var geo in levels.currentGeos)
             geo.Draw(spriteBatch);
         player.Draw(spriteBatch, gameTime);
@@ -507,56 +512,137 @@ public partial class GameScene : IScene
         levels.DrawEnemies(spriteBatch);
         spriteBatch.End();
 
-        // Pass 2 — soul meter & HP masks (non-premultiplied textures)
+        // Draw fog vignette overlay in screen space on top
+        if (_fogEnabled)
+            DrawFogOverlay(spriteBatch);
+    }
+
+    private void DrawFogOverlay(SpriteBatch spriteBatch)
+    {
+        int w = _graphics.Viewport.Width;
+        int h = _graphics.Viewport.Height;
+
+        Vector2 screenPos = new Vector2(
+            player.Position.X - _camera.Position.X,
+            player.Position.Y - _camera.Position.Y);
+
+        spriteBatch.Begin(blendState: BlendState.AlphaBlend);
+
+        int tileSize = 4; // very small = smooth looking
+        float innerRadius = 150f;
+        float outerRadius = 320f;
+
+        for (int x = 0; x < w; x += tileSize)
+        {
+            for (int y = 0; y < h; y += tileSize)
+            {
+                Vector2 tileCenter = new Vector2(x + tileSize / 2f, y + tileSize / 2f);
+                float dist = Vector2.Distance(tileCenter, screenPos);
+
+                float alpha = MathHelper.Clamp(
+                    (dist - innerRadius) / (outerRadius - innerRadius),
+                    0f, 1f);
+                // smoothstep
+                alpha = alpha * alpha * (3f - 2f * alpha);
+
+                if (alpha > 0.01f)
+                {
+                    spriteBatch.Draw(pixelTexture,
+                        new Rectangle(x, y, tileSize, tileSize),
+                        Color.Black * alpha);
+                }
+            }
+        }
+
+        spriteBatch.End();
+    }
+
+    // ------------------------------------------------------------------
+    //  Pass 2: Soul meter and HP bar (non-premultiplied blend)
+    // ------------------------------------------------------------------
+    private void DrawMasks(SpriteBatch spriteBatch)
+    {
         spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
         DrawSoulMeter(spriteBatch);
         DrawHPBar(spriteBatch);
         spriteBatch.End();
+    }
 
-        // Pass 3 — screen-space HUD & overlays
+    // ------------------------------------------------------------------
+    //  Pass 3: HUD and overlays (always on top, never fogged)
+    // ------------------------------------------------------------------
+    private void DrawHUD(SpriteBatch spriteBatch)
+    {
         spriteBatch.Begin();
-        if (_isPaused) DrawPauseScreen(spriteBatch);
+
+        if (_isPaused)
+            DrawPauseScreen(spriteBatch);
+
         abilityBar.Draw(spriteBatch, _graphics.Viewport.Width, _graphics.Viewport.Height);
         HUD.DrawHUD(player, spriteBatch, _graphics.Viewport.Width, font, levels.geoTexture);
-        if (_isGameOver) DrawGameOver(spriteBatch);
+
+        if (_isGameOver)
+            DrawGameOver(spriteBatch);
+
         if (_bossWhiteAlpha > 0f)
-            spriteBatch.Draw(pixelTexture,
-                new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
-                Color.White * _bossWhiteAlpha);
-        if (_isWin) DrawWinScreen(spriteBatch);
-        if (_charmInventoryOpen) DrawCharmInventory(spriteBatch);
-        if (_isShopOpen) DrawShopHUD(spriteBatch);
+            DrawFullscreenOverlay(spriteBatch, Color.White * _bossWhiteAlpha);
+
+        if (_isWin)
+            DrawWinScreen(spriteBatch);
+
+        if (_charmInventoryOpen)
+            DrawCharmInventory(spriteBatch);
+
+        if (_isShopOpen)
+            DrawShopHUD(spriteBatch);
+
         if (_isTransitioning)
-            spriteBatch.Draw(pixelTexture,
-                new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
-                Color.Black * _transitionAlpha);
+            DrawFullscreenOverlay(spriteBatch, Color.Black * _transitionAlpha);
+
         if (itemManager.IsEquipped(WaywardCompassIndex))
             Minimap.Draw(spriteBatch, pixelTexture, _graphics,
-                 levels.currentRoom.Bounds, levels.currentRoom.Tiles,
-                 player.Position,
-                 levels.TotalRooms,
-                 levels.CurrentRoomIndex);
+                levels.currentRoom.Bounds, levels.currentRoom.Tiles,
+                player.Position, levels.TotalRooms, levels.CurrentRoomIndex);
 
-        if ((levels.currentRoom.roomName == "shop" || levels.currentRoom.roomName == "shop2")
-            && !_isShopOpen && !_charmInventoryOpen
-            && !_isGameOver && !_isPaused)
-        {
-            string shopHint = "Press B to open Shop";
-            Vector2 shopHintSize = font.MeasureString(shopHint);
-            spriteBatch.DrawString(font, shopHint,
-                new Vector2((_graphics.Viewport.Width - shopHintSize.X) / 2f, 20), Color.Gold);
-        }
-
-        if (levels.currentRoom.roomName == "level1" && !_isShopOpen && !_charmInventoryOpen
-            && !_isGameOver && !_isPaused)
-        {
-            string invHint = "Press I to open Inventory";
-            Vector2 invHintSize = font.MeasureString(invHint);
-            spriteBatch.DrawString(font, invHint,
-                new Vector2((_graphics.Viewport.Width - invHintSize.X) / 2f, 20), Color.Gold);
-        }
+        DrawRoomHints(spriteBatch);
 
         spriteBatch.End();
+    }
+
+    // ------------------------------------------------------------------
+    //  Helpers
+    // ------------------------------------------------------------------
+    private void DrawFullscreenOverlay(SpriteBatch spriteBatch, Color color)
+    {
+        spriteBatch.Draw(pixelTexture,
+            new Rectangle(0, 0, _graphics.Viewport.Width, _graphics.Viewport.Height),
+            color);
+    }
+
+    private void DrawRoomHints(SpriteBatch spriteBatch)
+    {
+        if (_isGameOver || _isPaused || _charmInventoryOpen) return;
+
+        bool inShop = levels.currentRoom.roomName == "shop"
+                   || levels.currentRoom.roomName == "shop2";
+
+        if (inShop && !_isShopOpen)
+        {
+            DrawCenteredHint(spriteBatch, "Press B to open Shop");
+            return;
+        }
+
+        if (levels.currentRoom.roomName == "level1" && !_isShopOpen)
+        {
+            DrawCenteredHint(spriteBatch, "Press I to open Inventory");
+        }
+    }
+
+    private void DrawCenteredHint(SpriteBatch spriteBatch, string text)
+    {
+        Vector2 size = font.MeasureString(text);
+        Vector2 pos = new Vector2((_graphics.Viewport.Width - size.X) / 2f, 20);
+        spriteBatch.DrawString(font, text, pos, Color.Gold);
     }
 
     // ------------------------------------------------------------------
@@ -617,6 +703,8 @@ public partial class GameScene : IScene
         _camera.RoomBounds = levels.currentRoom.Bounds;
         _camera.SnapTo(player.Position);
         _tookHit = false;
+
+
     }
 
     // ------------------------------------------------------------------

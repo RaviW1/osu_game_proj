@@ -1,0 +1,27 @@
+Author: Lohith Katari
+Date: 4/27/2026
+Sprint 5 Code Quality Review
+Author of Code: Ravi
+Files Reviewed: boss.cs, BossAttackAnticState.cs, BossAttackState.cs, BossDeathState.cs, BossIdleState.cs, BossJumpAttackState.cs, BOssRunState.cs
+Minutes Taken: 50 minutes
+
+Readability:
+The classes for the boss is similar to that of the player class. 
+As such the code is readable because it seperates variables from a base boss class and the boss's statemachine. 
+The states are easy to read and implement a BossInterface which makes it easier to read and understand the code.
+This gives you the why to the boss states and defines what actions the statemachine handles and what actions the boss class handle. 
+The code is also well commented which makes it easier to understand the code and the logic behind it.
+The code also mentions what code is AI written or what is not which can be helpful to understand the logic behind it. 
+Overall the code is readable and easy to understand.
+The code is also structured in a way that lets you easily create new states for the boss and create new bosses by copying the pattern. 
+
+Maintainability:
+The code is maintainable because of the use of interfaces and the separation of variables and logic.
+The IBossState interface allows for easy addition of new states without having to modify existing code.
+The separation of variables and logic allows for easy modification of the boss's behavior without having to modify the statemachine.
+This lets you easily create new states for the boss as long as you have the sprite assets. 
+All you would ahve to do is adjust the state transition logic. 
+This also prevents the boss from changing into an unpredictable state and allows for easy debugging.
+The code has a simple pattern of swapping between vunerable states and attacking states which makes for an engaging boss fight. 
+There is some coupling between the boss and checking an instance of the player instead of using the collision queury system which may lead to higher than needed coupling. 
+Overall the code is maintainable and allows for easy addition of new states and modification of existing states without having to modify existing code.

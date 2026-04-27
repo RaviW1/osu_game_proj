@@ -686,6 +686,12 @@
 /processorParam:TextureFormat=Color
 /build:soul_meter.png
 
+#begin FogOfWar.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:FogOfWar.fx
+
 #begin Soul_orb_fills.png
 /importer:TextureImporter
 /processor:TextureProcessor
