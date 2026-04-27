@@ -9,17 +9,14 @@ public class BaldurIdleState : IBaldurState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private double idleDuration = 2.0; // start by idling for 2 seconds
-    private readonly double runDuration = 4.0;
+    private double idleDuration = 2.0;
     private Random rng;
 
     public void OnEnter(BaldurBoss boss)
     {
         boss.velocity = new Vector2(0, 0);
         boss.sourceRectangle = new Rectangle(3, 22, 284, 255);
-        commandReceivedThisFrame = false;
         timer = 0;
         boss.Projectiles.Clear();
         rng = new Random();
@@ -35,8 +32,6 @@ public class BaldurIdleState : IBaldurState
 
         int newX = startX + (currentFrame * (frameWidth + gap));
 
-        // Update the boss's source rectangle
-        // Note: Ensure the height (373 vs 395) is consistent with sprite sheet
         boss.sourceRectangle = new Rectangle(newX, 22, frameWidth, 255);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
 

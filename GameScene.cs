@@ -18,9 +18,7 @@ public partial class GameScene : IScene
     private KeyboardController keyboard;
     private MouseController mouse;
     private ItemManager itemManager;
-    private List<ISprite> enemies;
     private List<ISprite> blocks;
-    private int currentEnemyIndex = 0;
     private int currentBlockIndex = 0;
     private Texture2D fireballTexture;
     private AbilityBar abilityBar;

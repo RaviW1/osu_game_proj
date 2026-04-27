@@ -9,15 +9,13 @@ public class BaldurBoss : ISprite, IEnemy
     public Vector2 position { get; private set; }
     public Texture2D fireballTexture { get; private set; }
     private bool isDead;
-    private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
     private int bossHealth = 2;
     private float invincibilityTimer = 0f;
-    private const float InvincibilityDuration = 0.5f; // Half a second of safety
+    private const float InvincibilityDuration = 0.5f;
     private int maxBossHealth = 2;
 
-    private bool hasTakenDamageThisFrame = false;
 
     private IBaldurState currentState;
 
@@ -39,7 +37,6 @@ public class BaldurBoss : ISprite, IEnemy
         this.texture = texture;
         this.position = startPos;
         this.isDead = false;
-        this.currentFrame = 0;
         this.facingLeft = false;
         this.fireballTexture = firballText;
         this.Projectiles = new List<Projectile>();
@@ -50,7 +47,6 @@ public class BaldurBoss : ISprite, IEnemy
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        hasTakenDamageThisFrame = false;
         if (invincibilityTimer > 0)
         {
             invincibilityTimer -= dt;
@@ -75,8 +71,6 @@ public class BaldurBoss : ISprite, IEnemy
             projectile.Draw(spriteBatch, Vector2.Zero);
         }
     }
-    // TODO: finish these, currently placeholders
-    // TODO: maybe get bounds depends on the state
     public Rectangle GetBounds()
     {
         // return empty hitbox when "invincible"
@@ -94,14 +88,8 @@ public class BaldurBoss : ISprite, IEnemy
         if (bossHealth <= 0) Die();
 
     }
-    // I copied these bounce methods from the enemy class but I haven't found an extra use for them yet
     public void BounceX()
     {
-        // Vector2 currentVelocity = velocity;
-        // currentVelocity.X *= -1;
-        // velocity = currentVelocity;
-        // facingLeft = (velocity.X < 0);
-        //facingLeft = !facingLeft;
         if (facingLeft && velocity.X < 0)
         {
             velocity = new Vector2(-velocity.X, velocity.Y);

@@ -1,44 +1,52 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-// TODO: finish implementation 
-// Right now is just a copy of the attack recovery state
-// Should play one invincible animation entering vulerability
-// then stay vulnerable for a certain amount of time
-public class BossAttackRecoveryState : IBossState
+public class BossIdleState : IBossState
 {
-    private const float SecondsPerFrame = 0.15f;
+    private const float SecondsPerFrame = 0.1f;
     private const int TotalFrames = 5;
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private readonly double runDuration = 4.0; // Run for 3 seconds
-    private int frameWidth = 655;
+    private double idleDuration = 2.0;
+    private Random rng;
+
     public void OnEnter(Boss boss)
     {
-        boss.sourceRectangle = new Rectangle(6, 4388, frameWidth, 578);
-        commandReceivedThisFrame = false;
+        boss.velocity = new Vector2(0, 0);
+        boss.sourceRectangle = new Rectangle(3, 25, 624, 390);
         timer = 0;
+        rng = new Random();
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
     {
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
-        int gap = 6;
-        int startX = 6;
+        int frameWidth = 621;
+        int gap = 3;
+        int startX = 3;
 
         int newX = startX + (currentFrame * (frameWidth + gap));
 
-        // Update the boss's source rectangle
-        // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
-        boss.sourceRectangle = new Rectangle(newX, 4388, frameWidth, 578);
+        boss.sourceRectangle = new Rectangle(newX, 25, frameWidth, 390);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
-        if (timer >= runDuration)
+
+        // Logic for changing into new attack state
+        if (timer >= idleDuration)
         {
-            boss.ChangeState(new BossIdleState());
+            // pick random state
+            float choice = rng.NextSingle();
+            if (choice < .4)
+            {
+                boss.ChangeState(new BossAttackAnticState());
+            }
+            else
+            {
+                boss.ChangeState(new BossRunState());
+            }
         }
     }
     public void Draw(Boss boss, SpriteBatch spriteBatch)
@@ -59,12 +67,9 @@ public class BossAttackRecoveryState : IBossState
         int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
         int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
-        // Tighten the width to 30% of the sprite frame
         int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
-        int bodyHeight = (int)(scaledHeight * 0.5f);
+        int bodyHeight = (int)(scaledHeight * 0.6f);
 
-        // Calculate X and Y based on the bottom-center origin
         int x = (int)boss.position.X - (bodyWidth / 2);
         int y = (int)boss.position.Y - bodyHeight;
 

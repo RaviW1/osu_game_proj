@@ -11,7 +11,6 @@ namespace osu_game_proj
     {
         private int currentLevelNum;
         public Texture2D geoTexture;
-        private List<IRoom> allRoomObjs;
         private Dictionary<string, LevelNode> levelMap;
 
         public List<Geo> currentGeos;

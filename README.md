@@ -18,6 +18,14 @@ B to open shops (only available in shop worlds)
 R to reset  
 Delete to quit
 
+### Hints/Tips
+There is a secret room that can be accessed by the shop room. 
+If you stack the blocks on top of each other and push them to the right edge, you will 
+be teleported to the secret level with a secret boss
+You must kill the secret boss to return to the room.
+You cannot hit the boss with your nail, use fireballs with soul from the
+surrounding enemies.
+
 ## Known bugs 
 none
 

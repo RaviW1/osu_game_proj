@@ -8,13 +8,10 @@ public class BossDeathState : IBossState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private readonly double runDuration = 4.0; // Run for 3 seconds
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(1691, 11647, 419, 468);
-        commandReceivedThisFrame = false;
         timer = 0;
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
@@ -48,12 +45,9 @@ public class BossDeathState : IBossState
         int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
         int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
-        // Tighten the width to 30% of the sprite frame
         int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
         int bodyHeight = (int)(scaledHeight * 0.5f);
 
-        // Calculate X and Y based on the bottom-center origin
         int x = (int)boss.position.X - (bodyWidth / 2);
         int y = (int)boss.position.Y - bodyHeight;
 

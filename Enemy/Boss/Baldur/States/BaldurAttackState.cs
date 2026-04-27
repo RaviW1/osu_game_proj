@@ -12,15 +12,12 @@ public class BaldurAttackState : IBaldurState
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private double idleDuration = 2.0; // start by idling for 2 seconds
     private Random rng;
     public void OnEnter(BaldurBoss boss)
     {
         boss.velocity = new Vector2(0, 0);
         boss.sourceRectangle = new Rectangle(3, 22, 284, 255);
-        commandReceivedThisFrame = false;
         timer = 0;
         rng = new Random();
     }
@@ -42,11 +39,9 @@ public class BaldurAttackState : IBaldurState
         }
 
         // Logic for changing into new state
-
         if (Player.Instance != null)
         {
             Vector2 target = Player.Instance.Position;
-            // Do attack logic
             Vector2 playerPos = Player.Instance.Position;
             float distance = Vector2.DistanceSquared(boss.position, playerPos);
             if (distance <= (attackRange * attackRange))
