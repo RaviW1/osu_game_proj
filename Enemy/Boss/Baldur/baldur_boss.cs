@@ -12,10 +12,10 @@ public class BaldurBoss : ISprite, IEnemy
     private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
-    private int bossHealth = 10;
+    private int bossHealth = 2;
     private float invincibilityTimer = 0f;
     private const float InvincibilityDuration = 0.5f; // Half a second of safety
-    private int maxBossHealth = 5;
+    private int maxBossHealth = 2;
 
     private bool hasTakenDamageThisFrame = false;
 
