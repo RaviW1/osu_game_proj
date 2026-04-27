@@ -33,8 +33,8 @@
   <Enemy id="aspid" x_pos="600" y_pos="200"/>
 
   <!-- Exits and Spawns -->
-  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="230"/>
-  <Exit direction="right" x_pos="880" y_pos="300" width="30" height="230"/>
+  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="400"/>
+  <Exit direction="right" x_pos="880" y_pos="300" width="30" height="400"/>
   <Spawn id="default" x_pos="100" y_pos="470"/>
   <Spawn id="fromLeft" x_pos="80" y_pos="470"/>
   <Spawn id="fromRight" x_pos="830" y_pos="470"/>

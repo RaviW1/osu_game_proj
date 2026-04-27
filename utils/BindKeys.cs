@@ -52,12 +52,13 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.LeftShift, new DashCommand());
             keyboard.BindPress(Keys.M, new MuteCommand());
 
-            keyboard.BindPress(Keys.Q, new QuitCommand(game));
+            keyboard.BindPress(Keys.Delete, new QuitCommand(game));
             keyboard.BindPress(Keys.R, new ResetCommand(scene));
 
             keyboard.BindPress(Keys.Z, new AttackCommand());
             keyboard.BindPress(Keys.N, new AttackCommand());
-            keyboard.BindPress(Keys.E, new DamageCommand());
+            keyboard.BindPress(Keys.F, new AttackCommand());
+            keyboard.BindPress(Keys.Q, new ShootFireballCommand());
             keyboard.BindPress(Keys.D1, new AttackCommand());
             keyboard.BindPress(Keys.D2, new ShootFireballCommand());
             keyboard.BindHeld(Keys.D3, new HealCommand());

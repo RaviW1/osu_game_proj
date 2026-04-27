@@ -37,8 +37,8 @@
   <Enemy id="husk_bully" x_pos="550" y_pos="510"/>
 
   <!-- Exits -->
-  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="280"/>
-  <Exit direction="right" x_pos="880" y_pos="300" width="30" height="280"/>
+  <Exit direction="left" x_pos="-20" y_pos="300" width="30" height="400"/>
+  <Exit direction="right" x_pos="880" y_pos="300" width="30" height="400"/>
   <Spawn id="default" x_pos="450" y_pos="520"/>
   <Spawn id="fromLeft" x_pos="450" y_pos="520"/>
   <Spawn id="fromRight" x_pos="830" y_pos="520"/>

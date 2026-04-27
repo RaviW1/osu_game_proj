@@ -121,7 +121,7 @@
 
   <!-- ==================== EXITS AND SPAWNS ==================== -->
   <Exit direction="left" x_pos="-20" y_pos="600" width="30" height="800"/>
-  <Exit direction="right" x_pos="3980" y_pos="1200" width="30" height="250"/>
+  <Exit direction="right" x_pos="3980" y_pos="1200" width="30" height="400"/>
   <Spawn id="default" x_pos="200" y_pos="1340"/>
   <Spawn id="fromLeft" x_pos="200" y_pos="1340"/>
   <Spawn id="fromRight" x_pos="3800" y_pos="1340"/>
