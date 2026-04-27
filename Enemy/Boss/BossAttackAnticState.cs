@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -13,6 +14,8 @@ public class BossAttackAnticState : IBossState
     private double timer = 0;
     private readonly double runDuration = 4.0; // Run for 3 seconds
     private Vector2 offset = new Vector2(15, 10);
+    private Random rng;
+
     public void OnEnter(Boss boss)
     {
         boss.sourceRectangle = new Rectangle(5, 2945, 580, 400);
@@ -28,6 +31,7 @@ public class BossAttackAnticState : IBossState
         boss.OffsetPosition(offset);
         commandReceivedThisFrame = false;
         timer = 0;
+        rng = new Random();
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
@@ -62,7 +66,15 @@ public class BossAttackAnticState : IBossState
             // NOTE: undo any shifts
 
             boss.OffsetPosition(-offset);
-            boss.ChangeState(new BossAttackState());
+            float choice = rng.NextSingle();
+            if (choice < .6)
+            {
+                boss.ChangeState(new BossAttackState());
+            }
+            else
+            {
+                boss.ChangeState(new BossJumpAttackState());
+            }
         }
 
         // timer += gameTime.ElapsedGameTime.TotalSeconds;

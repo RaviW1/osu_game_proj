@@ -148,6 +148,10 @@ public class Boss : ISprite, IEnemy
         position = currentPos;
 
     }
+    public void SetPos(Vector2 pos)
+    {
+        position = pos;
+    }
     public void Die()
     {
         if (isDead) return;
