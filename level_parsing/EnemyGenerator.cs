@@ -17,6 +17,8 @@ namespace osu_game_proj
         public Action OnPlayerHit;
         public Action OnEnemyHit;
 
+        public Action OnBossDeath;
+
         public EnemyGenerator(List<EnemyInformation> generateEnemyInfo)
         {
             this.generateEnemyInfo = generateEnemyInfo;
@@ -65,7 +67,10 @@ namespace osu_game_proj
                 }
                 else if (enemyInfo.enemyType == "false_knight")
                 {
-                    enemy = new Boss(enemyTextures["false_knight"], enemyInfo.destPos);
+                    var boss = new Boss(enemyTextures["false_knight"], enemyInfo.destPos);
+                    
+                    boss.OnDeath = () => OnBossDeath?.Invoke();
+                    enemy = boss;
                 }
                 enemyList.Add(enemy);
             }

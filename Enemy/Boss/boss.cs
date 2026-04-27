@@ -24,6 +24,7 @@ public class Boss : ISprite, IEnemy
     public bool IsPhased => false;
     public bool IsInvincible => invincibilityTimer > 0f;
     public Rectangle sourceRectangle;
+    public Action OnDeath;
 
     public int BossHealth
     {
@@ -153,5 +154,6 @@ public class Boss : ISprite, IEnemy
         isDead = true;
         ChangeState(new BossDeathState());
         velocity = Vector2.Zero;
+        OnDeath?.Invoke();
     }
 }
