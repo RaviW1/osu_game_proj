@@ -123,7 +123,6 @@ public class Aspid : ISprite, IEnemy
             velocity.Y *= -1;
         }
 
-        hoverTimer += 0.016f;
         shootTimer += 0.016f;
         if (shootTimer >= shootInterval) { ShootFireball(); shootTimer = 0f; }
 

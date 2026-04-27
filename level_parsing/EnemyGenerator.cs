@@ -31,6 +31,7 @@ namespace osu_game_proj
             enemyTextures.Add("aspid", Content.Load<Texture2D>("Enemy Sprites\\aspid_hunter"));
             enemyTextures.Add("husk_bully", Content.Load<Texture2D>("Enemy Sprites\\husk_bully"));
             enemyTextures.Add("false_knight", Content.Load<Texture2D>("Enemy Sprites\\false_knight"));
+            enemyTextures.Add("baldur", Content.Load<Texture2D>("Enemy Sprites\\elder_baldur"));
 
             fireballTexture = Content.Load<Texture2D>("fireball");
             createEnemyObjects(generateEnemyInfo);
@@ -65,10 +66,14 @@ namespace osu_game_proj
                 {
                     enemy = new HuskBully(enemyTextures["husk_bully"], enemyInfo.destPos);
                 }
+                else if (enemyInfo.enemyType == "baldur")
+                {
+                    enemy = new BaldurBoss(enemyTextures["baldur"], enemyInfo.destPos, fireballTexture);
+                }
                 else if (enemyInfo.enemyType == "false_knight")
                 {
                     var boss = new Boss(enemyTextures["false_knight"], enemyInfo.destPos);
-                    
+
                     boss.OnDeath = () => OnBossDeath?.Invoke();
                     enemy = boss;
                 }
@@ -128,7 +133,25 @@ namespace osu_game_proj
                     }
                 }
 
+                // baldur projectiles vs player
+                if (currentEnemy is BaldurBoss baldur)
+                {
+                    for (int i = baldur.Projectiles.Count - 1; i >= 0; i--)
+                    {
+                        if (baldur.Projectiles[i].GetBounds().Intersects(playerBounds))
+                        {
+                            if (!player.IsInvincible)
+                            {
+                                player.PlayerHealth--;
+                                player.TakeDamage();
+                                OnPlayerHit?.Invoke();
+                            }
+                            baldur.Projectiles.RemoveAt(i);
+                        }
+                    }
+                }
                 // Player projectiles vs enemy (fireball hits do NOT grant soul)
+                // Player projectiles vs enemy
                 for (int i = player.Projectiles.Count - 1; i >= 0; i--)
                 {
                     if (player.Projectiles[i].GetBounds().Intersects(currentEnemy.GetBounds()))
