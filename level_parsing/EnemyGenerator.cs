@@ -12,12 +12,14 @@ namespace osu_game_proj
         public List<EnemyInformation> generateEnemyInfo;
         public Texture2D fireballTexture;
         private List<IEnemy> enemyList;
+        public IReadOnlyList<IEnemy> Enemies => enemyList;
         public List<Vector2> PendingDeathPositions { get; } = new List<Vector2>();
 
         public Action OnPlayerHit;
         public Action OnEnemyHit;
 
         public Action OnBossDeath;
+        public Action OnSecretBossDeath;
 
         public EnemyGenerator(List<EnemyInformation> generateEnemyInfo)
         {
@@ -68,7 +70,9 @@ namespace osu_game_proj
                 }
                 else if (enemyInfo.enemyType == "baldur")
                 {
-                    enemy = new BaldurBoss(enemyTextures["baldur"], enemyInfo.destPos, fireballTexture);
+                    var baldur = new BaldurBoss(enemyTextures["baldur"], enemyInfo.destPos, fireballTexture);
+                    baldur.OnDeath = () => OnSecretBossDeath?.Invoke();
+                    enemy = baldur;
                 }
                 else if (enemyInfo.enemyType == "false_knight")
                 {
@@ -180,6 +184,9 @@ namespace osu_game_proj
                     }
                 }
             }
+
+            // Cull non-boss corpses once their post-death timer is up
+            enemyList.RemoveAll(e => e.ShouldBeRemoved);
         }
     }
 }

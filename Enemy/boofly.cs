@@ -11,12 +11,17 @@ public class Boofly : ISprite, IEnemy
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
+    private float deathTimer = 0f;
+    private const float DeathFlashStart = 3f;
+    private const float DeathFlashDuration = 0.6f;
+    private const float DeathRemovalDelay = 3.6f;
 
     private float patrolLeft;
     private float patrolRight;
 
     public bool IsDead => isDead;
     public bool IsPhased => false;
+    public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
 
     public Boofly(Texture2D texture, Vector2 startPosition)
     {
@@ -81,6 +86,7 @@ public class Boofly : ISprite, IEnemy
     {
         if (isDead)
         {
+            deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             deathVelocityY += 600f * 0.016f;
             velocity = new Vector2(0, deathVelocityY);
             position.Y += velocity.Y * 0.016f;
@@ -110,8 +116,18 @@ public class Boofly : ISprite, IEnemy
             int frameY = 23;
             var sourceRect = new Rectangle(frameX, frameY, frameWidth, frameHeight);
             float scale = 0.2f;
-            spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
+            Color tint = GetDeathTint(Color.White);
+            spriteBatch.Draw(texture, drawPos, sourceRect, tint,
                             0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
         }
+    }
+
+    private Color GetDeathTint(Color baseTint)
+    {
+        if (!isDead) return baseTint;
+        float t = deathTimer - DeathFlashStart;
+        if (t < 0f || t >= DeathFlashDuration) return baseTint;
+        bool on = ((int)(t * 10)) % 2 == 0;
+        return on ? baseTint : baseTint * 0.2f;
     }
 }

@@ -29,4 +29,5 @@
   <Spawn id="default" x_pos="450" y_pos="470"/>
   <Spawn id="fromLeft" x_pos="80" y_pos="470"/>
   <Spawn id="fromRight" x_pos="830" y_pos="470"/>
+  <Spawn id="fromUnder" x_pos="450" y_pos="470"/>
 </Level>
