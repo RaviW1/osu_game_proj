@@ -60,7 +60,7 @@ public partial class GameScene
             { "side_slash", _content.Load<Texture2D>("slash_effect_sideways") }
         };
         Vector2 spawn = levels.currentRoom.GetSpawnPoint("fromLeft");
-        var p = new Player(textures, fireballTexture, spawn);
+        var p = new Player(textures, fireballTexture, spawn, levels.currentRoom.Gravity);
         p.OnDamaged = () => TriggerHitEffects(playerWasHit: true);
         return p;  // return p, not a new Player
     }

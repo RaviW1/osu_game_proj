@@ -20,4 +20,5 @@ public interface IRoom
     public RoomBase DownNeighbor { get; set; }
     public int roomIndex { get; set; }
     public string roomName { get; set; }
+    public float Gravity { get; set; }
 }

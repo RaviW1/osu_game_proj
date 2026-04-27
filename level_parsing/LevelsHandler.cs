@@ -92,6 +92,10 @@ namespace osu_game_proj
                 {
                     node.Room = new RoomC();
                 }
+                else if (def.Type == "RoomD")
+                {
+                    node.Room = new RoomD();
+                }
 
                 node.Room.Load(Content, node.TileGen);
                 node.Room.roomName = def.Name;

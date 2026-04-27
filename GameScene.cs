@@ -404,7 +404,7 @@ public partial class GameScene : IScene
         levels.currentRoom.Update(gameTime, player, this);
 
         ProcessInput(gameTime);
-        player.Update(gameTime);
+        player.Update(gameTime, levels.currentRoom.Gravity);
 
         // Apply ALL movement together, then resolve collisions
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;

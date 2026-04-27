@@ -22,7 +22,7 @@ public class Player
 
     private float invincibilityTimer = 0f;
     private const float InvincibilityDuration = 1.0f;
-    private const float GravityForce = 1200f;
+    private float GravityForce = 1200f;
 
     private float _fireballCooldown = 0f;
     private const float FireballCooldownDuration = 0.5f;
@@ -81,7 +81,7 @@ public class Player
     // singleton instance 
     public static Player Instance { get; private set; }
 
-    public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
+    public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords, float gravity)
     {
         Textures = textures;
         this.fireballTexture = fireballTexture;
@@ -90,11 +90,13 @@ public class Player
         currentState = new IdleState();
         currentState.OnEnter(this);
         Instance = this;
+        this.GravityForce = gravity;
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, float gravity)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        this.GravityForce = gravity;
 
         if (invincibilityTimer > 0f)
             invincibilityTimer -= dt;

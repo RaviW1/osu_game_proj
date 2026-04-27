@@ -71,7 +71,7 @@
     {
         "Name": "secret",
         "File": "level_files/secret.xml",
-        "Type": "RoomA",
+        "Type": "RoomD",
         "Left": "shop2",
         "Up": "shop2"
     }

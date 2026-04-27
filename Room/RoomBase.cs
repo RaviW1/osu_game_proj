@@ -9,6 +9,7 @@ public abstract class RoomBase : IRoom
     public Rectangle Bounds { get; protected set; }
     public List<TileBlock> Tiles { get; protected set; } = new List<TileBlock>();
     protected Dictionary<string, Vector2> spawnPoints = new Dictionary<string, Vector2>();
+    public float Gravity { get; set; } = 1200f;
 
     // Custom exit zones loaded from XML
     private List<ExitInfo> exitZones = new List<ExitInfo>();
