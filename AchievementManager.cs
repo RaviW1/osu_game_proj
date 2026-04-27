@@ -14,12 +14,13 @@ public static class AchievementManager
         }
     }
 
-    public static readonly Achievement Monopoly  = new Achievement("Monopoly",    "Collect 100 Geo");
-    public static readonly Achievement Winner    = new Achievement("Winner",      "Beat the game");
-    public static readonly Achievement WhatsThis = new Achievement("What's this", "???");
-    public static readonly Achievement Robinhood = new Achievement("Robinhood",   "Beat the game without taking a hit");
+    public static readonly Achievement Monopoly       = new Achievement("Monopoly",       "Collect 100 Geo");
+    public static readonly Achievement Winner         = new Achievement("Winner",         "Beat the game");
+    public static readonly Achievement WhatsThis      = new Achievement("What's this",    "???");
+    public static readonly Achievement Robinhood      = new Achievement("Robinhood",      "Beat the game without taking a hit");
+    public static readonly Achievement TrueDifficulty = new Achievement("True Difficulty", "Beat the game on hard mode");
 
-    public static readonly Achievement[] All = { Monopoly, Winner, WhatsThis, Robinhood };
+    public static readonly Achievement[] All = { Monopoly, Winner, WhatsThis, Robinhood, TrueDifficulty };
 
     public static void Unlock(Achievement achievement)
     {

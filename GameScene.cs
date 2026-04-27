@@ -588,6 +588,8 @@ public partial class GameScene : IScene
         AchievementManager.Unlock(AchievementManager.Winner);
         if (!_tookHit)
             AchievementManager.Unlock(AchievementManager.Robinhood);
+        if (Difficulty.IsHardMode)
+            AchievementManager.Unlock(AchievementManager.TrueDifficulty);
     }
 
     public void CycleStage(int direction)

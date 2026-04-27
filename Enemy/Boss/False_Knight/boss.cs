@@ -21,6 +21,8 @@ public class Boss : ISprite, IEnemy
     public bool IsPhased => false;
     public bool ShouldBeRemoved => false;
     public bool IsInvincible => invincibilityTimer > 0f;
+    public int Health => bossHealth;
+    public int MaxHealth => maxBossHealth;
     public Rectangle sourceRectangle;
     public Action OnDeath;
 
@@ -35,6 +37,8 @@ public class Boss : ISprite, IEnemy
         this.position = startPos;
         this.isDead = false;
         this.facingLeft = false;
+        this.bossHealth *= osu_game_proj.Difficulty.HpMultiplier;
+        this.maxBossHealth *= osu_game_proj.Difficulty.HpMultiplier;
         currentState = new BossIdleState();
         currentState.OnEnter(this);
     }
@@ -71,11 +75,11 @@ public class Boss : ISprite, IEnemy
     }
     public void TakeDamage()
     {
+        if (isDead || invincibilityTimer > 0f) return;
         bossHealth--;
         invincibilityTimer = InvincibilityDuration;
 
         if (bossHealth <= 0) Die();
-
     }
     public void BounceX()
     {

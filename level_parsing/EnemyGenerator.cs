@@ -155,32 +155,37 @@ namespace osu_game_proj
                     }
                 }
                 // Player projectiles vs enemy (fireball hits do NOT grant soul)
-                // Player projectiles vs enemy
                 for (int i = player.Projectiles.Count - 1; i >= 0; i--)
                 {
-                    if (player.Projectiles[i].GetBounds().Intersects(currentEnemy.GetBounds()))
+                    Rectangle enemyBounds = currentEnemy.GetBounds();
+                    if (player.Projectiles[i].GetBounds().Intersects(enemyBounds))
                     {
                         bool wasAlive = !currentEnemy.IsDead;
                         currentEnemy.TakeDamage();
                         OnEnemyHit?.Invoke();
+                        // Use the pre-damage bounds: TakeDamage starts i-frames
+                        // which makes GetBounds return Rectangle.Empty.
                         if (wasAlive && currentEnemy.IsDead)
-                            PendingDeathPositions.Add(new Vector2(currentEnemy.GetBounds().Center.X, currentEnemy.GetBounds().Center.Y));
+                            PendingDeathPositions.Add(new Vector2(enemyBounds.Center.X, enemyBounds.Center.Y));
                         player.Projectiles.RemoveAt(i);
                         break;
                     }
                 }
 
-                // Melee vs enemy
+                // Melee vs enemy — i-frames are gated by GetBounds returning
+                // Rectangle.Empty inside each enemy, so the 0.3s attack window
+                // can't re-register hits while the enemy is invincible.
                 if (player.IsAttacking)
                 {
-                    if (player.GetMeleeHitbox().Intersects(currentEnemy.GetBounds()))
+                    Rectangle enemyBounds = currentEnemy.GetBounds();
+                    if (player.GetMeleeHitbox().Intersects(enemyBounds))
                     {
                         bool wasAlive = !currentEnemy.IsDead;
                         currentEnemy.TakeDamage();
                         OnEnemyHit?.Invoke();
-                        player.Soul = Math.Min(player.Soul + 10, player.SoulLimit);
+                        player.Soul = Math.Min(player.Soul + Difficulty.SoulPerMeleeHit, player.SoulLimit);
                         if (wasAlive && currentEnemy.IsDead)
-                            PendingDeathPositions.Add(new Vector2(currentEnemy.GetBounds().Center.X, currentEnemy.GetBounds().Center.Y));
+                            PendingDeathPositions.Add(new Vector2(enemyBounds.Center.X, enemyBounds.Center.Y));
                     }
                 }
             }

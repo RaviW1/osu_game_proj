@@ -20,6 +20,11 @@ public class Aspid : ISprite, IEnemy
     private const float DeathFlashStart = 3f;
     private const float DeathFlashDuration = 0.6f;
     private const float DeathRemovalDelay = 3.6f;
+    private const int BaseHealth = 1;
+    private int health;
+    private int maxHealth;
+    private float invincibilityTimer = 0f;
+    private const float InvincibilityDuration = 0.3f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -29,6 +34,8 @@ public class Aspid : ISprite, IEnemy
     public bool IsDead => isDead;
     public bool IsPhased => false;
     public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
+    public int Health => health;
+    public int MaxHealth => maxHealth;
     public List<Projectile> Projectiles { get; private set; }
 
     public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)
@@ -43,10 +50,15 @@ public class Aspid : ISprite, IEnemy
         this.patrolRight = startPosition.X + 200f;
         this.patrolTop = startPosition.Y - 100f;
         this.patrolBottom = startPosition.Y + 100f;
+        this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
+        this.health = this.maxHealth;
     }
 
     public Rectangle GetBounds()
     {
+        // Same trick as the boss: drop the hitbox while invincible so the
+        // attack window doesn't keep re-registering hits every frame.
+        if (invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 45, 60);
     }
 
@@ -64,9 +76,15 @@ public class Aspid : ISprite, IEnemy
 
     public void TakeDamage()
     {
-        isDead = true;
-        velocity = new Vector2(0, 0);
-        Projectiles.Clear();
+        if (isDead || invincibilityTimer > 0f) return;
+        health--;
+        invincibilityTimer = InvincibilityDuration;
+        if (health <= 0)
+        {
+            isDead = true;
+            velocity = new Vector2(0, 0);
+            Projectiles.Clear();
+        }
     }
 
     public void ResolveCollisions(List<CollisionResult> results)
@@ -118,6 +136,7 @@ public class Aspid : ISprite, IEnemy
         position.X += velocity.X * 0.016f;
         position.Y += velocity.Y * 0.016f;
         if (bounceCooldown > 0f) bounceCooldown -= 0.016f;
+        if (invincibilityTimer > 0f) invincibilityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (position.X > patrolRight || position.X < patrolLeft)
         {
