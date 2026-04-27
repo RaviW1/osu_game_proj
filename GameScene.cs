@@ -155,6 +155,20 @@ public partial class GameScene : IScene
 
     public void Update(GameTime gameTime)
     {
+        try
+        {
+            UpdateInternal(gameTime);
+        }
+        finally
+        {
+            // Keep mouse edge detection accurate even when ProcessInput was
+            // skipped this frame (paused, transitioning, shop/inventory open, ...).
+            mouse.EndOfFrameSync();
+        }
+    }
+
+    private void UpdateInternal(GameTime gameTime)
+    {
         if (_isPaused)
         {
             ProcessInput(gameTime);
@@ -472,6 +486,8 @@ public partial class GameScene : IScene
         if (levels.currentRoom.roomName != "secret") return false;
         if (player.Soul >= 10) return false;
         if (_isSecretBossSequence || _isBossWinSequence) return false;
+        // A fireball still in flight could land the killing blow, so wait it out.
+        if (player.Projectiles.Count > 0) return false;
 
         bool baldurAlive = false;
         bool otherAlive = false;
