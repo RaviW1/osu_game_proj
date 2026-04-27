@@ -1,0 +1,31 @@
+Author of Code Review: Ravi Wijeratne
+Date of Code Review: 4/27/2026
+Sprint Number 5
+Name of Files: MenuScene.cs/AcheivementManager.cs
+Note: AchievementManager is a much smaller class that is used by
+MenuScene to handle tracking/collecting acheivements
+As such I am reviewing it alongside the new menu class
+Author of File: Owen Wu
+Time Taken: 30 minutes
+
+
+Readability:
+Short, single-issue methods make it very easy to understand what the class
+is doing at any point. Not many comments throughout, but those that are
+there are short and descriptive. The large number of magic numbers do make
+it difficult to read some parts of the code. However, it might be more tedious 
+to have so many variables throughout, especially for code that draws to the
+screen.
+
+Maintainability:
+Most methods are small, single-function methods that make quick changes very easy. The class also follows the update/scene logic used throughout 
+the rest of the project, which makes maintaining it very simple.
+However, there are many magic numbers throughout that may be tedious to
+search for and change. Although, in graphics-oriented classes like
+this it is more understandable. The acheivement manager also 
+containing all the achievements/description is nice. However, it might
+be better to load these from a file, making it easier to add new acheivements
+without writing new code. Additionally, this class breaks the command input
+pattern by directly using the controllers' getstate logic. This logic
+should be handled by our input manager. 
+
