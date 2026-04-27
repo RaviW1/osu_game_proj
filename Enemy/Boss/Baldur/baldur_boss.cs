@@ -23,6 +23,8 @@ public class BaldurBoss : ISprite, IEnemy
     public bool IsPhased => false;
     public bool ShouldBeRemoved => false;
     public bool IsInvincible => invincibilityTimer > 0f;
+    public int Health => bossHealth;
+    public int MaxHealth => maxBossHealth;
     public Rectangle sourceRectangle;
     public Action OnDeath;
 
@@ -40,6 +42,8 @@ public class BaldurBoss : ISprite, IEnemy
         this.facingLeft = false;
         this.fireballTexture = firballText;
         this.Projectiles = new List<Projectile>();
+        this.maxBossHealth *= osu_game_proj.Difficulty.HpMultiplier;
+        this.bossHealth = this.maxBossHealth;
         currentState = new BaldurIdleState();
         currentState.OnEnter(this);
 
@@ -82,11 +86,11 @@ public class BaldurBoss : ISprite, IEnemy
     }
     public void TakeDamage()
     {
+        if (isDead || invincibilityTimer > 0f) return;
         bossHealth--;
         invincibilityTimer = InvincibilityDuration;
 
         if (bossHealth <= 0) Die();
-
     }
     public void BounceX()
     {

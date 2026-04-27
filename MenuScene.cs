@@ -18,8 +18,11 @@ namespace osu_game_proj
         private Rectangle _quitBtn;
         private Rectangle _achievementsBtn;
         private Rectangle _backBtn;
+        private Rectangle _normalBtn;
+        private Rectangle _hardBtn;
 
         private bool _achievementsOpen = false;
+        private bool _difficultyOpen = false;
 
         private MouseState _prevMouse;
         private KeyboardState _prevKeyboard;
@@ -87,6 +90,8 @@ namespace osu_game_proj
 
             if (_achievementsOpen)
                 DrawAchievementsScreen();
+            else if (_difficultyOpen)
+                DrawDifficultyScreen();
             else
                 DrawMainMenu();
 
@@ -133,16 +138,17 @@ namespace osu_game_proj
                 new Vector2((vw - titleSize.X) / 2f, vh * 0.08f),
                 Color.Gold, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
-            // Achievement rows
-            int rowH = 70;
+            // Achievement rows — sized to keep the whole list on screen
+            int rowH = 52;
+            int rowGap = 8;
             int padX = 60;
-            int startY = (int)(vh * 0.25f);
+            int startY = (int)(vh * 0.20f);
             int boxW = vw - padX * 2;
 
             for (int i = 0; i < AchievementManager.All.Length; i++)
             {
                 var a = AchievementManager.All[i];
-                Rectangle row = new Rectangle(padX, startY + i * (rowH + 12), boxW, rowH);
+                Rectangle row = new Rectangle(padX, startY + i * (rowH + rowGap), boxW, rowH);
 
                 Color bgColor = a.Unlocked ? new Color(30, 60, 30) : new Color(30, 30, 30);
                 Color textColor = a.Unlocked ? Color.White : Color.Gray;
@@ -153,17 +159,17 @@ namespace osu_game_proj
 
                 // Name
                 _spriteBatch.DrawString(_font, a.Name,
-                    new Vector2(row.X + 16, row.Y + 8), textColor);
+                    new Vector2(row.X + 12, row.Y + 4), textColor);
 
                 // Description
-                float descScale = 0.8f;
+                float descScale = 0.7f;
                 _spriteBatch.DrawString(_font, a.Description,
-                    new Vector2(row.X + 16, row.Y + 36), Color.Gray * (a.Unlocked ? 1f : 0.5f),
+                    new Vector2(row.X + 12, row.Y + 26), Color.Gray * (a.Unlocked ? 1f : 0.5f),
                     0f, Vector2.Zero, descScale, SpriteEffects.None, 0f);
 
                 Vector2 tagSize = _font.MeasureString(tag);
                 _spriteBatch.DrawString(_font, tag,
-                    new Vector2(row.Right - tagSize.X - 16, row.Y + (rowH - tagSize.Y) / 2f),
+                    new Vector2(row.Right - tagSize.X - 12, row.Y + (rowH - tagSize.Y) / 2f),
                     tagColor);
             }
 
@@ -171,6 +177,41 @@ namespace osu_game_proj
             Vector2 backSz = _font.MeasureString("Back");
             int backW = (int)backSz.X + 60;
             DrawButton(_spriteBatch, ref _backBtn, "Back", 20 + backW / 2, 30, new Color(50, 50, 80));
+        }
+
+        private void DrawDifficultyScreen()
+        {
+            int vw = _graphics.Viewport.Width;
+            int vh = _graphics.Viewport.Height;
+
+            string title = "Choose Difficulty";
+            float titleScale = 2.5f;
+            Vector2 titleSize = _font.MeasureString(title) * titleScale;
+            _spriteBatch.DrawString(_font, title,
+                new Vector2((vw - titleSize.X) / 2f, vh * 0.18f),
+                Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+
+            string normalSub = "Normal: standard HP, +10 soul per hit";
+            Vector2 normalSubSz = _font.MeasureString(normalSub);
+            _spriteBatch.DrawString(_font, normalSub,
+                new Vector2((vw - normalSubSz.X) / 2f, vh * 0.36f), Color.LightGray);
+
+            DrawButton(_spriteBatch, ref _normalBtn, "Normal", vw / 2, (int)(vh * 0.50f), new Color(40, 80, 40));
+
+            string hardSub = "Hard: x2 enemy HP, only +5 soul per hit";
+            Vector2 hardSubSz = _font.MeasureString(hardSub);
+            _spriteBatch.DrawString(_font, hardSub,
+                new Vector2((vw - hardSubSz.X) / 2f, vh * 0.66f), Color.LightGray);
+
+            DrawButton(_spriteBatch, ref _hardBtn, "Hard", vw / 2, (int)(vh * 0.80f), new Color(120, 30, 30));
+
+            Vector2 backSz = _font.MeasureString("Back");
+            int backW = (int)backSz.X + 60;
+            DrawButton(_spriteBatch, ref _backBtn, "Back", 20 + backW / 2, 30, new Color(50, 50, 80));
+
+            float overlayAlpha = MathHelper.Clamp(_fadeOutAlpha, 0f, 1f);
+            if (overlayAlpha > 0f)
+                _spriteBatch.Draw(_pixel, new Rectangle(0, 0, vw, vh), Color.Black * overlayAlpha);
         }
 
         private void HandleInput()
@@ -185,24 +226,46 @@ namespace osu_game_proj
                     if (_backBtn.Contains(ms.Position))
                         _achievementsOpen = false;
                 }
+                else if (_difficultyOpen)
+                {
+                    if (_normalBtn.Contains(ms.Position))
+                    {
+                        Difficulty.IsHardMode = false;
+                        BeginFadeOut();
+                    }
+                    else if (_hardBtn.Contains(ms.Position))
+                    {
+                        Difficulty.IsHardMode = true;
+                        BeginFadeOut();
+                    }
+                    else if (_backBtn.Contains(ms.Position))
+                    {
+                        _difficultyOpen = false;
+                    }
+                }
                 else
                 {
-                    if (_playBtn.Contains(ms.Position)) BeginFadeOut();
+                    if (_playBtn.Contains(ms.Position)) _difficultyOpen = true;
                     if (_achievementsBtn.Contains(ms.Position)) _achievementsOpen = true;
                     if (_quitBtn.Contains(ms.Position)) _game.Exit();
                 }
             }
 
-            if (!_achievementsOpen)
+            if (!_achievementsOpen && !_difficultyOpen)
             {
                 if ((ks.IsKeyDown(Keys.Enter) && _prevKeyboard.IsKeyUp(Keys.Enter)) ||
                     (ks.IsKeyDown(Keys.Space) && _prevKeyboard.IsKeyUp(Keys.Space)))
-                    BeginFadeOut();
+                    _difficultyOpen = true;
             }
-            else
+            else if (_achievementsOpen)
             {
                 if (ks.IsKeyDown(Keys.Escape) && _prevKeyboard.IsKeyUp(Keys.Escape))
                     _achievementsOpen = false;
+            }
+            else if (_difficultyOpen)
+            {
+                if (ks.IsKeyDown(Keys.Escape) && _prevKeyboard.IsKeyUp(Keys.Escape))
+                    _difficultyOpen = false;
             }
 
             _prevMouse = ms;

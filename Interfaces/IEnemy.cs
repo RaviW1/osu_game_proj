@@ -9,6 +9,8 @@ public interface IEnemy : ISprite
     // Regular enemies report true after their post-death timer expires
     // so EnemyGenerator can cull them from the active list.
     bool ShouldBeRemoved { get; }
+    int Health { get; }
+    int MaxHealth { get; }
     Rectangle GetBounds();
     void TakeDamage();
     void BounceX();

@@ -15,6 +15,11 @@ public class Boofly : ISprite, IEnemy
     private const float DeathFlashStart = 3f;
     private const float DeathFlashDuration = 0.6f;
     private const float DeathRemovalDelay = 3.6f;
+    private const int BaseHealth = 1;
+    private int health;
+    private int maxHealth;
+    private float invincibilityTimer = 0f;
+    private const float InvincibilityDuration = 0.3f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -22,6 +27,8 @@ public class Boofly : ISprite, IEnemy
     public bool IsDead => isDead;
     public bool IsPhased => false;
     public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
+    public int Health => health;
+    public int MaxHealth => maxHealth;
 
     public Boofly(Texture2D texture, Vector2 startPosition)
     {
@@ -31,10 +38,15 @@ public class Boofly : ISprite, IEnemy
 
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
+        this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
+        this.health = this.maxHealth;
     }
 
     public Rectangle GetBounds()
     {
+        // Same trick as the boss: drop the hitbox while invincible so the
+        // attack window doesn't keep re-registering hits every frame.
+        if (invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 56, 64);
     }
 
@@ -45,8 +57,14 @@ public class Boofly : ISprite, IEnemy
 
     public void TakeDamage()
     {
-        isDead = true;
-        velocity = Vector2.Zero;
+        if (isDead || invincibilityTimer > 0f) return;
+        health--;
+        invincibilityTimer = InvincibilityDuration;
+        if (health <= 0)
+        {
+            isDead = true;
+            velocity = Vector2.Zero;
+        }
     }
 
     public void ResolveCollisions(List<CollisionResult> results)
@@ -92,6 +110,8 @@ public class Boofly : ISprite, IEnemy
             position.Y += velocity.Y * 0.016f;
             return;
         }
+
+        if (invincibilityTimer > 0f) invincibilityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         position.X += velocity.X * 0.016f;
 

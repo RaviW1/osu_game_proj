@@ -53,7 +53,6 @@ namespace osu_game_proj
             keyboard.BindPress(Keys.M, new MuteCommand());
             keyboard.BindPress(Keys.R, new ResetCommand(scene));
             keyboard.BindPress(Keys.Delete, new QuitCommand(game));
-            keyboard.BindPress(Keys.D0, new WinCommand(scene));
         }
     }
 }

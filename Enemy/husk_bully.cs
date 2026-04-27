@@ -19,6 +19,11 @@ public class HuskBully : ISprite, IEnemy
     private const float DeathFlashStart = 3f;
     private const float DeathFlashDuration = 0.6f;
     private const float DeathRemovalDelay = 3.6f;
+    private const int BaseHealth = 1;
+    private int health;
+    private int maxHealth;
+    private float invincibilityTimer = 0f;
+    private const float InvincibilityDuration = 0.3f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -26,6 +31,8 @@ public class HuskBully : ISprite, IEnemy
     public bool IsDead => isDead;
     public bool IsPhased => isPhased;
     public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
+    public int Health => health;
+    public int MaxHealth => maxHealth;
 
     public HuskBully(Texture2D texture, Vector2 startPosition)
     {
@@ -47,18 +54,29 @@ public class HuskBully : ISprite, IEnemy
         this.frames[7] = new Rectangle(492, 1165, 159, 110);
         this.delay = TimeSpan.FromSeconds(0.125);
         this.elapsedTime = TimeSpan.FromSeconds(0);
+        this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
+        this.health = this.maxHealth;
     }
 
     public Rectangle GetBounds()
     {
+        // Same trick as the boss: drop the hitbox while invincible so the
+        // attack window doesn't keep re-registering hits every frame.
+        if (invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 35, 35);
     }
 
     public void TakeDamage()
     {
         if (isPhased) return;
-        isDead = true;
-        velocity = Vector2.Zero;
+        if (isDead || invincibilityTimer > 0f) return;
+        health--;
+        invincibilityTimer = InvincibilityDuration;
+        if (health <= 0)
+        {
+            isDead = true;
+            velocity = Vector2.Zero;
+        }
     }
 
     public float GetVelocityX() => velocity.X;
@@ -100,6 +118,8 @@ public class HuskBully : ISprite, IEnemy
             deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             return;
         }
+
+        if (invincibilityTimer > 0f) invincibilityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         elapsedTime += gameTime.ElapsedGameTime;
         if (elapsedTime >= delay)
