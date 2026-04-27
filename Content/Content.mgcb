@@ -31,7 +31,7 @@
 /processorParam:Quality=Best
 /build:background_music.mp3
 
-#begin Dashmaster_0011_charm_generic_03.png
+#begin Charms/Dashmaster_0011_charm_generic_03.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -43,14 +43,7 @@
 /processorParam:TextureFormat=Color
 /build:Charms/Dashmaster_0011_charm_generic_03.png
 
-#begin DefaultFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:DefaultFont.spritefont
-
-#begin Dreamshield_charm_grimm_markoth_shield.png
+#begin Charms/Dreamshield_charm_grimm_markoth_shield.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -61,6 +54,37 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Charms/Dreamshield_charm_grimm_markoth_shield.png
+
+#begin Charms/Unbreakable Heart - _0002_charm_glass_heal_full.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Charms/Unbreakable Heart - _0002_charm_glass_heal_full.png
+
+#begin Charms/WaywardCompass.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Charms/WaywardCompass.png
+
+#begin DefaultFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DefaultFont.spritefont
 
 #begin Enemy Sprites/aspid_hatchling.png
 /importer:TextureImporter
@@ -709,28 +733,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:The Knight main sprites - atlas0 #00000357.png
-
-#begin Unbreakable Heart - _0002_charm_glass_heal_full.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Charms/Unbreakable Heart - _0002_charm_glass_heal_full.png
-
-#begin WaywardCompass.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Charms/WaywardCompass.png
 

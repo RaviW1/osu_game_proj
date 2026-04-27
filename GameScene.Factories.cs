@@ -89,9 +89,9 @@ public partial class GameScene
 
     private void LoadItems()
     {
-        Texture2D heartTex = _content.Load<Texture2D>("Unbreakable Heart - _0002_charm_glass_heal_full");
-        Texture2D dashTex = _content.Load<Texture2D>("Dashmaster_0011_charm_generic_03");
-        Texture2D compassTex = _content.Load<Texture2D>("WaywardCompass");
+        Texture2D heartTex = _content.Load<Texture2D>("Charms/Unbreakable Heart - _0002_charm_glass_heal_full");
+        Texture2D dashTex = _content.Load<Texture2D>("Charms/Dashmaster_0011_charm_generic_03");
+        Texture2D compassTex = _content.Load<Texture2D>("Charms/WaywardCompass");
 
         itemManager.AddItem(
             new TextureItem(0, heartTex, p => p.MaxPlayerHealth += 2, p => p.MaxPlayerHealth -= 2));
