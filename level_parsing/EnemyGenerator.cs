@@ -128,7 +128,7 @@ namespace osu_game_proj
                     }
                 }
 
-                // Player projectiles vs enemy
+                // Player projectiles vs enemy (fireball hits do NOT grant soul)
                 for (int i = player.Projectiles.Count - 1; i >= 0; i--)
                 {
                     if (player.Projectiles[i].GetBounds().Intersects(currentEnemy.GetBounds()))
@@ -136,7 +136,6 @@ namespace osu_game_proj
                         bool wasAlive = !currentEnemy.IsDead;
                         currentEnemy.TakeDamage();
                         OnEnemyHit?.Invoke();
-                        player.Soul = Math.Min(player.Soul + 10, player.SoulLimit);
                         if (wasAlive && currentEnemy.IsDead)
                             PendingDeathPositions.Add(new Vector2(currentEnemy.GetBounds().Center.X, currentEnemy.GetBounds().Center.Y));
                         player.Projectiles.RemoveAt(i);

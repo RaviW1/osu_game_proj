@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 public class HealingState : IPlayerState
 {
     private float healTimer = 0f;
-    private const float healDuration = 0.5f;
+    private const float healDuration = 1f;
     private float blinkTimer = 0f;
+    private bool healApplied = false;
 
     public void OnEnter(Player player)
     {
         player.Soul -= 30;
-        player.PlayerHealth++;
         player.CurrentTexture = player.Textures["Walking"];
         player.sourceRectangle = new Rectangle(0, 0, player.CurrentTexture.Width / 8, player.CurrentTexture.Height);
     }
@@ -28,6 +28,11 @@ public class HealingState : IPlayerState
 
         if (healTimer >= healDuration)
         {
+            if (!healApplied)
+            {
+                player.PlayerHealth++;
+                healApplied = true;
+            }
             player.DrawColor = Color.White; // Reset color
             player.ChangeState(new IdleState());
         }
