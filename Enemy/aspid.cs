@@ -45,7 +45,6 @@ public class Aspid : ISprite, IEnemy
         this.position = startPosition;
         this.velocity = new Vector2(-30, 30);
         this.Projectiles = new List<Projectile>();
-
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
         this.patrolTop = startPosition.Y - 100f;
@@ -56,9 +55,9 @@ public class Aspid : ISprite, IEnemy
 
     public Rectangle GetBounds()
     {
-        // Same trick as the boss: drop the hitbox while invincible so the
-        // attack window doesn't keep re-registering hits every frame.
-        if (invincibilityTimer > 0f) return Rectangle.Empty;
+        // Only suppress hitbox during i-frames while ALIVE
+        // Dead enemies always return real bounds so physics collision still works
+        if (!isDead && invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 45, 60);
     }
 
@@ -104,7 +103,7 @@ public class Aspid : ISprite, IEnemy
                 case CollisionDirection.Left:
                 case CollisionDirection.Right:
                     if (!isDead) BounceX();
-                    else { position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width; }
+                    else position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width;
                     break;
                 case CollisionDirection.Down:
                     if (isDead)
@@ -144,9 +143,7 @@ public class Aspid : ISprite, IEnemy
             facingLeft = velocity.X < 0;
         }
         if (position.Y > patrolBottom || position.Y < patrolTop)
-        {
             velocity.Y *= -1;
-        }
 
         shootTimer += 0.016f;
         if (shootTimer >= shootInterval) { ShootFireball(); shootTimer = 0f; }
@@ -162,9 +159,7 @@ public class Aspid : ISprite, IEnemy
 
     private void ShootFireball()
     {
-        Vector2 fireballVelocity = facingLeft
-            ? new Vector2(-150, 0)
-            : new Vector2(150, 0);
+        Vector2 fireballVelocity = facingLeft ? new Vector2(-150, 0) : new Vector2(150, 0);
         Projectiles.Add(new Projectile(fireballTexture, position, fireballVelocity));
     }
 
@@ -176,12 +171,9 @@ public class Aspid : ISprite, IEnemy
         if (texture != null)
         {
             var sourceRect = new Rectangle(4, 23, 140, 120);
-            var spriteEffect = facingLeft
-                ? SpriteEffects.None
-                : SpriteEffects.FlipHorizontally;
+            var spriteEffect = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Color tint = GetDeathTint(Color.White);
-            spriteBatch.Draw(texture, drawPos, sourceRect, tint,
-                0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
+            spriteBatch.Draw(texture, drawPos, sourceRect, tint, 0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
         }
 
         foreach (var projectile in Projectiles)

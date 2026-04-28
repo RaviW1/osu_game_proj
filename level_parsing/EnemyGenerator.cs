@@ -17,9 +17,11 @@ namespace osu_game_proj
 
         public Action OnPlayerHit;
         public Action OnEnemyHit;
-
         public Action OnBossDeath;
         public Action OnSecretBossDeath;
+
+        // Tracks enemies already hit this dash so one dash = one hit per enemy
+        private HashSet<IEnemy> _dashedThisDash = new HashSet<IEnemy>();
 
         public EnemyGenerator(List<EnemyInformation> generateEnemyInfo)
         {
@@ -57,17 +59,11 @@ namespace osu_game_proj
 
                 IEnemy enemy = new Boofly(enemyTextures["boofly"], enemyInfo.destPos);
                 if (enemyInfo.enemyType == "boofly")
-                {
                     enemy = new Boofly(enemyTextures["boofly"], enemyInfo.destPos);
-                }
                 else if (enemyInfo.enemyType == "aspid")
-                {
                     enemy = new Aspid(enemyTextures["aspid"], fireballTexture, enemyInfo.destPos);
-                }
                 else if (enemyInfo.enemyType == "husk_bully")
-                {
                     enemy = new HuskBully(enemyTextures["husk_bully"], enemyInfo.destPos);
-                }
                 else if (enemyInfo.enemyType == "baldur")
                 {
                     var baldur = new BaldurBoss(enemyTextures["baldur"], enemyInfo.destPos, fireballTexture);
@@ -77,7 +73,6 @@ namespace osu_game_proj
                 else if (enemyInfo.enemyType == "false_knight")
                 {
                     var boss = new Boss(enemyTextures["false_knight"], enemyInfo.destPos);
-
                     boss.OnDeath = () => OnBossDeath?.Invoke();
                     enemy = boss;
                 }
@@ -93,23 +88,45 @@ namespace osu_game_proj
 
         public void Update(GameTime gameTime, Player player, SpatialGrid _grid)
         {
+            // Reset dash hit tracking when dash ends
+            if (!player.IsDashing)
+                _dashedThisDash.Clear();
+
             foreach (IEnemy currentEnemy in this.enemyList)
             {
-                // Run collision on ALL enemies - alive AND dead
-                // Dead enemies need collision to find the floor and stop falling
-                var enemyVelocity = new Vector2(currentEnemy.GetVelocityX(), currentEnemy.GetVelocityY());
-                var enemyResults = CollisionSystem.Query(currentEnemy.GetBounds(), _grid, enemyVelocity);
-                currentEnemy.ResolveCollisions(enemyResults);
+                // Physics collision runs on all enemies alive and dead
+                // GetBounds() now returns real bounds for dead enemies so they land on floor
+                var enemyBounds = currentEnemy.GetBounds();
+                if (enemyBounds != Rectangle.Empty)
+                {
+                    var enemyVelocity = new Vector2(currentEnemy.GetVelocityX(), currentEnemy.GetVelocityY());
+                    var enemyResults = CollisionSystem.Query(enemyBounds, _grid, enemyVelocity);
+                    currentEnemy.ResolveCollisions(enemyResults);
+                }
 
-                // Update movement/animation
                 currentEnemy.Update(gameTime);
 
-                // Skip all combat logic for dead or phased enemies
+                // Skip combat for dead or phased enemies
                 if (currentEnemy.IsDead || currentEnemy.IsPhased) continue;
 
-                // Enemy body vs player
                 Rectangle playerBounds = player.GetBounds();
-                if (currentEnemy.GetBounds().Intersects(playerBounds))
+                Rectangle liveBounds = currentEnemy.GetBounds();
+
+                // ── Dash damage ───────────────────────────────────────────────
+                if (player.IsDashing
+                    && !_dashedThisDash.Contains(currentEnemy)
+                    && liveBounds.Intersects(playerBounds))
+                {
+                    _dashedThisDash.Add(currentEnemy);
+                    bool wasAlive = !currentEnemy.IsDead;
+                    currentEnemy.TakeDamage();
+                    OnEnemyHit?.Invoke();
+                    player.Soul = Math.Min(player.Soul + Difficulty.SoulPerMeleeHit, player.SoulLimit);
+                    if (wasAlive && currentEnemy.IsDead)
+                        PendingDeathPositions.Add(new Vector2(liveBounds.Center.X, liveBounds.Center.Y));
+                }
+                // ── Body collision (not dashing) ──────────────────────────────
+                else if (!player.IsDashing && liveBounds.Intersects(playerBounds))
                 {
                     if (!player.IsInvincible)
                     {
@@ -119,7 +136,7 @@ namespace osu_game_proj
                     }
                 }
 
-                // Aspid projectiles vs player
+                // ── Aspid projectiles vs player ───────────────────────────────
                 if (currentEnemy is Aspid aspid)
                 {
                     for (int i = aspid.Projectiles.Count - 1; i >= 0; i--)
@@ -137,7 +154,7 @@ namespace osu_game_proj
                     }
                 }
 
-                // baldur projectiles vs player
+                // ── Baldur projectiles vs player ──────────────────────────────
                 if (currentEnemy is BaldurBoss baldur)
                 {
                     for (int i = baldur.Projectiles.Count - 1; i >= 0; i--)
@@ -154,43 +171,35 @@ namespace osu_game_proj
                         }
                     }
                 }
-                // Player projectiles vs enemy (fireball hits do NOT grant soul)
+
+                // ── Player projectiles vs enemy ───────────────────────────────
                 for (int i = player.Projectiles.Count - 1; i >= 0; i--)
                 {
-                    Rectangle enemyBounds = currentEnemy.GetBounds();
-                    if (player.Projectiles[i].GetBounds().Intersects(enemyBounds))
+                    if (player.Projectiles[i].GetBounds().Intersects(liveBounds))
                     {
                         bool wasAlive = !currentEnemy.IsDead;
                         currentEnemy.TakeDamage();
                         OnEnemyHit?.Invoke();
-                        // Use the pre-damage bounds: TakeDamage starts i-frames
-                        // which makes GetBounds return Rectangle.Empty.
                         if (wasAlive && currentEnemy.IsDead)
-                            PendingDeathPositions.Add(new Vector2(enemyBounds.Center.X, enemyBounds.Center.Y));
+                            PendingDeathPositions.Add(new Vector2(liveBounds.Center.X, liveBounds.Center.Y));
                         player.Projectiles.RemoveAt(i);
                         break;
                     }
                 }
 
-                // Melee vs enemy — i-frames are gated by GetBounds returning
-                // Rectangle.Empty inside each enemy, so the 0.3s attack window
-                // can't re-register hits while the enemy is invincible.
-                if (player.IsAttacking)
+                // ── Melee vs enemy ────────────────────────────────────────────
+                if (player.IsAttacking && player.GetMeleeHitbox().Intersects(liveBounds))
                 {
-                    Rectangle enemyBounds = currentEnemy.GetBounds();
-                    if (player.GetMeleeHitbox().Intersects(enemyBounds))
-                    {
-                        bool wasAlive = !currentEnemy.IsDead;
-                        currentEnemy.TakeDamage();
-                        OnEnemyHit?.Invoke();
-                        player.Soul = Math.Min(player.Soul + Difficulty.SoulPerMeleeHit, player.SoulLimit);
-                        if (wasAlive && currentEnemy.IsDead)
-                            PendingDeathPositions.Add(new Vector2(enemyBounds.Center.X, enemyBounds.Center.Y));
-                    }
+                    bool wasAlive = !currentEnemy.IsDead;
+                    currentEnemy.TakeDamage();
+                    OnEnemyHit?.Invoke();
+                    player.Soul = Math.Min(player.Soul + Difficulty.SoulPerMeleeHit, player.SoulLimit);
+                    if (wasAlive && currentEnemy.IsDead)
+                        PendingDeathPositions.Add(new Vector2(liveBounds.Center.X, liveBounds.Center.Y));
                 }
             }
 
-            // Cull non-boss corpses once their post-death timer is up
+            // Remove corpses once post-death timer expires
             enemyList.RemoveAll(e => e.ShouldBeRemoved);
         }
     }

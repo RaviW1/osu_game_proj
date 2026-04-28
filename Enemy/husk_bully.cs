@@ -43,15 +43,13 @@ public class HuskBully : ISprite, IEnemy
         this.isDead = false;
         this.isPhased = false;
         this.currentFrame = 0;
-
         this.patrolLeft = startPosition.X - 150f;
         this.patrolRight = startPosition.X + 150f;
 
         for (int i = 0; i < 7; i++)
-        {
             this.frames[i] = new Rectangle(4 + 111 * i, 175, 106, 128);
-        }
         this.frames[7] = new Rectangle(492, 1165, 159, 110);
+
         this.delay = TimeSpan.FromSeconds(0.125);
         this.elapsedTime = TimeSpan.FromSeconds(0);
         this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
@@ -60,16 +58,15 @@ public class HuskBully : ISprite, IEnemy
 
     public Rectangle GetBounds()
     {
-        // Same trick as the boss: drop the hitbox while invincible so the
-        // attack window doesn't keep re-registering hits every frame.
-        if (invincibilityTimer > 0f) return Rectangle.Empty;
+        // Only suppress hitbox during i-frames while ALIVE
+        // Dead enemies always return real bounds so physics collision still works
+        if (!isDead && invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 35, 35);
     }
 
     public void TakeDamage()
     {
-        if (isPhased) return;
-        if (isDead || invincibilityTimer > 0f) return;
+        if (isPhased || isDead || invincibilityTimer > 0f) return;
         health--;
         invincibilityTimer = InvincibilityDuration;
         if (health <= 0)
@@ -144,8 +141,7 @@ public class HuskBully : ISprite, IEnemy
         {
             Color baseTint = isPhased ? Color.White * 0.4f : Color.White;
             Color tint = GetDeathTint(baseTint);
-            spriteBatch.Draw(texture, position, frames[currentFrame],
-                tint, 0f, Vector2.Zero, 0.35f, direction, 0f);
+            spriteBatch.Draw(texture, position, frames[currentFrame], tint, 0f, Vector2.Zero, 0.35f, direction, 0f);
         }
     }
 

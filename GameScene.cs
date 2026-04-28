@@ -722,7 +722,7 @@ public partial class GameScene : IScene
         _camera.SnapTo(player.Position);
         _tookHit = false;
 
-
+        UpdateFog();
     }
 
     // ------------------------------------------------------------------

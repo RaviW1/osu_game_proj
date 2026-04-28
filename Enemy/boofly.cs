@@ -35,7 +35,6 @@ public class Boofly : ISprite, IEnemy
         this.texture = texture;
         this.position = startPosition;
         this.velocity = new Vector2(50, 0);
-
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
         this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
@@ -44,9 +43,9 @@ public class Boofly : ISprite, IEnemy
 
     public Rectangle GetBounds()
     {
-        // Same trick as the boss: drop the hitbox while invincible so the
-        // attack window doesn't keep re-registering hits every frame.
-        if (invincibilityTimer > 0f) return Rectangle.Empty;
+        // Only suppress hitbox during i-frames while ALIVE
+        // Dead enemies always return real bounds so physics collision still works
+        if (!isDead && invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 56, 64);
     }
 
@@ -82,7 +81,7 @@ public class Boofly : ISprite, IEnemy
                 case CollisionDirection.Left:
                 case CollisionDirection.Right:
                     if (!isDead) BounceX();
-                    else { position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width; }
+                    else position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width;
                     break;
                 case CollisionDirection.Down:
                     if (isDead)
@@ -116,9 +115,7 @@ public class Boofly : ISprite, IEnemy
         position.X += velocity.X * 0.016f;
 
         if (position.X > patrolRight || position.X < patrolLeft)
-        {
             velocity.X *= -1;
-        }
 
         bobTimer += 0.016f;
     }
@@ -130,15 +127,9 @@ public class Boofly : ISprite, IEnemy
 
         if (texture != null)
         {
-            int frameWidth = 309;
-            int frameHeight = 335;
-            int frameX = 4;
-            int frameY = 23;
-            var sourceRect = new Rectangle(frameX, frameY, frameWidth, frameHeight);
-            float scale = 0.2f;
+            var sourceRect = new Rectangle(4, 23, 309, 335);
             Color tint = GetDeathTint(Color.White);
-            spriteBatch.Draw(texture, drawPos, sourceRect, tint,
-                            0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, drawPos, sourceRect, tint, 0f, Vector2.Zero, 0.2f, SpriteEffects.None, 0f);
         }
     }
 
