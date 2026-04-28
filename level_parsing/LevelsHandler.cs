@@ -11,7 +11,6 @@ namespace osu_game_proj
     {
         private int currentLevelNum;
         public Texture2D geoTexture;
-        private List<IRoom> allRoomObjs;
         private Dictionary<string, LevelNode> levelMap;
 
         public List<Geo> currentGeos;
@@ -80,7 +79,20 @@ namespace osu_game_proj
                 node.Exits = exits;
                 node.Spawns = spawns;
 
-                node.Room = (def.Type == "RoomA") ? new RoomA() : new RoomB();
+
+                if (def.Type == "RoomA")
+                {
+                    node.Room = new RoomA();
+                }
+                else if (def.Type == "RoomB")
+                {
+                    node.Room = new RoomB();
+                }
+                else if (def.Type == "RoomC")
+                {
+                    node.Room = new RoomC();
+                }
+
                 node.Room.Load(Content, node.TileGen);
                 node.Room.roomName = def.Name;
 

@@ -78,6 +78,8 @@ public class Player
     public int GeoCount { get { return geoCount; } set { geoCount = value; } }
 
     public bool HasWaywardCompass { get; set; }
+    // singleton instance 
+    public static Player Instance { get; private set; }
 
     public Player(Dictionary<string, Texture2D> textures, Texture2D fireballTexture, Vector2 startCoords)
     {
@@ -87,6 +89,7 @@ public class Player
         Position = startCoords;
         currentState = new IdleState();
         currentState.OnEnter(this);
+        Instance = this;
     }
 
     public void Update(GameTime gameTime)
@@ -247,6 +250,10 @@ public class Player
     public void Jump() => currentState.Jump(this);
     public void Attack() => currentState.Attack(this);
     public void Heal() => currentState.Heal(this);
+    public void InterruptHeal()
+    {
+        if (currentState is HealingState hs) hs.Interrupt(this);
+    }
     public void Dash() => currentState.Dash(this);
     public void LookUp() => currentState.LookUp(this);
 

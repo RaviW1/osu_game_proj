@@ -10,7 +10,6 @@ public class WalkingState : IPlayerState
     private int direction = 1;
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
 
     public WalkingState(int direction)
     {
@@ -25,7 +24,6 @@ public class WalkingState : IPlayerState
             0, 0,
             player.CurrentTexture.Width / TotalFrames,
             player.CurrentTexture.Height);
-        commandReceivedThisFrame = false;
     }
 
     public void Update(Player player, GameTime gameTime)
@@ -38,7 +36,7 @@ public class WalkingState : IPlayerState
         }
 
         // Set horizontal velocity instead of directly modifying position
-        player.Velocity.X = direction * 300f; 
+        player.Velocity.X = direction * 300f;
 
 
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
@@ -48,7 +46,6 @@ public class WalkingState : IPlayerState
     {
         if (direction == 0) return;
 
-        commandReceivedThisFrame = true;
         this.direction = direction;
 
         if (direction > 0) //right

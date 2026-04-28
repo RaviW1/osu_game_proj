@@ -1,43 +1,61 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-// TODO: finish implementation 
-// Right now is just a copy of the attack recovery state
-// Should play one invincible animation entering vulerability
-// then stay vulnerable for a certain amount of time
-public class BossAttackRecoveryState : IBossState
+public class BossJumpAttackState : IBossState
 {
     private const float SecondsPerFrame = 0.15f;
-    private const int TotalFrames = 5;
+    private const int TotalFrames = 3;
 
     private int currentFrame = 0;
     private float timeSinceLastFrame = 0f;
-    private bool commandReceivedThisFrame = false;
     private double timer = 0;
-    private readonly double runDuration = 4.0; // Run for 3 seconds
-    private int frameWidth = 655;
+    private readonly double runDuration = 4.0;
+    private const float Gravity = 1200f;
+    private const float JumpImpulse = -700f;
+    private float horizontalSpeed = 200f;
+    private float groundLevel;
     public void OnEnter(Boss boss)
     {
-        boss.sourceRectangle = new Rectangle(6, 4388, frameWidth, 578);
-        commandReceivedThisFrame = false;
+        boss.sourceRectangle = new Rectangle(3, 3771, 704, 593);
         timer = 0;
+
+        groundLevel = boss.position.Y;
+
+        // Calculate horizontal direction based on player or screen
+        int dir = (Player.Instance.Position.X < boss.position.X) ? -1 : 1;
+        boss.facingLeft = (dir == -1);
+
+        boss.velocity = new Vector2(dir * horizontalSpeed, JumpImpulse);
     }
     // AI-Written (Wrote the math logic to get new source Rectangles)
     public void Update(Boss boss, GameTime gameTime)
     {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         AdvanceFrame((float)gameTime.ElapsedGameTime.TotalSeconds);
         // Update the source rectangle here
-        int gap = 6;
-        int startX = 6;
+        int frameWidth = 704;
+        int gap = 4;
+        int startX = 3;
 
         int newX = startX + (currentFrame * (frameWidth + gap));
 
-        // Update the boss's source rectangle
-        // Note: Ensure the height (373 vs 395) is consistent with your sprite sheet
-        boss.sourceRectangle = new Rectangle(newX, 4388, frameWidth, 578);
+        boss.sourceRectangle = new Rectangle(newX, 3771, frameWidth, 593);
         timer += gameTime.ElapsedGameTime.TotalSeconds;
         if (timer >= runDuration)
         {
+            boss.ChangeState(new BossIdleState());
+        }
+
+        Vector2 currentVel = boss.velocity;
+        currentVel.Y += Gravity * dt;
+        boss.velocity = currentVel;
+
+        if (boss.position.Y >= groundLevel && boss.velocity.Y > 0)
+        {
+            // Snap to ground and stop moving
+            boss.SetPos(new Vector2(boss.position.X, groundLevel));
+            boss.velocity = Vector2.Zero;
+
             boss.ChangeState(new BossIdleState());
         }
     }
@@ -59,9 +77,7 @@ public class BossAttackRecoveryState : IBossState
         int scaledWidth = (int)(boss.sourceRectangle.Width * scale);
         int scaledHeight = (int)(boss.sourceRectangle.Height * scale);
 
-        // Tighten the width to 30% of the sprite frame
-        int bodyWidth = (int)(scaledWidth * 0.3f);
-        // Usually, you want the hitbox slightly shorter than the head (e.g., 90% height)
+        int bodyWidth = (int)(scaledWidth * 0.7f);
         int bodyHeight = (int)(scaledHeight * 0.5f);
 
         // Calculate X and Y based on the bottom-center origin

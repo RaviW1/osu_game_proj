@@ -1,0 +1,26 @@
+Author of Code Review: Owen Wang
+Date of Code Review: 4/27/2026
+Sprint Number 5
+Name of Files: GameScene.cs
+Note: AchievementManager is a much smaller class that is used by
+MenuScene to handle tracking/collecting acheivements
+As such I am reviewing it alongside the new menu class
+Author of File: Akari Wu
+Time Taken: 25 minutes
+
+
+Readability:
+Clearly communicates the "consume this frame" contract, which helps future readers
+Early returns keep the path flat and easy to follow, avoiding deeply nested logic.
+Single-letter variable names save almost no typing while making the code harder to read, and keyboardState and mouseState would be self-documenting.
+The shop room check relies on magic strings compared inline. That logic should be on the room itself.
+Styles are not very consistent but not a big problem.
+
+
+Maintainability:
+Separating shop and inventory logic into their own methods rather than one giant Update() shows good instinct for single responsibility.
+The mutual exclusion between the shop and charm inventory is enforced consistently, that's clean.
+The two methods share an almost identical structure that's duplicated rather than abstracted. 
+The mutual-exclusion guards are scattered across each method's conditions, considering centralizing panel management would make this logic easier.
+
+

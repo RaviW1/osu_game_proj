@@ -58,11 +58,12 @@ public partial class GameScene
 
         spriteBatch.Draw(_gameOverTexture, new Rectangle(0, 0, vw, vh), tint);
 
-        string title = "Game Over";
-        float titleScale = 2.5f;
+        string title = _isTrapped ? "You are trapped here, forever..." : "Game Over";
+        float titleScale = _isTrapped ? 1.2f : 2.5f;
         Vector2 titleSize = font.MeasureString(title) * titleScale;
         Vector2 titlePos = new Vector2((vw - titleSize.X) / 2f, vh * 0.3f);
-        spriteBatch.DrawString(font, title, titlePos, Color.White * _gameOverAlpha,
+        Color titleColor = _isTrapped ? Color.LightSteelBlue * _gameOverAlpha : Color.White * _gameOverAlpha;
+        spriteBatch.DrawString(font, title, titlePos, titleColor,
             0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
         string btnText = "Restart";

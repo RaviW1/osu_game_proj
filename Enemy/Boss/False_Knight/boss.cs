@@ -8,21 +8,21 @@ public class Boss : ISprite, IEnemy
     private Texture2D texture;
     public Vector2 position { get; private set; }
     private bool isDead;
-    private int currentFrame;
     public Vector2 velocity { get; set; }
     public bool facingLeft { get; set; }
     private int bossHealth = 10;
     private float invincibilityTimer = 0f;
-    private const float InvincibilityDuration = 0.5f; // Half a second of safety
+    private const float InvincibilityDuration = 1f; // Half a second of safety
     private int maxBossHealth = 5;
-
-    private bool hasTakenDamageThisFrame = false;
 
     private IBossState currentState;
 
     public bool IsDead => isDead;
     public bool IsPhased => false;
+    public bool ShouldBeRemoved => false;
     public bool IsInvincible => invincibilityTimer > 0f;
+    public int Health => bossHealth;
+    public int MaxHealth => maxBossHealth;
     public Rectangle sourceRectangle;
     public Action OnDeath;
 
@@ -36,15 +36,15 @@ public class Boss : ISprite, IEnemy
         this.texture = texture;
         this.position = startPos;
         this.isDead = false;
-        this.currentFrame = 0;
         this.facingLeft = false;
+        this.bossHealth *= osu_game_proj.Difficulty.HpMultiplier;
+        this.maxBossHealth *= osu_game_proj.Difficulty.HpMultiplier;
         currentState = new BossIdleState();
         currentState.OnEnter(this);
     }
     public void Update(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        hasTakenDamageThisFrame = false;
         if (invincibilityTimer > 0)
         {
             invincibilityTimer -= dt;
@@ -64,8 +64,6 @@ public class Boss : ISprite, IEnemy
         currentState.Draw(this, spriteBatch);
         spriteBatch.Draw(texture, position, sourceRectangle, Color.White, 0f, origin, 0.4f, direction, 0f);
     }
-    // TODO: finish these, currently placeholders
-    // TODO: maybe get bounds depends on the state
     public Rectangle GetBounds()
     {
         // return empty hitbox when "invincible"
@@ -77,20 +75,14 @@ public class Boss : ISprite, IEnemy
     }
     public void TakeDamage()
     {
+        if (isDead || invincibilityTimer > 0f) return;
         bossHealth--;
         invincibilityTimer = InvincibilityDuration;
 
         if (bossHealth <= 0) Die();
-
     }
-    // I copied these bounce methods from the enemy class but I haven't found an extra use for them yet
     public void BounceX()
     {
-        // Vector2 currentVelocity = velocity;
-        // currentVelocity.X *= -1;
-        // velocity = currentVelocity;
-        // facingLeft = (velocity.X < 0);
-        //facingLeft = !facingLeft;
         if (facingLeft && velocity.X < 0)
         {
             velocity = new Vector2(-velocity.X, velocity.Y);
@@ -147,6 +139,10 @@ public class Boss : ISprite, IEnemy
         currentPos.Y = currentPos.Y + offset.Y;
         position = currentPos;
 
+    }
+    public void SetPos(Vector2 pos)
+    {
+        position = pos;
     }
     public void Die()
     {

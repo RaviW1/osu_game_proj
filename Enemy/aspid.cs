@@ -16,6 +16,15 @@ public class Aspid : ISprite, IEnemy
     private bool isDead = false;
     private float deathVelocityY = 0f;
     private float bounceCooldown = 0f;
+    private float deathTimer = 0f;
+    private const float DeathFlashStart = 3f;
+    private const float DeathFlashDuration = 0.6f;
+    private const float DeathRemovalDelay = 3.6f;
+    private const int BaseHealth = 1;
+    private int health;
+    private int maxHealth;
+    private float invincibilityTimer = 0f;
+    private const float InvincibilityDuration = 0.3f;
 
     private float patrolLeft;
     private float patrolRight;
@@ -24,6 +33,9 @@ public class Aspid : ISprite, IEnemy
 
     public bool IsDead => isDead;
     public bool IsPhased => false;
+    public bool ShouldBeRemoved => isDead && deathTimer >= DeathRemovalDelay;
+    public int Health => health;
+    public int MaxHealth => maxHealth;
     public List<Projectile> Projectiles { get; private set; }
 
     public Aspid(Texture2D texture, Texture2D fireballTexture, Vector2 startPosition)
@@ -33,15 +45,19 @@ public class Aspid : ISprite, IEnemy
         this.position = startPosition;
         this.velocity = new Vector2(-30, 30);
         this.Projectiles = new List<Projectile>();
-
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
         this.patrolTop = startPosition.Y - 100f;
         this.patrolBottom = startPosition.Y + 100f;
+        this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
+        this.health = this.maxHealth;
     }
 
     public Rectangle GetBounds()
     {
+        // Only suppress hitbox during i-frames while ALIVE
+        // Dead enemies always return real bounds so physics collision still works
+        if (!isDead && invincibilityTimer > 0f) return Rectangle.Empty;
         return new Rectangle((int)position.X, (int)position.Y, 45, 60);
     }
 
@@ -59,9 +75,15 @@ public class Aspid : ISprite, IEnemy
 
     public void TakeDamage()
     {
-        isDead = true;
-        velocity = new Vector2(0, 0);
-        Projectiles.Clear();
+        if (isDead || invincibilityTimer > 0f) return;
+        health--;
+        invincibilityTimer = InvincibilityDuration;
+        if (health <= 0)
+        {
+            isDead = true;
+            velocity = new Vector2(0, 0);
+            Projectiles.Clear();
+        }
     }
 
     public void ResolveCollisions(List<CollisionResult> results)
@@ -81,7 +103,7 @@ public class Aspid : ISprite, IEnemy
                 case CollisionDirection.Left:
                 case CollisionDirection.Right:
                     if (!isDead) BounceX();
-                    else { position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width; }
+                    else position.X += (result.Direction == CollisionDirection.Left) ? result.Overlap.Width : -result.Overlap.Width;
                     break;
                 case CollisionDirection.Down:
                     if (isDead)
@@ -103,6 +125,7 @@ public class Aspid : ISprite, IEnemy
     {
         if (isDead)
         {
+            deathTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             deathVelocityY += 600f * 0.016f;
             velocity = new Vector2(0, deathVelocityY);
             position.Y += velocity.Y * 0.016f;
@@ -112,6 +135,7 @@ public class Aspid : ISprite, IEnemy
         position.X += velocity.X * 0.016f;
         position.Y += velocity.Y * 0.016f;
         if (bounceCooldown > 0f) bounceCooldown -= 0.016f;
+        if (invincibilityTimer > 0f) invincibilityTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         if (position.X > patrolRight || position.X < patrolLeft)
         {
@@ -119,11 +143,8 @@ public class Aspid : ISprite, IEnemy
             facingLeft = velocity.X < 0;
         }
         if (position.Y > patrolBottom || position.Y < patrolTop)
-        {
             velocity.Y *= -1;
-        }
 
-        hoverTimer += 0.016f;
         shootTimer += 0.016f;
         if (shootTimer >= shootInterval) { ShootFireball(); shootTimer = 0f; }
 
@@ -138,9 +159,7 @@ public class Aspid : ISprite, IEnemy
 
     private void ShootFireball()
     {
-        Vector2 fireballVelocity = facingLeft
-            ? new Vector2(-150, 0)
-            : new Vector2(150, 0);
+        Vector2 fireballVelocity = facingLeft ? new Vector2(-150, 0) : new Vector2(150, 0);
         Projectiles.Add(new Projectile(fireballTexture, position, fireballVelocity));
     }
 
@@ -152,14 +171,21 @@ public class Aspid : ISprite, IEnemy
         if (texture != null)
         {
             var sourceRect = new Rectangle(4, 23, 140, 120);
-            var spriteEffect = facingLeft
-                ? SpriteEffects.None
-                : SpriteEffects.FlipHorizontally;
-            spriteBatch.Draw(texture, drawPos, sourceRect, Color.White,
-                0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
+            var spriteEffect = facingLeft ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            Color tint = GetDeathTint(Color.White);
+            spriteBatch.Draw(texture, drawPos, sourceRect, tint, 0f, Vector2.Zero, 0.5f, spriteEffect, 0f);
         }
 
         foreach (var projectile in Projectiles)
             projectile.Draw(spriteBatch, Vector2.Zero);
+    }
+
+    private Color GetDeathTint(Color baseTint)
+    {
+        if (!isDead) return baseTint;
+        float t = deathTimer - DeathFlashStart;
+        if (t < 0f || t >= DeathFlashDuration) return baseTint;
+        bool on = ((int)(t * 10)) % 2 == 0;
+        return on ? baseTint : baseTint * 0.2f;
     }
 }
