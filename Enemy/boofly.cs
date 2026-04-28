@@ -37,8 +37,6 @@ public class Boofly : ISprite, IEnemy
         this.velocity = new Vector2(50, 0);
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
-        this.maxHealth = BaseHealth * osu_game_proj.Difficulty.HpMultiplier;
-        this.health = this.maxHealth;
     }
 
     public Rectangle GetBounds()
