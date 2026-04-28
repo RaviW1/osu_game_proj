@@ -11,6 +11,10 @@ public class Boofly : ISprite, IEnemy
     private float bobTimer = 0f;
     private bool isDead = false;
     private float deathVelocityY = 0f;
+    private int currentFrame;
+    private Rectangle[] frames = new Rectangle[8];
+    private TimeSpan delay;
+    private TimeSpan elapsedTime;
 
     private float patrolLeft;
     private float patrolRight;
@@ -26,6 +30,15 @@ public class Boofly : ISprite, IEnemy
 
         this.patrolLeft = startPosition.X - 200f;
         this.patrolRight = startPosition.X + 200f;
+
+        this.currentFrame = 0;
+        for (int i = 0; i < 7; i++)
+        {
+            this.frames[i] = new Rectangle(4 + 111 * i, 175, 106, 128);
+        }
+        this.frames[7] = new Rectangle(492, 1165, 159, 110);
+        this.delay = TimeSpan.FromSeconds(0.125);
+        this.elapsedTime = TimeSpan.FromSeconds(0);
     }
 
     public Rectangle GetBounds()
