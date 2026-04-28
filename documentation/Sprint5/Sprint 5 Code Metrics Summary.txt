@@ -1,0 +1,12 @@
+Sprint 5 Code Metrics Summary
+
+
+Average maintainability index: 90.89 90.16
+
+Average cyclomatic complexity: 3.16 3.47
+
+Overall our code metrics were once again comparable to the previous sprint. This time there was a slight decrease in average maintainability, which can likely be attributed to the multiple new rooms and features that were newly implemented. This was also likely the cause for the slight increase in our average cyclomatic complexity. 
+
+In terms of maintainability, there were a couple methods in GameScene and MenuScene that were among the lowest scorers in this category within our program (all had maintainability scores between 30-40). Again, these were among the newly implemented aspects of our sprint, and if we were to do some refactoring, it is likely that this issue would be resolved, based on the results of our previous refactoring.
+
+GameScene also had an extremely high cyclomatic complexity value of 254, which was more than triple its previous cyclomatic complexity score from Sprint 4 (where it was also a notable outlier in this category). While this is technically the last Sprint for this project, this may be a sign that this class should absolutely be reevaluated before the final presentations take place next week. Other than that though, the other parts of the program have comparable cyclomatic complexities to those in Sprint 4, and previous outliers seem to no longer be an issue (besides GameScene).
