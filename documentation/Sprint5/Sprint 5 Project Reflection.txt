@@ -12,5 +12,12 @@ Reflecting on our work as a team, there was definitely an increase in communicat
 
 Overall, we would consider our final product to be a finished, fully playable experience. There are still things that we would look to improve going forward, if we ever decide to come back to this project on our own. Some examples would be things that got cut from other sprints, including additional enemies, some animation work, omnidirectional attacking, and some of the movement abilities found in the original Hollow Knight (ex. wall climbing and "pogoing" (bouncing off spikes with your weapon)). While it is not certain if we will ever revisit this project, the skills and camaraderie that the team has developed have been invaluable. We have learned a lot over the course of this semester, and the experience has inspired many of us to continue developing our own projects like this one in the future.
 
-Individual Thoughts on the Project
+Miscelaneous Additional Thoughts on the Project From the Team:
+
+This sprint involved much more development using the systems and tools that we had already created in previous sprints. This emphasizes the solidity of our design decisions in previous sprints.
+Some desired functionality was cut, like omni directional attacking, which is a bummer. It would be cool to return to the project and add some of these later.
+The game right now really captures some of the late-game boss-run sections(the path of pain), alot like the original game.
+We really enjoyed playing around with the difficulty and creating bosses and areas that strained the mechanics and the player's understanding of them.
+
+
 
