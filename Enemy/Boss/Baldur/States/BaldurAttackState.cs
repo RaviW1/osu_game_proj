@@ -82,7 +82,7 @@ public class BaldurAttackState : IBaldurState
     {
         // by design the baldur enemy always faces left
         Vector2 fireballVelocity = new Vector2(-150, 0);
-        Vector2 pos = new Vector2(boss.position.X - 70, boss.position.Y - 70);
+        Vector2 pos = new Vector2(boss.position.X - 70, boss.position.Y - 45);
         boss.Projectiles.Add(new Projectile(boss.fireballTexture, pos, fireballVelocity));
     }
 }
