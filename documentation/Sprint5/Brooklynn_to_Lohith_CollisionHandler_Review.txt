@@ -1,0 +1,33 @@
+Author: Brooklynn Kongdech
+Date: 4/27/26
+Sprint #5
+Files reviewed: CollisionDirection.cs, CollisionResult.cs, CollisionSystem.cs, SpatialGrid.cs
+Author of file being reviewed: Lohith Katari
+Minutes to complete review: 30 min
+
+
+Readability:
+
+- Variable names are generally fairly descriptive, it's pretty clear what everything is supposed to represent
+
+- The purposes of CollisionDirection and CollisionResult are clear even at a glance
+
+- In CollisionSystem, there are two different Query methods but it wasn't immediately clear to me what the difference between them was (functionality wise), so adding comments to differentiate them and explain the difference might be helpful
+
+- Methods are concise, essentially no nesting beyond what is necessary (two levels in SpatialGrid.Register() and SpatialGrid.GetNearby(), but this makes sense since both the x and y have to be checked)
+
+- SpatialGrid.Register() could be renamed to something else since I feel like the name doesn't completely reflect the functionality (adds TileBlocks to the list of cells)
+
+- It's a bit unclear at a glance what the relationship between SpatialGrid and the rest of the code is, so this may also need a comment
+
+- The code is overall readable and easy to understand with a few confusing bits here and there, but nothing major
+
+
+Maintainability:
+
+- Code has high cohesion, but low coupling to other classes, which is good; the classes function quite independently from other classes in the program
+
+- All files are relatively short, and as stated above are fairly easy to read
+
+
+Overall, these files are all fairly readable and maintainable. My only suggestion would be to add a couple of comments in CollisionSystem and SpatialGrid to help describe some aspects of the functionality better.
